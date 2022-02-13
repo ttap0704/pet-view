@@ -5,13 +5,10 @@ declare module '@mui/material/styles' {
     [key: string]: Palette['primary'];
   }
   interface PaletteOptions {
-    red: PaletteOptions['primary'];
-    green: PaletteOptions['primary'];
     orange: PaletteOptions['primary'];
-    light_orange: PaletteOptions['primary'];
-    yellow: PaletteOptions['primary'];
-    cyan: PaletteOptions['primary'];
-    purple: PaletteOptions['primary'];
+    brown: PaletteOptions['primary'];
+    blue: PaletteOptions['primary'];
+    white: PaletteOptions['primary'];
   }
 
   interface PaletteColor {
@@ -24,12 +21,9 @@ declare module '@mui/material/styles' {
 
 declare module '@mui/material/Button' {
   interface ButtonPropsColorOverrides {
-    red: true;
-    green: true;
     orange: true;
-    light_orange: true;
-    yellow: true;
-    cyan: true;
-    purple: true;
+    brown: true;
+    blue: true;
+    white: true;
   }
 }

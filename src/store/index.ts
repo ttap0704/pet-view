@@ -1,24 +1,24 @@
 import { combineReducers } from "redux";
 
 // models
-import userReducer from "./models/user"
-import restaurantReducer from "./models/restaurant";
-import accommodationReducer from "./models/accommodation";
+import UserReducer from "./models/user"
+import RestaurantReducer from "./models/restaurant";
+import AccommodationReducer from "./models/accommodation";
 
 // common
-import testReducer from "./common/testReducer";
-import uploadReducer from "./common/upload";
+import UploadReducer from "./common/upload";
+import RoutesReducer from './common/routes'
 
 
 const rootReducer = combineReducers({
     // models
-    userReducer,
-    restaurantReducer,
-    accommodationReducer,
+    UserReducer,
+    RestaurantReducer,
+    AccommodationReducer,
 
     // common
-    testReducer,
-    uploadReducer
+    UploadReducer,
+    RoutesReducer
 })
 
 export default rootReducer;

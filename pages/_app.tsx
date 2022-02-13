@@ -8,23 +8,41 @@ import '../src/assets/styles/globals.scss';
 import { ThemeProvider } from '@mui/material/styles';
 import theme from '../src/utils/theme';
 
+import LayoutApp from '../src/components/layout/LayoutApp';
+import LayoutManage from '../src/components/layout/LayoutManage';
+
 // store 설정파일 로드
 const store = configureStore();
 
 const _APP = ({ Component, pageProps }: AppProps) => {
   const router = useRouter();
+  const [rootPath, setRootPath] = useState('');
 
-  function rest(test: string) {
-    console.log(test);
-  }
+  useEffect(() => {
+    const root_path = router.pathname.split('/')[1];
+    setRootPath(root_path);
+  }, [router.pathname]);
+
+  const Layout = () => {
+    if (rootPath.indexOf('manage') >= 0) {
+      return (
+        <LayoutManage>
+          <Component style={{ width: '100%', height: '100%' }} {...pageProps} />
+        </LayoutManage>
+      );
+    } else {
+      return (
+        <LayoutApp>
+          <Component style={{ width: '100%', height: '100%' }} {...pageProps} />
+        </LayoutApp>
+      );
+    }
+  };
 
   return (
     <Provider store={store}>
       <ThemeProvider theme={theme}>
-        <Component style={{ width: '100%', height: '100%' }} {...pageProps} />
-        <div className='hihi' onClick={() => rest('test')}>
-          hi
-        </div>
+        <Layout />
       </ThemeProvider>
     </Provider>
   );

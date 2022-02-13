@@ -2,33 +2,21 @@ import { createTheme } from '@mui/material/styles';
 
 const theme = createTheme({
   palette: {
-    red: {
+    orange: {
       contrastText: "#fff",
       main: "#e9131d"
     },
-    green: {
+    brown: {
       contrastText: "#fff",
-      main: "#1ed07b"
+      main: "#cfaf7b"
     },
-    orange: {
+    blue: {
       contrastText: "#fff",
-      main: "#ffa500"
+      main: "#0485d1"
     },
-    light_orange: {
-      contrastText: "#fff",
-      main: "#ffc079"
-    },
-    yellow: {
-      contrastText: "#fff",
-      main: "#fcbe00"
-    },
-    cyan: {
-      contrastText: "#fff",
-      main: "#2baed1"
-    },
-    purple: {
-      contrastText: "#fff",
-      main: "#c39bea"
+    white: {
+      contrastText: "#e9131d",
+      main: "#fff"
     }
   },
 });
