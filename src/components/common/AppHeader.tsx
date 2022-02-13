@@ -2,31 +2,29 @@ import * as React from 'react';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
-import Typography from '@mui/material/Typography';
-import Button from '../button/Button';
 import Link from 'next/link';
 
 import { useEffect, useState } from 'react';
 import { styled } from '@mui/material/styles';
 
-const CustomBox = styled(Box)(() => ({
+const CustomBox = styled(Box)(({ theme }) => ({
   position: 'sticky',
   top: 0,
   '.MuiPaper-root': {
     transition: '0.35s',
-    backgroundColor: 'var(--orange)',
+    backgroundColor: theme.palette.orange.main,
     boxShadow: 'none',
   },
 
   '&.sticky': {
     '.MuiPaper-root': {
-      backgroundColor: 'var(--white)',
+      backgroundColor: theme.palette.white.main,
       boxShadow:
         '0px 2px 4px -1px rgb(0 0 0 / 20%), 0px 4px 5px 0px rgb(0 0 0 / 14%), 0px 1px 10px 0px rgb(0 0 0 / 12%);',
 
       '.MuiToolbar-root': {
         '.MuiBox-root': {
-          color: 'var(--orange)',
+          color: theme.palette.orange.main,
         },
       },
     },
@@ -54,7 +52,7 @@ const CustomToolbar = styled(Toolbar)(() => ({
 }));
 
 function AppHeader() {
-  const [sticky, setSticky] = useState(true);
+  const [sticky, setSticky] = useState(false);
 
   useEffect(() => {
     window.addEventListener('scroll', isSticky);
@@ -89,7 +87,7 @@ function AppHeader() {
       },
       {
         label: '로그인',
-        path: '/',
+        path: '/login',
       },
     ];
 
