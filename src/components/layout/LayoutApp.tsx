@@ -6,10 +6,11 @@ interface LayoutAppProps {
   children: React.ReactNode;
 }
 
-const WrapBox = styled(Box)(({ theme }) => ({
+const ChildrenBox = styled(Box)(({ theme }) => ({
   width: '62rem',
   padding: '1rem 1rem 0',
   margin: '0 auto',
+  height: '100vh'
 }));
 
 const LayoutApp = (props: LayoutAppProps) => {
@@ -17,7 +18,7 @@ const LayoutApp = (props: LayoutAppProps) => {
   return (
     <>
       <AppHeader />
-      <WrapBox sx={{ flexGrow: 1 }}>{children}</WrapBox>
+      <ChildrenBox>{children}</ChildrenBox>
     </>
   );
 };

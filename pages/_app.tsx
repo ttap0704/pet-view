@@ -27,13 +27,13 @@ const _APP = ({ Component, pageProps }: AppProps) => {
     if (rootPath.indexOf('manage') >= 0) {
       return (
         <LayoutManage>
-          <Component style={{ width: '100%', height: '100%' }} {...pageProps} />
+          <Component {...pageProps} />
         </LayoutManage>
       );
     } else {
       return (
         <LayoutApp>
-          <Component style={{ width: '100%', height: '100%' }} {...pageProps} />
+          <Component style={{ width: '100%', height: 'auto' }} {...pageProps} />
         </LayoutApp>
       );
     }
