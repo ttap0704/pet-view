@@ -17,8 +17,9 @@ function Button(props: ButtonProps) {
   const children = props.children;
   const startIcon = props.startIcon;
   const endIcon = props.endIcon;
+  const sx = props.sx;
   return (
-    <CustomButton variant={variant} color={color} startIcon={startIcon} endIcon={endIcon}>
+    <CustomButton variant={variant} color={color} startIcon={startIcon} endIcon={endIcon} sx={sx}>
       {children}
     </CustomButton>
   );

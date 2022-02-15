@@ -30,6 +30,8 @@ const _APP = ({ Component, pageProps }: AppProps) => {
           <Component {...pageProps} />
         </LayoutManage>
       );
+    } else if (['login', 'join'].includes(rootPath)) {
+      return <Component {...pageProps} />;
     } else {
       return (
         <LayoutApp>

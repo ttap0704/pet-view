@@ -32,7 +32,7 @@ const LoginBox = styled(Box)(({ theme }) => ({
   gap: '0.5rem',
 }));
 
-const LoginIndex = () => {
+const JoinIndex = () => {
   const [loginInfo, setLoginInfo] = useState([
     {
       value: '',
@@ -92,4 +92,4 @@ const LoginIndex = () => {
   );
 };
 
-export default LoginIndex;
+export default JoinIndex;
