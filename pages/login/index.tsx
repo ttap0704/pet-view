@@ -86,7 +86,9 @@ const LoginIndex = () => {
       </LoginBox>
       <UtilBox sx={{ paddingX: '1rem' }}>
         <Button color='gray_2'>비밀번호 찾기</Button>
-        <Button color='gray_2'>사업자 회원가입</Button>
+        <Button color='gray_2'>
+          <Link href='/join'>사업자 회원가입</Link>
+        </Button>
       </UtilBox>
     </LoginWrap>
   );

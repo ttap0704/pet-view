@@ -48,45 +48,67 @@ const JoinIndex = () => {
     },
   ]);
 
-  const handleLoginInput = (e: React.ChangeEvent<HTMLInputElement>, idx: number) => {
-    setLoginInfo(state => {
-      return [
-        ...state.map((info, index) => {
-          if (index == idx) {
-            return {
-              ...info,
-              value: e.target.value,
-            };
-          } else {
-            return info;
-          }
-        }),
-      ];
-    });
-  };
+  let [certificationContents, setCertificationContents] = useState<{ [key: string]: { value: string; label: string } }>(
+    {
+      b_no: { value: '', label: '' },
+      start_dt: { value: '', label: '' },
+      p_nm: { value: '', label: '' },
+      p_nm2: { value: '', label: '' },
+      b_nm: { value: '', label: '' },
+      corp_no: { value: '', label: '' },
+      b_sector: { value: '', label: '' },
+      b_type: { value: '', label: '' },
+    },
+  );
+
+  // const handleLoginInput = (e: React.ChangeEvent<HTMLInputElement>, idx: number) => {
+  //   setLoginInfo(state => {
+  //     return [
+  //       ...state.map((info, index) => {
+  //         if (index == idx) {
+  //           return {
+  //             ...info,
+  //             value: e.target.value,
+  //           };
+  //         } else {
+  //           return info;
+  //         }
+  //       }),
+  //     ];
+  //   });
+  // };
 
   return (
     <LoginWrap>
-      <Typography variant='h4'>로그인</Typography>
+      <Typography variant='h4'>사업자 회원가입</Typography>
       <LoginBox>
-        {loginInfo.map((info, index) => {
+        {Object.keys(certificationContents).map((key, idx) => {
+          return (
+            <InputOutlined
+              // startAdornment={certificationContents[key].icon}
+              value={certificationContents[key].value}
+              key={`certification_contents_${idx}`}
+              // onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleLoginInput(e, index)}
+              // placeholder={certificationContents[key].placeholder}
+            />
+          );
+        })}
+        {/* {loginInfo.map((info, index) => {
           return (
             <InputOutlined
               startAdornment={info.icon}
               value={info.value}
-              key={`login_contents_${index}`}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleLoginInput(e, index)}
+              key={`join_contents_${index}`}
+              // onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleLoginInput(e, index)}
               placeholder={info.placeholder}
             />
           );
-        })}
-        <Button variant='contained' color='blue' sx={{ marginTop: '0.5rem' }}>
-          로그인
-        </Button>
+        })} */}
       </LoginBox>
       <UtilBox sx={{ paddingX: '1rem' }}>
-        <Button color='gray_2'>비밀번호 찾기</Button>
-        <Button color='gray_2'>사업자 회원가입</Button>
+        <Button color='blue' variant='contained'>
+          사업자 인증
+        </Button>
       </UtilBox>
     </LoginWrap>
   );
