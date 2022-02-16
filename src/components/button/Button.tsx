@@ -18,8 +18,9 @@ function Button(props: ButtonProps) {
   const startIcon = props.startIcon;
   const endIcon = props.endIcon;
   const sx = props.sx;
+  const onClick = props.onClick;
   return (
-    <CustomButton variant={variant} color={color} startIcon={startIcon} endIcon={endIcon} sx={sx}>
+    <CustomButton variant={variant} color={color} startIcon={startIcon} endIcon={endIcon} sx={sx} onClick={onClick}>
       {children}
     </CustomButton>
   );

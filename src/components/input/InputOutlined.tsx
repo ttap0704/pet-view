@@ -27,7 +27,7 @@ const CustomInput = (props: OutlinedInputProps) => {
   const placeholder = props.placeholder;
   const start_adornment = props.startAdornment;
   const end_adornment = props.endAdornment;
-
+  const type = props.type;
   const onChange = props.onChange;
 
   return (
@@ -39,6 +39,7 @@ const CustomInput = (props: OutlinedInputProps) => {
         onChange={onChange}
         startAdornment={start_adornment}
         endAdornment={end_adornment}
+        type={type}
       />
     </>
   );

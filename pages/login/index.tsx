@@ -1,7 +1,8 @@
 import { Box, Divider, Typography } from '@mui/material';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useContext } from 'react';
 import { styled } from '@mui/material/styles';
 
 import { MdAttachEmail } from 'react-icons/md';
@@ -10,6 +11,9 @@ import { RiLockPasswordFill } from 'react-icons/ri';
 import InputOutlined from '../../src/components/input/InputOutlined';
 import Button from '../../src/components/button/Button';
 import UtilBox from '../../src/components/common/UtilBox';
+
+import { ModalContext } from '../../src/provider/ModalProvider';
+import { fetchPostApi } from '../../src/utils/api';
 
 const LoginWrap = styled(Box)(({ theme }) => ({
   width: '100%',
@@ -33,18 +37,23 @@ const LoginBox = styled(Box)(({ theme }) => ({
 }));
 
 const LoginIndex = () => {
+  const router = useRouter();
+  const { modal_alert, modal_notice } = useContext(ModalContext);
+
   const [loginInfo, setLoginInfo] = useState([
     {
       value: '',
       status: true,
       icon: <MdAttachEmail />,
       placeholder: '이메일을 입력해주세요.',
+      type: 'text',
     },
     {
       value: '',
       status: true,
       icon: <RiLockPasswordFill />,
       placeholder: '비밀번호를 입력해주세요.',
+      type: 'password',
     },
   ]);
 
@@ -65,6 +74,25 @@ const LoginIndex = () => {
     });
   };
 
+  const userLogin = async () => {
+    const login_data = {
+      id: loginInfo[0].value,
+      password: loginInfo[1].value,
+    };
+
+    if (login_data.id.length == 0 || login_data.password.length == 0) {
+      modal_alert.openModalAlert('모든 정보를 입력해주세요.');
+      return;
+    }
+
+    const user = await fetchPostApi('/user/login', login_data);
+    if (user.pass) {
+      modal_notice.openModalNotice(user.message, () => {
+        router.push('/');
+      });
+    }
+  };
+
   return (
     <LoginWrap>
       <Typography variant='h4'>로그인</Typography>
@@ -72,6 +100,7 @@ const LoginIndex = () => {
         {loginInfo.map((info, index) => {
           return (
             <InputOutlined
+              type={info.type}
               startAdornment={info.icon}
               value={info.value}
               key={`login_contents_${index}`}
@@ -80,7 +109,7 @@ const LoginIndex = () => {
             />
           );
         })}
-        <Button variant='contained' color='blue' sx={{ marginTop: '0.5rem' }}>
+        <Button variant='contained' color='orange' sx={{ marginTop: '0.5rem' }} onClick={userLogin}>
           로그인
         </Button>
       </LoginBox>

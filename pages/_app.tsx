@@ -6,6 +6,7 @@ import { useState, useEffect } from 'react';
 import configureStore from '../src/store/configureStore';
 import '../src/assets/styles/globals.scss';
 import { ThemeProvider } from '@mui/material/styles';
+import ModalProvider from '../src/provider/ModalProvider';
 import theme from '../src/utils/theme';
 
 import LayoutApp from '../src/components/layout/LayoutApp';
@@ -44,7 +45,9 @@ const _APP = ({ Component, pageProps }: AppProps) => {
   return (
     <Provider store={store}>
       <ThemeProvider theme={theme}>
-        <Layout />
+        <ModalProvider>
+          <Layout />
+        </ModalProvider>
       </ThemeProvider>
     </Provider>
   );
