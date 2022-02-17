@@ -5,7 +5,7 @@ import {
 } from 'typesafe-actions';
 
 interface AccommodationReducer {
-  accommodation_list:object []
+  accommodation_list: object[]
 }
 
 const initialState: AccommodationReducer = {

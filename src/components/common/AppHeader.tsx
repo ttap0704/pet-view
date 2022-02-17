@@ -10,6 +10,7 @@ import { styled } from '@mui/material/styles';
 const CustomBox = styled(Box)(({ theme }) => ({
   position: 'sticky',
   top: 0,
+  zIndex: 100,
   '.MuiPaper-root': {
     transition: '0.35s',
     backgroundColor: theme.palette.orange.main,

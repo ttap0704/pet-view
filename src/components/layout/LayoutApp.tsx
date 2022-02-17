@@ -12,6 +12,7 @@ const ChildrenBox = styled(Box)(({ theme }) => ({
   padding: '1rem 1rem 0',
   margin: '0 auto',
   height: '100vh',
+  overflow: 'hidden',
 }));
 
 const LayoutApp = (props: LayoutAppProps) => {

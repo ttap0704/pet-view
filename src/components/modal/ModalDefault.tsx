@@ -33,8 +33,6 @@ function ModalDefault(props: ModalDefaultProps) {
     } else {
       style.top = '50%';
     }
-
-    console.log(style);
   }, [visible]);
 
   return (

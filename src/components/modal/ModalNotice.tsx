@@ -24,10 +24,6 @@ const ModalNoticeBox = styled(Box)(({ theme }) => ({
 function ModalNotice() {
   const { modal_notice } = useContext(ModalContext);
 
-  React.useEffect(() => {
-    console.log(modal_notice.data.visible);
-  }, [modal_notice]);
-
   return (
     <>
       <ModalDefault
