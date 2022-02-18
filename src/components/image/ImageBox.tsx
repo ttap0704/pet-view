@@ -12,7 +12,7 @@ interface ImageBoxProps extends BoxProps {
 
 const CustomBox = styled(Box)(({ theme }) => ({
   width: '100%',
-  maxWidth: '60rem',
+  maxWidth: '42rem',
   height: '21rem',
   display: 'flex',
   alignItems: 'center',

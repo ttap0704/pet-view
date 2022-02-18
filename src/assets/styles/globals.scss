@@ -82,3 +82,19 @@ input[type="file"] {
   clip: rect(0, 0, 0, 0);
   border: 0;
 }
+
+input {
+  border-image: none;
+  background-color: #fff;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  border: 1px solid;
+
+  &:focus-visible {
+    outline: 0;
+  }
+
+  &:read-only {
+    cursor: unset;
+  }
+}

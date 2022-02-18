@@ -1,11 +1,14 @@
 import { GetStaticProps } from 'next';
 
+import { Box } from '@mui/material';
 import { useEffect, useState, Fragment } from 'react';
+import { styled } from '@mui/material/styles';
 import { fetchGetApi } from '../../src/utils/api';
 import { setImageArray } from '../../src/utils/tools';
+
 import ImageBox from '../../src/components/image/ImageBox';
 import ListLabel from '../../src/components/common/ListLabel';
-
+import SideSearchBox from '../../src/components/common/SideSearchBox';
 interface AccommodationList {
   accommodation_images: { file_name: string }[];
   bname: string;
@@ -14,24 +17,36 @@ interface AccommodationList {
   sigungu: string;
 }
 
+const AccommodationContainer = styled(Box)(({ theme }) => ({
+  width: '100%',
+  height: 'auto',
+  display: 'flex',
+  justifyContent: 'space-between',
+}));
+
+const ListBox = styled(Box)(({ theme }) => ({
+  width: '42rem',
+  height: 'auto',
+}));
+
 const AccommodationIndex = (props: { list: AccommodationList[]; style: { [key: string]: string } }) => {
-  const tmp = ['1_0_1643158040156.jpeg', '1_0_1644277795931.jpeg', '1_1_1643158040157.jpeg'];
   const [list, setList] = useState<AccommodationList[]>([]);
   useEffect(() => {
     setList([...props.list]);
   }, []);
 
   return (
-    <div>
+    <AccommodationContainer>
       {list.map((item, index) => {
         return (
-          <Fragment key={`accommodation_list_${index}`}>
-            <ImageBox imageList={setImageArray(item.accommodation_images)} type='accommodation' slide={true} />
+          <ListBox key={`accommodation_list_${index}`}>
+            <ImageBox imageList={setImageArray(item.accommodation_images)} type='accommodation' slide={false} />
             <ListLabel title={item.label} subtitle={item.bname} />
-          </Fragment>
+          </ListBox>
         );
       })}
-    </div>
+      <SideSearchBox />
+    </AccommodationContainer>
   );
 };
 

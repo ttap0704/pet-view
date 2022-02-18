@@ -11,18 +11,28 @@ interface ListLabelProps {
 
 const LabelBox = styled(Box)(({ theme }) => ({
   width: '100%',
-  height: '5rem',
+  height: '3.5rem',
+  paddingRight: '1rem',
+  marginTop: '1rem',
   display: 'flex',
   alignItems: 'flex-end',
   justifyContent: 'center',
   flexDirection: 'column',
-
+  position: 'relative',
   '.title': {
-    fontSize: '1.4rem',
+    fontSize: '1.3rem',
   },
   '.subtitle': {
-    fontSize: '1.15rem',
+    fontSize: '1.05rem',
   },
+}));
+
+const DecoBox = styled(Box)(({ theme }) => ({
+  position: 'absolute',
+  right: 0,
+  height: '100%',
+  width: '0.5rem',
+  backgroundColor: theme.palette.brown.main,
 }));
 
 const ListLabel = (props: ListLabelProps) => {
@@ -38,6 +48,7 @@ const ListLabel = (props: ListLabelProps) => {
         <Typography className='subtitle' component='h4'>
           {subtitle}
         </Typography>
+        <DecoBox />
       </LabelBox>
     </>
   );
