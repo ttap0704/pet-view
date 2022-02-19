@@ -32,7 +32,7 @@ const DecoBox = styled(Box)(({ theme }) => ({
   right: 0,
   height: '100%',
   width: '0.5rem',
-  backgroundColor: theme.palette.brown.main,
+  backgroundColor: theme.palette.yellow.main,
 }));
 
 const ListLabel = (props: ListLabelProps) => {

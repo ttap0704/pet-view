@@ -3,9 +3,12 @@ import TextField from '@mui/material/TextField';
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
 import DatePicker from '@mui/lab/DatePicker';
-import { Box } from '@mui/material';
 
 import { styled } from '@mui/material/styles';
+
+interface DatePickerProps {
+  onDateChange: (date: Date) => void;
+}
 
 const CustomTextField = styled(TextField)(({ theme }) => ({
   width: '100%',
@@ -17,16 +20,19 @@ const CustomTextField = styled(TextField)(({ theme }) => ({
   },
 }));
 
-const CustomDatePicker = () => {
+const CustomDatePicker = (props: DatePickerProps) => {
   const [value, setValue] = React.useState<Date | null>(new Date());
+  const onDateChange = props.onDateChange;
 
   return (
     <LocalizationProvider dateAdapter={AdapterDateFns}>
       <DatePicker
         value={value}
         inputFormat={'yyyy년 MM월 dd일'}
+        mask={'____년 __월 __일'}
         onChange={newValue => {
           setValue(newValue);
+          onDateChange(new Date(`${newValue}`));
         }}
         renderInput={params => <CustomTextField {...params} />}
       />

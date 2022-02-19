@@ -6,6 +6,10 @@ const theme = createTheme({
       contrastText: "#fff",
       main: "#e9131d"
     },
+    yellow: {
+      contrastText: "#fff",
+      main: "#fff064"
+    },
     brown: {
       contrastText: "#fff",
       main: "#cfaf7b"
@@ -41,6 +45,10 @@ const theme = createTheme({
     gray_6: {
       contrastText: "#fff",
       main: "#ececec"
+    },
+    black: {
+      contrastText: "#fff",
+      main: "#000"
     },
   },
 });

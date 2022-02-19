@@ -35,6 +35,10 @@ const AccommodationIndex = (props: { list: AccommodationList[]; style: { [key: s
     setList([...props.list]);
   }, []);
 
+  const test = (date: Date, type: string) => {
+    console.log(date, type);
+  };
+
   return (
     <AccommodationContainer>
       {list.map((item, index) => {
@@ -45,7 +49,7 @@ const AccommodationIndex = (props: { list: AccommodationList[]; style: { [key: s
           </ListBox>
         );
       })}
-      <SideSearchBox />
+      <SideSearchBox onDateChange={test} />
     </AccommodationContainer>
   );
 };

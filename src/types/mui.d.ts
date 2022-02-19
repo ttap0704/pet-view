@@ -9,6 +9,7 @@ declare module '@mui/material/styles' {
 
   interface Palette {
     orange: SimplePaletteColorOptions;
+    yellow: SimplePaletteColorOptions;
     brown: SimplePaletteColorOptions;
     blue: SimplePaletteColorOptions;
     white: SimplePaletteColorOptions;
@@ -18,11 +19,13 @@ declare module '@mui/material/styles' {
     gray_4: SimplePaletteColorOptions;
     gray_5: SimplePaletteColorOptions;
     gray_6: SimplePaletteColorOptions;
+    black: SimplePaletteColorOptions;
 
     [key: string]: Palette['primary'];
   }
   interface PaletteOptions {
     orange: SimplePaletteColorOptions;
+    yellow: SimplePaletteColorOptions;
     brown: SimplePaletteColorOptions;
     blue: SimplePaletteColorOptions;
     white: SimplePaletteColorOptions;
@@ -32,6 +35,8 @@ declare module '@mui/material/styles' {
     gray_4: SimplePaletteColorOptions;
     gray_5: SimplePaletteColorOptions;
     gray_6: SimplePaletteColorOptions;
+    black: SimplePaletteColorOptions;
+
   }
 
   interface PaletteColor {
@@ -46,6 +51,7 @@ declare module '@mui/material/Button' {
   interface ButtonPropsColorOverrides {
     orange: true;
     brown: true;
+    yellow: true;
     blue: true;
     white: true;
     gray_1: SimplePaletteColorOptions;
@@ -54,5 +60,6 @@ declare module '@mui/material/Button' {
     gray_4: SimplePaletteColorOptions;
     gray_5: SimplePaletteColorOptions;
     gray_6: SimplePaletteColorOptions;
+    black: true;
   }
 }

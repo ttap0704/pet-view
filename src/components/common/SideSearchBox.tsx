@@ -8,6 +8,10 @@ import DatePicker from './DatePicker';
 import InputOutlined from '../input/InputOutlined';
 import { FaSearchLocation } from 'react-icons/fa';
 
+interface SideSearchBoxProps {
+  onDateChange: (date: Date, type: string) => void;
+}
+
 const SideBox = styled(Box)(({ theme }) => ({
   width: '15rem',
   height: 'auto',
@@ -43,8 +47,9 @@ const ItemBox = styled(Box)(({ theme }) => ({
   },
 }));
 
-const SideSearchBox = () => {
+const SideSearchBox = (props: SideSearchBoxProps) => {
   const [location, setLocation] = useState('');
+  const onDateChange = props.onDateChange;
 
   const searchLocation = () => {
     console.log(location);
@@ -69,8 +74,13 @@ const SideSearchBox = () => {
         <Divider />
 
         <ItemBox>
-          <Typography component='h4'>날짜</Typography>
-          <DatePicker />
+          <Typography component='h4'>입실</Typography>
+          <DatePicker onDateChange={(date: Date) => onDateChange(date, 'first')} />
+        </ItemBox>
+
+        <ItemBox>
+          <Typography component='h4'>퇴실</Typography>
+          <DatePicker onDateChange={(date: Date) => onDateChange(date, 'last')} />
         </ItemBox>
       </SideBox>
     </>
