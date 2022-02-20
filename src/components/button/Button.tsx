@@ -6,8 +6,15 @@ import { styled } from '@mui/material/styles';
 const CustomButton = styled(MuiButton)(({ theme }) => ({
   boxShadow: 'none',
   fontSize: '1rem',
+  display: 'flex',
+  justifyContent: 'center',
+  gap: '0.5rem',
   '&:hover': {
     boxShadow: 'none',
+  },
+
+  label: {
+    cursor: 'pointer',
   },
 }));
 

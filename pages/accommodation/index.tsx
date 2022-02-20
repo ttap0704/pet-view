@@ -7,7 +7,7 @@ import { fetchGetApi } from '../../src/utils/api';
 import { setImageArray } from '../../src/utils/tools';
 
 import ImageBox from '../../src/components/image/ImageBox';
-import ListLabel from '../../src/components/common/ListLabel';
+import LabelList from '../../src/components/label/LabelList';
 import SideSearchBox from '../../src/components/common/SideSearchBox';
 interface AccommodationList {
   accommodation_images: { file_name: string }[];
@@ -45,7 +45,7 @@ const AccommodationIndex = (props: { list: AccommodationList[]; style: { [key: s
         return (
           <ListBox key={`accommodation_list_${index}`}>
             <ImageBox imageList={setImageArray(item.accommodation_images)} type='accommodation' slide={false} />
-            <ListLabel title={item.label} subtitle={item.bname} />
+            <LabelList title={item.label} subtitle={item.bname} />
           </ListBox>
         );
       })}

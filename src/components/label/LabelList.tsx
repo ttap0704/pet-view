@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { styled } from '@mui/material/styles';
 import { Typography } from '@mui/material';
 
-interface ListLabelProps {
+interface LabelListProps {
   title: string;
   subtitle: string;
 }
@@ -35,7 +35,7 @@ const DecoBox = styled(Box)(({ theme }) => ({
   backgroundColor: theme.palette.yellow.main,
 }));
 
-const ListLabel = (props: ListLabelProps) => {
+const LabelList = (props: LabelListProps) => {
   const title = props.title;
   const subtitle = props.subtitle;
 
@@ -54,4 +54,4 @@ const ListLabel = (props: ListLabelProps) => {
   );
 };
 
-export default ListLabel;
+export default LabelList;

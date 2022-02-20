@@ -3,6 +3,10 @@ import Box, { BoxProps } from '@mui/material/Box';
 import { useEffect, useState } from 'react';
 import { styled } from '@mui/material/styles';
 
+interface UtilBoxProps extends BoxProps {
+  justifyContent?: string;
+}
+
 const StyledBox = styled(Box)(({ theme }) => ({
   width: '100%',
   height: '3rem',
@@ -10,17 +14,27 @@ const StyledBox = styled(Box)(({ theme }) => ({
   alignItems: 'center',
 }));
 
-const UtilBox = (props: BoxProps) => {
+const UtilBox = (props: UtilBoxProps) => {
   const children = props.children;
   const sx = props.sx;
+  const justify_content = props.justifyContent;
 
-  const style = {
-    justifyContent: Object.prototype.toString.call(children) === '[object Array]' ? 'space-between' : 'center',
+  const setStyle = () => {
+    let style = {
+      justifyContent: '',
+    };
+    if (justify_content) {
+      style.justifyContent = justify_content;
+    } else {
+      style.justifyContent = Object.prototype.toString.call(children) === '[object Array]' ? 'space-between' : 'center';
+    }
+
+    return style;
   };
 
   return (
     <>
-      <StyledBox style={{ ...style }} sx={sx}>
+      <StyledBox style={{ ...setStyle() }} sx={sx}>
         {children}
       </StyledBox>
     </>

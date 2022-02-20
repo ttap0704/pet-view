@@ -2,10 +2,12 @@ import { useEffect, useState } from 'react';
 import { styled } from '@mui/material/styles';
 
 import Box, { BoxProps } from '@mui/material/Box';
+import { Typography } from '@mui/material';
 import ImageSlider from './ImageSlider';
+import ContainerFullAbsolute from '../container/ContainerFullAbsolute';
 
 interface ImageBoxProps extends BoxProps {
-  imageList: string[];
+  imageList?: string[];
   type: string;
   slide: boolean;
 }
@@ -51,37 +53,47 @@ const ImageBox = (props: ImageBoxProps) => {
   const [isSlide, setIsSlide] = useState(false);
 
   useEffect(() => {
-    if (slide == true && image_list.length > 0) {
-      setIsSlide(true);
+    if (slide == true && image_list) {
+      if (image_list.length > 0) setIsSlide(true);
     }
   }, [slide]);
 
   const handleSlider = (dir: string) => {
-    let cur_num = curNum;
+    if (image_list) {
+      let cur_num = curNum;
 
-    if (dir == 'left') {
-      if (cur_num == 0) {
-        cur_num = image_list.length - 1;
-      } else {
-        cur_num--;
+      if (dir == 'left') {
+        if (cur_num == 0) {
+          cur_num = image_list?.length - 1;
+        } else {
+          cur_num--;
+        }
+      } else if (dir == 'right') {
+        if (cur_num == image_list?.length - 1) {
+          cur_num = 0;
+        } else {
+          cur_num++;
+        }
       }
-    } else if (dir == 'right') {
-      if (cur_num == image_list.length - 1) {
-        cur_num = 0;
-      } else {
-        cur_num++;
-      }
+
+      setCurNum(cur_num);
+    } else {
+      return false;
     }
-
-    setCurNum(cur_num);
   };
 
   return (
     <>
       <CustomBox>
-        <ImageWrap>
-          <img src={`http://localhost:3080/image/${type}/${image_list[curNum]}`} alt='미리보기 이미지' />
-        </ImageWrap>
+        {image_list ? (
+          <ImageWrap>
+            <img src={`http://localhost:3080/image/${type}/${image_list[curNum]}`} alt='미리보기 이미지' />
+          </ImageWrap>
+        ) : (
+          <ContainerFullAbsolute>
+            <Typography component='h5'>이미지를 등록해주세요.</Typography>
+          </ContainerFullAbsolute>
+        )}
         {isSlide ? <ImageSlider onSlide={handleSlider} /> : null}
       </CustomBox>
     </>

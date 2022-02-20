@@ -23,13 +23,7 @@ const SideBox = styled(Box)(({ theme }) => ({
   borderColor: theme.palette.gray_5.main,
   borderRadius: '4px',
 
-  h3: {
-    fontSize: '1.2rem',
-    fontWeight: 'bold',
-  },
-
   h4: {
-    fontSize: '1.05rem',
     marginBottom: '0.25rem',
   },
 }));

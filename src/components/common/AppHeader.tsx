@@ -90,6 +90,10 @@ function AppHeader() {
         label: '로그인',
         path: '/login',
       },
+      {
+        label: '임시',
+        path: '/manage',
+      },
     ];
 
     return (

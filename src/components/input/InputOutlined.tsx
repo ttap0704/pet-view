@@ -6,6 +6,7 @@ import { InputBaseComponentProps } from '@mui/material';
 
 interface InputOutlinedProps extends OutlinedInputProps {
   onKeyDownEnter?: () => void;
+  width?: string;
 }
 
 const StyledInput = styled(OutlinedInput)(({ theme }) => ({
@@ -16,7 +17,6 @@ const StyledInput = styled(OutlinedInput)(({ theme }) => ({
   padding: 0,
 
   input: {
-    width: '100%',
     height: '100%',
 
     '&:read-only': {
@@ -41,9 +41,21 @@ const CustomInput = (props: InputOutlinedProps) => {
   const onChange = props.onChange;
   const class_name = props.className;
   const onKeyDownEnter = props.onKeyDownEnter;
+  const width = props.width;
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.code == 'ENTER') onKeyDownEnter ? onKeyDownEnter() : false;
+  };
+
+  const setStyle = () => {
+    let style = {
+      width: '100%',
+    };
+    if (width) {
+      style.width = width;
+    }
+
+    return style;
   };
 
   return (
@@ -58,6 +70,7 @@ const CustomInput = (props: InputOutlinedProps) => {
         type={type}
         readOnly={read_only}
         onKeyDown={handleKeyDown}
+        style={{ ...setStyle() }}
       />
     </>
   );
