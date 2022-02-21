@@ -7,6 +7,7 @@ import { InputBaseComponentProps } from '@mui/material';
 interface InputOutlinedProps extends OutlinedInputProps {
   onKeyDownEnter?: () => void;
   width?: string;
+  align?: 'center' | 'right';
 }
 
 const StyledInput = styled(OutlinedInput)(({ theme }) => ({
@@ -42,13 +43,14 @@ const CustomInput = (props: InputOutlinedProps) => {
   const class_name = props.className;
   const onKeyDownEnter = props.onKeyDownEnter;
   const width = props.width;
+  const align = props.align;
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.code == 'ENTER') onKeyDownEnter ? onKeyDownEnter() : false;
   };
 
   const setStyle = () => {
-    let style = {
+    let style: { [key: string]: string | number } = {
       width: '100%',
     };
     if (width) {
@@ -70,7 +72,8 @@ const CustomInput = (props: InputOutlinedProps) => {
         type={type}
         readOnly={read_only}
         onKeyDown={handleKeyDown}
-        style={{ ...setStyle() }}
+        sx={{ ...setStyle() }}
+        inputProps={{ style: { textAlign: align ? align : 'left' } }}
       />
     </>
   );
