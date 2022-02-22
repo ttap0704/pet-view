@@ -12,6 +12,7 @@ import FormPostcode from '../../../src/components/form/FormPostcode';
 import FormAddRoom from '../../../src/components/form/FormAddRoom';
 import Textarea from '../../../src/components/textarea/Textarea';
 import ChevronDivder from '../../../src/components/common/ChevronDivder';
+import ModalUpload from '../../../src/components/modal/ModalUpload';
 
 const ManageAccommodationRegistration = () => {
   const [regiData, setRegiData] = useState({
@@ -30,9 +31,34 @@ const ManageAccommodationRegistration = () => {
     console.log('test');
   };
 
-  const test11 = (e: React.ChangeEvent<HTMLInputElement>, type: string) => {
-    const valye = e.target.value;
-    console.log(valye, type);
+  const test11 = (e: React.ChangeEvent<HTMLInputElement>, type: string, idx: number) => {
+    const value = e.target.value;
+    setRooms(state => {
+      return [
+        ...state.map((room, room_idx) => {
+          if (room_idx == idx) {
+            return {
+              ...room,
+              [`${type}`]: value,
+            };
+          } else {
+            return room;
+          }
+        }),
+      ];
+    });
+  };
+
+  const addRoom = () => {
+    setRooms([
+      ...rooms,
+      {
+        label: '',
+        price: '',
+        standard_num: '',
+        maximum_num: '',
+      },
+    ]);
   };
 
   return (
@@ -57,14 +83,23 @@ const ManageAccommodationRegistration = () => {
       </ContainerRegistrationItem>
       <ChevronDivder />
       <ContainerRegistrationItem title='객실 등록'>
-        {/* {rooms.map((rooms, room_idx) => {})} */}
-        <FormAddRoom onChange={test11} />;
+        {rooms.map((room, room_idx) => {
+          return (
+            <FormAddRoom
+              onChange={(e: React.ChangeEvent<HTMLInputElement>, type: string) => test11(e, type, room_idx)}
+              key={`add_room_form_${room_idx}`}
+              imageList={[]}
+            />
+          );
+        })}
         <UtilBox justifyContent='flex-end' sx={{ marginTop: '1rem' }}>
-          <Button color='blue' variant='contained'>
+          <Button color='blue' variant='contained' onClick={addRoom}>
             객실 추가
           </Button>
         </UtilBox>
       </ContainerRegistrationItem>
+
+      <ModalUpload />
     </>
   );
 };

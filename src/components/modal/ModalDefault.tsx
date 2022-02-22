@@ -1,7 +1,6 @@
 import * as React from 'react';
-import Box from '@mui/material/Box';
-import Modal from '@mui/material/Modal';
-import { useEffect } from 'react';
+import { Box, Modal } from '@mui/material';
+import { styled } from '@mui/material/styles';
 
 interface ModalDefaultProps {
   visible: boolean;
@@ -11,14 +10,14 @@ interface ModalDefaultProps {
   white: boolean;
 }
 
-const style = {
+const ModalBox = styled(Box)(({ theme }) => ({
   position: 'absolute',
   top: '50%',
   left: '50%',
   transform: 'translate(-50%, -50%)',
   width: 'auto',
   height: 'auto',
-};
+}));
 
 function ModalDefault(props: ModalDefaultProps) {
   const visible = props.visible;
@@ -27,17 +26,9 @@ function ModalDefault(props: ModalDefaultProps) {
   const bottom = props.bottom;
   const white = props.white;
 
-  useEffect(() => {
-    if (bottom) {
-      style.top = '75%';
-    } else {
-      style.top = '50%';
-    }
-  }, [visible]);
-
   return (
     <Modal open={visible} onClose={onClose} BackdropProps={{ style: white ? { backgroundColor: 'transparent' } : {} }}>
-      <Box sx={style}>{children}</Box>
+      <ModalBox sx={{ top: bottom ? '75%' : '50%' }}>{children}</ModalBox>
     </Modal>
   );
 }

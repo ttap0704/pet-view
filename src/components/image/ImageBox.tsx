@@ -13,9 +13,6 @@ interface ImageBoxProps extends BoxProps {
 }
 
 const CustomBox = styled(Box)(({ theme }) => ({
-  width: '100%',
-  maxWidth: '42rem',
-  height: '21rem',
   display: 'flex',
   alignItems: 'center',
   overflow: 'hidden',
@@ -32,7 +29,6 @@ const CustomBox = styled(Box)(({ theme }) => ({
 const ImageWrap = styled(Box)(({ theme }) => ({
   width: '100%',
   height: '100%',
-  backgroundColor: theme.palette.orange.main,
 
   position: 'relative',
   img: {
@@ -51,10 +47,34 @@ const ImageBox = (props: ImageBoxProps) => {
   const slide = props.slide;
   const [curNum, setCurNum] = useState(0);
   const [isSlide, setIsSlide] = useState(false);
+  const [boxStyle, setBoxStyle] = useState({
+    width: '',
+    maxWidth: '',
+    height: '',
+  });
+
+  useEffect(() => {
+    if (type == 'accommodation') {
+      setBoxStyle({
+        width: '100%',
+        maxWidth: '42rem',
+        height: '21rem',
+      });
+    } else if (type == 'room') {
+      setBoxStyle({
+        width: '100%',
+        maxWidth: '23rem',
+        height: '15rem',
+      });
+    }
+  }, []);
 
   useEffect(() => {
     if (slide == true && image_list) {
-      if (image_list.length > 0) setIsSlide(true);
+      if (image_list.length > 0) {
+        console.log('hhihi');
+        setIsSlide(true);
+      }
     }
   }, [slide]);
 
@@ -84,8 +104,8 @@ const ImageBox = (props: ImageBoxProps) => {
 
   return (
     <>
-      <CustomBox>
-        {image_list ? (
+      <CustomBox sx={{ ...boxStyle }}>
+        {image_list && image_list.length > 0 ? (
           <ImageWrap>
             <img src={`http://localhost:3080/image/${type}/${image_list[curNum]}`} alt='미리보기 이미지' />
           </ImageWrap>

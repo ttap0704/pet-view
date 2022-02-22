@@ -15,10 +15,17 @@ const StyledInput = styled(OutlinedInput)(({ theme }) => ({
   height: '3rem',
   borderRadius: 6,
   borderColor: theme.palette.gray_4.main,
-  padding: 0,
+  padding: '0 1rem 0 0',
+
+  '&:hover': {
+    '.MuiOutlinedInput-notchedOutline': {
+      borderColor: theme.palette.gray_4.main,
+    },
+  },
 
   input: {
     height: '100%',
+    paddingRight: '0.5rem',
 
     '&:read-only': {
       cursor: 'unset',

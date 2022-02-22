@@ -18,6 +18,13 @@ interface ModalNoticeDataType {
   timeout: ReturnType<typeof setTimeout> | undefined;
 }
 
+interface ModalUploadDataType {
+  visible: boolean;
+  title: string;
+  type: string;
+  image_list: string[];
+}
+
 interface ModalControllerType {
   modal_alert: {
     data: ModalAlertDataType;
@@ -28,6 +35,11 @@ interface ModalControllerType {
     data: ModalNoticeDataType;
     closeModalNotice: () => void;
     openModalNotice: (title: string, callback: () => void) => void;
+  };
+  modal_upload: {
+    data: ModalUploadDataType;
+    closeModalUpload: () => void;
+    openModalUpload: (title: string, type: string, image_list: string[]) => void;
   };
 }
 
@@ -60,6 +72,20 @@ export const ModalContext = createContext<ModalControllerType>({
       return;
     },
   },
+  modal_upload: {
+    data: {
+      visible: false,
+      title: '',
+      type: '',
+      image_list: [],
+    },
+    closeModalUpload: () => {
+      return;
+    },
+    openModalUpload: (title: string, type: string, image_list: string[]) => {
+      return;
+    },
+  },
 });
 
 // ========================================================================================
@@ -82,6 +108,13 @@ function ModalProvider(props: { children: React.ReactNode }) {
     visible: false,
     title: '',
     timeout: undefined,
+  });
+
+  const [modalUploadData, setModalUploadData] = useState<ModalUploadDataType>({
+    visible: false,
+    title: '',
+    type: '',
+    image_list: [],
   });
 
   // 모달 컨트롤러
@@ -125,6 +158,24 @@ function ModalProvider(props: { children: React.ReactNode }) {
             }, 2000),
           };
         });
+      },
+    },
+    modal_upload: {
+      data: modalUploadData,
+      closeModalUpload: () => {
+        return;
+      },
+      openModalUpload: (title: string, type: string, image_list: string[]) => {
+        setModalUploadData(state => {
+          return {
+            ...state,
+            visible: true,
+            title: title,
+            type: type,
+            image_list: [...image_list],
+          };
+        });
+        return;
       },
     },
   };

@@ -9,7 +9,7 @@ interface UtilBoxProps extends BoxProps {
 
 const StyledBox = styled(Box)(({ theme }) => ({
   width: '100%',
-  height: '3rem',
+  height: '4rem',
   display: 'flex',
   alignItems: 'center',
 }));
