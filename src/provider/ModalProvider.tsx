@@ -22,7 +22,7 @@ interface ModalUploadDataType {
   visible: boolean;
   title: string;
   type: string;
-  image_list: string[];
+  image_list: { new: boolean; src: string }[];
 }
 
 interface ModalControllerType {
@@ -39,7 +39,8 @@ interface ModalControllerType {
   modal_upload: {
     data: ModalUploadDataType;
     closeModalUpload: () => void;
-    openModalUpload: (title: string, type: string, image_list: string[]) => void;
+    openModalUpload: (title: string, type: string, image_list: { new: boolean; src: string }[]) => void;
+    setModalUploadImageList: (image_list: { new: boolean; src: string }[]) => void;
   };
 }
 
@@ -82,7 +83,10 @@ export const ModalContext = createContext<ModalControllerType>({
     closeModalUpload: () => {
       return;
     },
-    openModalUpload: (title: string, type: string, image_list: string[]) => {
+    openModalUpload: (title: string, type: string, image_list: { new: boolean; src: string }[]) => {
+      return;
+    },
+    setModalUploadImageList: (image_list: { new: boolean; src: string }[]) => {
       return;
     },
   },
@@ -163,15 +167,25 @@ function ModalProvider(props: { children: React.ReactNode }) {
     modal_upload: {
       data: modalUploadData,
       closeModalUpload: () => {
-        return;
+        setModalUploadData({ visible: false, title: '', type: '', image_list: [] });
       },
-      openModalUpload: (title: string, type: string, image_list: string[]) => {
+      openModalUpload: (title: string, type: string, image_list: { new: boolean; src: string }[]) => {
         setModalUploadData(state => {
           return {
             ...state,
             visible: true,
             title: title,
             type: type,
+            image_list: [...image_list],
+          };
+        });
+        return;
+      },
+      setModalUploadImageList: (image_list: { new: boolean; src: string }[]) => {
+        console.log(image_list);
+        setModalUploadData(state => {
+          return {
+            ...state,
             image_list: [...image_list],
           };
         });

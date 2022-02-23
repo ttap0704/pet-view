@@ -8,6 +8,7 @@ interface InputOutlinedProps extends OutlinedInputProps {
   onKeyDownEnter?: () => void;
   width?: string;
   align?: 'center' | 'right';
+  bottom?: boolean;
 }
 
 const StyledInput = styled(OutlinedInput)(({ theme }) => ({
@@ -16,6 +17,15 @@ const StyledInput = styled(OutlinedInput)(({ theme }) => ({
   borderRadius: 6,
   borderColor: theme.palette.gray_4.main,
   padding: '0 1rem 0 0',
+
+  '&.bottom': {
+    borderRadius: 0,
+    '.MuiOutlinedInput-notchedOutline': {
+      borderTop: 0,
+      borderLeft: 0,
+      borderRight: 0,
+    },
+  },
 
   '&:hover': {
     '.MuiOutlinedInput-notchedOutline': {

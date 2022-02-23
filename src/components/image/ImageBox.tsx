@@ -7,7 +7,7 @@ import ImageSlider from './ImageSlider';
 import ContainerFullAbsolute from '../container/ContainerFullAbsolute';
 
 interface ImageBoxProps extends BoxProps {
-  imageList?: string[];
+  imageList?: { new: boolean; src: string }[];
   type: string;
   slide: boolean;
 }
@@ -37,7 +37,7 @@ const ImageWrap = styled(Box)(({ theme }) => ({
     transform: 'translate(-50%, -50%)',
     position: 'absolute',
     width: '100%',
-    minWidth: '40rem',
+    minWidth: '23rem',
   },
 }));
 
@@ -102,12 +102,26 @@ const ImageBox = (props: ImageBoxProps) => {
     }
   };
 
+  const setImageSrc = () => {
+    let src = '';
+
+    if (image_list && image_list.length > 0) {
+      if (image_list[curNum].new == true) {
+        src = image_list[curNum].src;
+      } else {
+        src = `http://localhost:3080/image/${type}/${image_list[curNum]}`;
+      }
+    }
+
+    return src;
+  };
+
   return (
     <>
       <CustomBox sx={{ ...boxStyle }}>
         {image_list && image_list.length > 0 ? (
           <ImageWrap>
-            <img src={`http://localhost:3080/image/${type}/${image_list[curNum]}`} alt='미리보기 이미지' />
+            <img src={setImageSrc()} alt='미리보기 이미지' />
           </ImageWrap>
         ) : (
           <ContainerFullAbsolute>

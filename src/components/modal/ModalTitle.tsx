@@ -5,6 +5,11 @@ import { Box, IconButton, Typography } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { RiCloseCircleFill } from 'react-icons/ri';
 
+interface ModalTitleProps {
+  title: string;
+  onClose: () => void;
+}
+
 const ModalTitleBox = styled(Box)(({ theme }) => ({
   width: '100%',
   height: '4rem',
@@ -23,12 +28,14 @@ const ModalTitleBox = styled(Box)(({ theme }) => ({
   },
 }));
 
-function ModalTitle(props: { title: string }) {
+function ModalTitle(props: ModalTitleProps) {
   const title = props.title;
+  const onClose = props.onClose;
+
   return (
     <ModalTitleBox>
       <Typography component='h3'>{title}</Typography>
-      <IconButton>
+      <IconButton onClick={onClose}>
         <RiCloseCircleFill />
       </IconButton>
     </ModalTitleBox>
