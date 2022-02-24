@@ -16,6 +16,11 @@ const CustomButton = styled(MuiButton)(({ theme }) => ({
   label: {
     cursor: 'pointer',
   },
+
+  '&.fill': {
+    width: '100%',
+    height: '100%',
+  },
 }));
 
 function Button(props: ButtonProps) {
@@ -26,8 +31,17 @@ function Button(props: ButtonProps) {
   const endIcon = props.endIcon;
   const sx = props.sx;
   const onClick = props.onClick;
+  const class_name = props.className;
   return (
-    <CustomButton variant={variant} color={color} startIcon={startIcon} endIcon={endIcon} sx={sx} onClick={onClick}>
+    <CustomButton
+      variant={variant}
+      color={color}
+      startIcon={startIcon}
+      endIcon={endIcon}
+      sx={sx}
+      onClick={onClick}
+      className={class_name}
+    >
       {children}
     </CustomButton>
   );

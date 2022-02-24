@@ -1,17 +1,21 @@
 import * as React from 'react';
 
-import { List, ListItem, ListItemIcon, Typography, Box } from '@mui/material';
+import { List, ListItem, ListItemIcon, Typography, Box, IconButton } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import InputOutlined from '../input/InputOutlined';
 import { FaRegImage } from 'react-icons/fa';
+import { TiDelete } from 'react-icons/ti';
 
 interface OrderListProps {
   type?: string;
   data: {
     label: string;
-    number: number;
+    number: string;
   }[];
   onClick: (idx: number) => void;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>, idx: number) => void;
+  onComplete: () => void;
+  onDeleteList: (idx: number) => void;
 }
 
 const CustomList = styled(List)(({ theme }) => ({
@@ -52,16 +56,32 @@ const ListIconBox = styled(Box)(({ theme }) => ({
   },
 }));
 
+const ListLabelBox = styled(Box)(({ theme }) => ({
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  gap: '0.5rem',
+
+  '.MuiIconButton-root': {
+    width: '1.5rem',
+    height: '1.5rem',
+    padding: 0,
+    svg: {
+      width: '1.25rem',
+      height: '1.25rem',
+    },
+  },
+}));
+
 function OrderList(props: OrderListProps) {
   const list = props.data;
   const type = props.type;
   const onClick = props.onClick;
+  const onChange = props.onChange;
+  const onComplete = props.onComplete;
+  const onDeleteList = props.onDeleteList;
 
   const icon = type == 'image' ? <FaRegImage /> : null;
-
-  React.useEffect(() => {
-    console.log(list);
-  }, [list]);
 
   return (
     <CustomList>
@@ -72,18 +92,38 @@ function OrderList(props: OrderListProps) {
               {icon != null ? (
                 <ListIconBox>
                   <ListItemIcon>{icon}</ListItemIcon>
-                  <InputOutlined width='80%' value={item.number} className='bottom' />
+                  <InputOutlined
+                    width='80%'
+                    height='2rem'
+                    value={item.number}
+                    className='bottom'
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => onChange(e, idx)}
+                    onBlur={onComplete}
+                    onKeyDownEnter={onComplete}
+                  />
                 </ListIconBox>
               ) : (
-                <InputOutlined width='10%' value={item.number} className='bottom' />
+                <InputOutlined
+                  width='10%'
+                  value={item.number}
+                  className='bottom'
+                  onBlur={onComplete}
+                  onKeyDownEnter={onComplete}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => onChange(e, idx)}
+                />
               )}
-              <Typography>{item.label}</Typography>
+              <ListLabelBox>
+                <Typography>{item.label}</Typography>
+                <IconButton onClick={() => onDeleteList(idx)}>
+                  <TiDelete />
+                </IconButton>
+              </ListLabelBox>
             </ListItem>
           );
         })
       ) : (
         <ListItem>
-          <Typography>등록된 아이템이 없습니다.</Typography>
+          <Typography sx={{ width: '100%', textAlign: 'center' }}>등록된 아이템이 없습니다.</Typography>
         </ListItem>
       )}
     </CustomList>

@@ -1,10 +1,19 @@
 import { useState, createContext, useContext } from 'react';
 
+import ModalConfirm from '../components/modal/ModalConfirm';
 import ModalAlert from '../components/modal/ModalAlert';
 import ModalNotice from '../components/modal/ModalNotice';
 
 // ========================================================================================
 // Type 설정
+
+interface ModalConfirmDataType {
+  visible: boolean;
+  title: string;
+  confirm: boolean;
+  target: string;
+  target_idx?: number | null;
+}
 
 interface ModalAlertDataType {
   visible: boolean;
@@ -26,6 +35,12 @@ interface ModalUploadDataType {
 }
 
 interface ModalControllerType {
+  modal_confirm: {
+    data: ModalConfirmDataType;
+    closeModalConfirm: () => void;
+    openModalConfirm: (title: string, target: string, target_idx?: number) => void;
+    checkModalConfirm: () => void;
+  };
   modal_alert: {
     data: ModalAlertDataType;
     closeModalAlert: () => void;
@@ -40,6 +55,7 @@ interface ModalControllerType {
     data: ModalUploadDataType;
     closeModalUpload: () => void;
     openModalUpload: (title: string, type: string, image_list: { new: boolean; src: string }[]) => void;
+    addModalUploadImageList: (image_list: { new: boolean; src: string }[]) => void;
     setModalUploadImageList: (image_list: { new: boolean; src: string }[]) => void;
   };
 }
@@ -47,6 +63,24 @@ interface ModalControllerType {
 // ========================================================================================
 // 초기값 설정
 export const ModalContext = createContext<ModalControllerType>({
+  modal_confirm: {
+    data: {
+      visible: false,
+      title: '',
+      confirm: false,
+      target: '',
+      target_idx: null,
+    },
+    closeModalConfirm: () => {
+      return;
+    },
+    openModalConfirm: (title: string, target: string, target_idx?: number) => {
+      return;
+    },
+    checkModalConfirm: () => {
+      return;
+    },
+  },
   modal_alert: {
     data: {
       visible: false,
@@ -86,6 +120,9 @@ export const ModalContext = createContext<ModalControllerType>({
     openModalUpload: (title: string, type: string, image_list: { new: boolean; src: string }[]) => {
       return;
     },
+    addModalUploadImageList: (image_list: { new: boolean; src: string }[]) => {
+      return;
+    },
     setModalUploadImageList: (image_list: { new: boolean; src: string }[]) => {
       return;
     },
@@ -101,6 +138,13 @@ function ModalProvider(props: { children: React.ReactNode }) {
   // modalController 객체 안에 넣으면
   // 실시간 렌더 x
   // useState 사용 바람
+
+  const [modalConfirmData, setModalConfirmData] = useState<ModalConfirmDataType>({
+    visible: false,
+    title: '',
+    confirm: false,
+    target: '',
+  });
 
   const [modalAlertData, setModalAlertData] = useState<ModalAlertDataType>({
     visible: false,
@@ -123,6 +167,40 @@ function ModalProvider(props: { children: React.ReactNode }) {
 
   // 모달 컨트롤러
   const modalController: ModalControllerType = {
+    modal_confirm: {
+      data: modalConfirmData,
+      closeModalConfirm: () => {
+        setModalConfirmData({
+          visible: false,
+          title: '',
+          confirm: false,
+          target: '',
+          target_idx: null,
+        });
+      },
+      openModalConfirm: (title: string, target: string, target_idx?: number) => {
+        setModalConfirmData(state => {
+          return {
+            ...state,
+            confirm: false,
+            visible: true,
+            title: title,
+            target: target,
+            target_idx: target_idx ? target_idx : null,
+          };
+        });
+      },
+      checkModalConfirm: () => {
+        setModalConfirmData(state => {
+          return {
+            ...state,
+            confirm: true,
+            visible: false,
+            title: '',
+          };
+        });
+      },
+    },
     modal_alert: {
       data: modalAlertData,
       closeModalAlert: () => {
@@ -181,6 +259,16 @@ function ModalProvider(props: { children: React.ReactNode }) {
         });
         return;
       },
+      addModalUploadImageList: (image_list: { new: boolean; src: string }[]) => {
+        console.log(image_list);
+        setModalUploadData(state => {
+          return {
+            ...state,
+            image_list: [...state.image_list, ...image_list],
+          };
+        });
+        return;
+      },
       setModalUploadImageList: (image_list: { new: boolean; src: string }[]) => {
         console.log(image_list);
         setModalUploadData(state => {
@@ -198,6 +286,7 @@ function ModalProvider(props: { children: React.ReactNode }) {
     <>
       <ModalContext.Provider value={modalController}>
         {children}
+        <ModalConfirm />
         <ModalNotice />
         <ModalAlert />
       </ModalContext.Provider>
