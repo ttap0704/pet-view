@@ -63,6 +63,7 @@ const CustomInput = (props: InputOutlinedProps) => {
   const width = props.width;
   const height = props.height;
   const align = props.align;
+  const id = props.id;
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.code == 'Enter') onKeyDownEnter ? onKeyDownEnter() : false;
@@ -87,6 +88,7 @@ const CustomInput = (props: InputOutlinedProps) => {
   return (
     <>
       <StyledInput
+        id={id}
         className={class_name}
         value={value}
         placeholder={placeholder}

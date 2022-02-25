@@ -6,20 +6,18 @@ export function setImageArray(data: { file_name: string }[]) {
   return image_arr;
 }
 
-export function setFileToImage(files: FileList | null): Promise<{ new: boolean, src: string }[]> {
+export function setFileToImage(files: FileList | null): Promise<{ new: boolean, src: string, origin: number }[]> {
   return new Promise((resolve) => {
-    let new_file_arr: { new: boolean, src: string }[] = [];
+    let new_file_arr: { new: boolean, src: string, origin: number }[] = [];
     let count = 0;
     if (files) {
       Array.from(files).forEach(async (file) => {
-        count++;
         const new_file_name = await readFile(file);
-        new_file_arr.push({ new: true, src: new_file_name })
+        count++;
+        new_file_arr.push({ new: true, src: new_file_name, origin: count - 1 })
         if (count == files.length && new_file_arr.length == files.length) {
-          console.log(new_file_arr, files.length, count, 'files length')
           resolve([...new_file_arr])
         }
-        // setPreviewFile((state) => [...state, { file: file, imageUrl: new_file_name }]);
       })
     }
   })

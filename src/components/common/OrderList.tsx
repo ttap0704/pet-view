@@ -11,11 +11,12 @@ interface OrderListProps {
   data: {
     label: string;
     number: string;
+    origin: number;
   }[];
   onClick: (idx: number) => void;
   onChange: (e: React.ChangeEvent<HTMLInputElement>, idx: number) => void;
-  onComplete: () => void;
-  onDeleteList: (idx: number) => void;
+  onComplete: (origin_idx: number) => void;
+  onDeleteList: (origin_idx: number) => void;
 }
 
 const CustomList = styled(List)(({ theme }) => ({
@@ -83,6 +84,11 @@ function OrderList(props: OrderListProps) {
 
   const icon = type == 'image' ? <FaRegImage /> : null;
 
+  const setInputBlur = (idx: number) => {
+    const el = document.getElementById(`order_list_input_${idx}`);
+    el?.blur();
+  };
+
   return (
     <CustomList>
       {list && list.length > 0 ? (
@@ -93,28 +99,31 @@ function OrderList(props: OrderListProps) {
                 <ListIconBox>
                   <ListItemIcon>{icon}</ListItemIcon>
                   <InputOutlined
+                    id={`order_list_input_${idx}`}
                     width='80%'
                     height='2rem'
                     value={item.number}
                     className='bottom'
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => onChange(e, idx)}
-                    onBlur={onComplete}
-                    onKeyDownEnter={onComplete}
+                    onBlur={() => onComplete(item.origin)}
+                    onKeyDownEnter={() => setInputBlur(idx)}
                   />
                 </ListIconBox>
               ) : (
                 <InputOutlined
+                  id={`order_list_input_${idx}`}
                   width='10%'
+                  height='2rem'
                   value={item.number}
                   className='bottom'
-                  onBlur={onComplete}
-                  onKeyDownEnter={onComplete}
+                  onBlur={() => onComplete(item.origin)}
+                  onKeyDownEnter={() => setInputBlur(idx)}
                   onChange={(e: React.ChangeEvent<HTMLInputElement>) => onChange(e, idx)}
                 />
               )}
               <ListLabelBox>
                 <Typography>{item.label}</Typography>
-                <IconButton onClick={() => onDeleteList(idx)}>
+                <IconButton onClick={() => onDeleteList(item.origin)}>
                   <TiDelete />
                 </IconButton>
               </ListLabelBox>

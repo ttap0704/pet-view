@@ -12,7 +12,7 @@ import { ModalContext } from '../../provider/ModalProvider';
 
 interface FormAddRoomProps {
   onChange: (e: React.ChangeEvent<HTMLInputElement>, type: string) => void;
-  imageList: string[];
+  imageList: { new: boolean; src: string; origin: number }[];
 }
 
 const FormContainer = styled(Box)(({ theme }) => ({

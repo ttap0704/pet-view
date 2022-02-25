@@ -7,7 +7,7 @@ import ImageSlider from './ImageSlider';
 import ContainerFullAbsolute from '../container/ContainerFullAbsolute';
 
 interface ImageBoxProps extends BoxProps {
-  imageList?: { new: boolean; src: string }[];
+  imageList?: { new: boolean; src: string; origin: number }[];
   type: string;
   slide: boolean;
 }

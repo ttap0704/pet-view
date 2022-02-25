@@ -31,7 +31,8 @@ interface ModalUploadDataType {
   visible: boolean;
   title: string;
   type: string;
-  image_list: { new: boolean; src: string }[];
+  image_list: { new: boolean; src: string; origin: number }[];
+  cur_num: number;
 }
 
 interface ModalControllerType {
@@ -54,9 +55,10 @@ interface ModalControllerType {
   modal_upload: {
     data: ModalUploadDataType;
     closeModalUpload: () => void;
-    openModalUpload: (title: string, type: string, image_list: { new: boolean; src: string }[]) => void;
-    addModalUploadImageList: (image_list: { new: boolean; src: string }[]) => void;
-    setModalUploadImageList: (image_list: { new: boolean; src: string }[]) => void;
+    openModalUpload: (title: string, type: string, image_list: { new: boolean; src: string; origin: number }[]) => void;
+    addModalUploadImageList: (image_list: { new: boolean; src: string; origin: number }[]) => void;
+    setModalUploadImageList: (image_list: { new: boolean; src: string; origin: number }[]) => void;
+    setCurNum: (number: number) => void;
   };
 }
 
@@ -113,6 +115,7 @@ export const ModalContext = createContext<ModalControllerType>({
       title: '',
       type: '',
       image_list: [],
+      cur_num: 0,
     },
     closeModalUpload: () => {
       return;
@@ -124,6 +127,9 @@ export const ModalContext = createContext<ModalControllerType>({
       return;
     },
     setModalUploadImageList: (image_list: { new: boolean; src: string }[]) => {
+      return;
+    },
+    setCurNum: (number: number) => {
       return;
     },
   },
@@ -163,6 +169,7 @@ function ModalProvider(props: { children: React.ReactNode }) {
     title: '',
     type: '',
     image_list: [],
+    cur_num: 0,
   });
 
   // 모달 컨트롤러
@@ -186,7 +193,7 @@ function ModalProvider(props: { children: React.ReactNode }) {
             visible: true,
             title: title,
             target: target,
-            target_idx: target_idx ? target_idx : null,
+            target_idx: Number(target_idx) >= 0 ? target_idx : null,
           };
         });
       },
@@ -245,9 +252,9 @@ function ModalProvider(props: { children: React.ReactNode }) {
     modal_upload: {
       data: modalUploadData,
       closeModalUpload: () => {
-        setModalUploadData({ visible: false, title: '', type: '', image_list: [] });
+        setModalUploadData({ visible: false, title: '', type: '', image_list: [], cur_num: 0 });
       },
-      openModalUpload: (title: string, type: string, image_list: { new: boolean; src: string }[]) => {
+      openModalUpload: (title: string, type: string, image_list: { new: boolean; src: string; origin: number }[]) => {
         setModalUploadData(state => {
           return {
             ...state,
@@ -259,7 +266,7 @@ function ModalProvider(props: { children: React.ReactNode }) {
         });
         return;
       },
-      addModalUploadImageList: (image_list: { new: boolean; src: string }[]) => {
+      addModalUploadImageList: (image_list: { new: boolean; src: string; origin: number }[]) => {
         console.log(image_list);
         setModalUploadData(state => {
           return {
@@ -269,12 +276,20 @@ function ModalProvider(props: { children: React.ReactNode }) {
         });
         return;
       },
-      setModalUploadImageList: (image_list: { new: boolean; src: string }[]) => {
-        console.log(image_list);
+      setModalUploadImageList: (image_list: { new: boolean; src: string; origin: number }[]) => {
         setModalUploadData(state => {
           return {
             ...state,
             image_list: [...image_list],
+          };
+        });
+        return;
+      },
+      setCurNum: (number: number) => {
+        setModalUploadData(state => {
+          return {
+            ...state,
+            cur_num: number,
           };
         });
         return;
