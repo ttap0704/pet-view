@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useContext } from 'react';
+import { useContext, useEffect } from 'react';
 
 import { Box, Typography } from '@mui/material';
 import { styled } from '@mui/material/styles';
@@ -12,7 +12,8 @@ import { ModalContext } from '../../provider/ModalProvider';
 
 interface FormAddRoomProps {
   onChange: (e: React.ChangeEvent<HTMLInputElement>, type: string) => void;
-  imageList: { new: boolean; src: string; origin: number }[];
+  imageList: ImageListType[];
+  room_idx: number;
 }
 
 const FormContainer = styled(Box)(({ theme }) => ({
@@ -60,6 +61,7 @@ function FormAddRoom(props: FormAddRoomProps) {
 
   const onChange = props.onChange;
   const image_list = props.imageList;
+  const room_idx = props.room_idx;
 
   const add_room_contents = [
     {
@@ -85,7 +87,7 @@ function FormAddRoom(props: FormAddRoomProps) {
   ];
 
   const uploadRoomImage = () => {
-    modal_upload.openModalUpload('객실 이미지 업로드', 'room', image_list);
+    modal_upload.openModalUpload('객실 이미지 업로드', 'room', image_list, room_idx);
   };
 
   return (

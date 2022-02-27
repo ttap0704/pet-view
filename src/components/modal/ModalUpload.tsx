@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useContext, useState, useEffect } from 'react';
 
-import { Box, Typography } from '@mui/material';
+import { Box, List, Typography } from '@mui/material';
 import { styled } from '@mui/material/styles';
 
 import ModalDefault from './ModalDefault';
@@ -45,6 +45,9 @@ function ModalUpload() {
 
   useEffect(() => {
     if (!modal_upload.data.visible) setOrderList([]);
+    else {
+      setImageList(modal_upload.data.image_list);
+    }
   }, [modal_upload.data.visible]);
 
   useEffect(() => {
@@ -61,30 +64,33 @@ function ModalUpload() {
   }, [modal_confirm.data.confirm]);
 
   const uploadImages = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const res_image_list = await setFileToImage(e.target.files);
+    const exclude_origin_idx = [...modal_upload.data.image_list.map(item => item.origin)];
+    const res_image_list = await setFileToImage(e.target.files, exclude_origin_idx);
     const image_list = [...modal_upload.data.image_list, ...res_image_list];
     if (image_list && image_list.length > 0) {
-      modal_upload.addModalUploadImageList(image_list);
+      modal_upload.setModalUploadImageList(image_list);
       setImageList(image_list);
     }
   };
 
   const deleteList = (origin_idx: number | null | undefined) => {
     if (Number(origin_idx) >= 0) {
-      const image_list = [
-        ...modal_upload.data.image_list.filter(item => {
-          return origin_idx != item.origin;
-        }),
-      ];
+      console.log(origin_idx, 'origin_idx');
+      console.log(modal_upload.data.image_list);
+      const image_list = [];
+      for (const list of modal_upload.data.image_list) {
+        if (list.origin != origin_idx) {
+          image_list.push(list);
+        }
+      }
 
-      console.log(image_list);
       modal_upload.setModalUploadImageList(image_list);
       modal_upload.setCurNum(0);
       setImageList(image_list);
     }
   };
 
-  const setImageList = (image_list: { new: boolean; src: string; origin: number }[]) => {
+  const setImageList = (image_list: ImageListType[]) => {
     setOrderList([
       ...image_list.map((item, index) => {
         return {
@@ -115,7 +121,6 @@ function ModalUpload() {
 
   const completeChangeOrder = (origin_idx: number) => {
     let same_cnt = 0;
-    console.log(modal_upload.data.image_list);
     const clone_order_list = [...orderList];
     const tmp_order_list = [...clone_order_list.sort((a, b) => Number(a.number) - Number(b.number))].map(
       (item, index) => {
@@ -134,12 +139,12 @@ function ModalUpload() {
   };
 
   const onChangeOrder = (tmp_order_list: { number: string; label: string; origin: number }[], origin_idx: number) => {
-    const image_list = tmp_order_list.map(item => {
+    const image_list: ImageListType[] = tmp_order_list.map(item => {
       const list = modal_upload.data.image_list.find(list_item => list_item.origin == item.origin);
 
       // 타입 에러 처리
       if (list == undefined) {
-        return { new: true, src: '', origin: -1 };
+        return { new: true, src: '', origin: -1, file: null };
       }
       return list;
     });
@@ -172,7 +177,7 @@ function ModalUpload() {
               slide={false}
             />
             <UtilBox justifyContent='flex-end'>
-              <ButtonFileInput title='이미지 업로드' multiple={true} onChange={uploadImages} />
+              <ButtonFileInput title='업로드' multiple={true} onChange={uploadImages} />
             </UtilBox>
             <OrderList
               data={orderList}
@@ -180,18 +185,20 @@ function ModalUpload() {
               onClick={(idx: number) => modal_upload.setCurNum(idx)}
               onChange={setImageOrder}
               onComplete={completeChangeOrder}
-              onDeleteList={(origin_idx: number) =>
-                modal_confirm.openModalConfirm(
-                  `이미지 ${origin_idx + 1}번을 삭제하시겠습니까?`,
-                  'delete_list',
-                  origin_idx,
-                )
+              onDeleteList={(origin_idx: number, idx: number) =>
+                modal_confirm.openModalConfirm(`${idx + 1}번째 이미지를 삭제하시겠습니까?`, 'delete_list', origin_idx)
               }
             />
           </ModalUploadContents>
           <UtilBox>
-            <Button variant='contained' color='orange'>
-              이미지 등록
+            <Button
+              variant='contained'
+              color='orange'
+              onClick={() =>
+                modal_confirm.openModalConfirm(`등록하신 순서대로 이미지를 업로드하시겠습니까?`, 'upload_image')
+              }
+            >
+              등록
             </Button>
           </UtilBox>
         </ModalUploadBox>

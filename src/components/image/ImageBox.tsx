@@ -7,7 +7,7 @@ import ImageSlider from './ImageSlider';
 import ContainerFullAbsolute from '../container/ContainerFullAbsolute';
 
 interface ImageBoxProps extends BoxProps {
-  imageList?: { new: boolean; src: string; origin: number }[];
+  imageList?: ImageListType[];
   type: string;
   slide: boolean;
 }
@@ -71,12 +71,11 @@ const ImageBox = (props: ImageBoxProps) => {
 
   useEffect(() => {
     if (slide == true && image_list) {
-      if (image_list.length > 0) {
-        console.log('hhihi');
+      if (image_list.length > 1) {
         setIsSlide(true);
       }
     }
-  }, [slide]);
+  }, [image_list]);
 
   const handleSlider = (dir: string) => {
     if (image_list) {

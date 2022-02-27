@@ -1,7 +1,10 @@
 import React from 'react';
 
 import { Box } from '@mui/material';
-import { useState } from 'react';
+import { useState, useContext, useEffect } from 'react';
+
+import { ModalContext } from '../../../src/provider/ModalProvider';
+import { setFileArray } from '../../../src/utils/tools';
 
 import ContainerRegistrationItem from '../../../src/components/container/ContainerRegistrationItem';
 import ImageBox from '../../../src/components/image/ImageBox';
@@ -15,23 +18,58 @@ import ChevronDivder from '../../../src/components/common/ChevronDivder';
 import ModalUpload from '../../../src/components/modal/ModalUpload';
 
 const ManageAccommodationRegistration = () => {
+  const { modal_upload, modal_confirm } = useContext(ModalContext);
+
+  const [exposureImages, setExposureImages] = useState<ImageListType[]>([]);
   const [regiData, setRegiData] = useState({
     introduction: '',
   });
-  const [rooms, setRooms] = useState([
+  const [rooms, setRooms] = useState<AddRoomContentsType[]>([
     {
       label: '',
       price: '',
       standard_num: '',
       maximum_num: '',
+      image_list: [],
     },
   ]);
 
-  const test = () => {
-    console.log('test');
+  useEffect(() => {
+    if (modal_confirm.data.confirm) {
+      switch (modal_confirm.data.target) {
+        case 'upload_image':
+          setPrevieImages();
+          break;
+      }
+    }
+  }, [modal_confirm.data.confirm]);
+
+  const setPrevieImages = () => {
+    console.log(modal_upload.data.image_list);
+    if (modal_upload.data.type == 'room') {
+      setRooms(state => {
+        return [
+          ...state.map((room, idx) => {
+            if (idx == modal_upload.data.target_idx) {
+              return {
+                ...room,
+                image_list: modal_upload.data.image_list,
+                cur_num: 0,
+              };
+            } else {
+              return room;
+            }
+          }),
+        ];
+      });
+    } else {
+      setExposureImages([...modal_upload.data.image_list]);
+    }
+
+    modal_upload.closeModalUpload();
   };
 
-  const test11 = (e: React.ChangeEvent<HTMLInputElement>, type: string, idx: number) => {
+  const handleRoomInput = (e: React.ChangeEvent<HTMLInputElement>, type: string, idx: number) => {
     const value = e.target.value;
     setRooms(state => {
       return [
@@ -57,6 +95,7 @@ const ManageAccommodationRegistration = () => {
         price: '',
         standard_num: '',
         maximum_num: '',
+        image_list: [],
       },
     ]);
   };
@@ -64,9 +103,12 @@ const ManageAccommodationRegistration = () => {
   return (
     <>
       <ContainerRegistrationItem title='대표이미지 등록'>
-        <ImageBox slide={true} type='accommodation' />
+        <ImageBox slide={true} type='accommodation' imageList={exposureImages} />
         <UtilBox justifyContent='flex-start' sx={{ marginTop: '1rem' }}>
-          <ButtonUpload title='대표이미지 등록' onClick={test} />
+          <ButtonUpload
+            title='대표이미지 등록'
+            onClick={() => modal_upload.openModalUpload('대표 이미지 업로드', 'accommodation', exposureImages, 0)}
+          />
         </UtilBox>
       </ContainerRegistrationItem>
       <ContainerRegistrationItem title='주소 등록'>
@@ -86,9 +128,10 @@ const ManageAccommodationRegistration = () => {
         {rooms.map((room, room_idx) => {
           return (
             <FormAddRoom
-              onChange={(e: React.ChangeEvent<HTMLInputElement>, type: string) => test11(e, type, room_idx)}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>, type: string) => handleRoomInput(e, type, room_idx)}
               key={`add_room_form_${room_idx}`}
-              imageList={[]}
+              room_idx={room_idx}
+              imageList={room.image_list}
             />
           );
         })}

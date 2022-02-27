@@ -16,7 +16,7 @@ interface OrderListProps {
   onClick: (idx: number) => void;
   onChange: (e: React.ChangeEvent<HTMLInputElement>, idx: number) => void;
   onComplete: (origin_idx: number) => void;
-  onDeleteList: (origin_idx: number) => void;
+  onDeleteList: (origin_idx: number, idx: number) => void;
 }
 
 const CustomList = styled(List)(({ theme }) => ({
@@ -123,7 +123,7 @@ function OrderList(props: OrderListProps) {
               )}
               <ListLabelBox>
                 <Typography>{item.label}</Typography>
-                <IconButton onClick={() => onDeleteList(item.origin)}>
+                <IconButton onClick={() => onDeleteList(item.origin, idx)}>
                   <TiDelete />
                 </IconButton>
               </ListLabelBox>
