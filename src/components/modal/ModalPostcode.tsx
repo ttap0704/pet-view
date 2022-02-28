@@ -19,15 +19,6 @@ interface PostcodeDataType {
   buildingName: string;
 }
 
-interface ResponsePostcodeDataType {
-  zonecode: string;
-  sido: string;
-  sigungu: string;
-  bname: string;
-  road_address: string;
-  building_name: string;
-}
-
 const PostcodeConatiner = styled(Box)(({ theme }) => ({
   width: '500px',
   '& > div': {
@@ -50,7 +41,6 @@ const ModalPostcode = (props: ModalPostcodeProps) => {
       building_name: data.buildingName,
     };
 
-    console.log(f_data);
     onChangeAddress(f_data);
     onClose();
   };

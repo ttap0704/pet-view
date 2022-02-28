@@ -27,6 +27,7 @@ const FormContainer = styled(Box)(({ theme }) => ({
   border: '1px solid',
   borderColor: theme.palette.gray_4.main,
   borderRadius: 6,
+  marginBottom: '1rem',
 }));
 
 const RoomImageContainer = styled(Box)(({ theme }) => ({

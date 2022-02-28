@@ -5,6 +5,7 @@ import { useState, useContext, useEffect } from 'react';
 
 import { ModalContext } from '../../../src/provider/ModalProvider';
 import { setFileArray } from '../../../src/utils/tools';
+import { fetchPostApi } from '../../../src/utils/api';
 
 import ContainerRegistrationItem from '../../../src/components/container/ContainerRegistrationItem';
 import ImageBox from '../../../src/components/image/ImageBox';
@@ -16,14 +17,39 @@ import FormAddRoom from '../../../src/components/form/FormAddRoom';
 import Textarea from '../../../src/components/textarea/Textarea';
 import ChevronDivder from '../../../src/components/common/ChevronDivder';
 import ModalUpload from '../../../src/components/modal/ModalUpload';
+import InputOutlined from '../../../src/components/input/InputOutlined';
+
+interface CreateAccommodationResponse {
+  accommodation_id: number;
+  rooms: {
+    accommodation_id: number;
+    createdAt: string;
+    id: number;
+    label: string;
+    maximum_num: string;
+    price: string;
+    seq: number;
+    standard_num: string;
+    updatedAt: string;
+  };
+}
 
 const ManageAccommodationRegistration = () => {
   const { modal_upload, modal_confirm } = useContext(ModalContext);
 
   const [exposureImages, setExposureImages] = useState<ImageListType[]>([]);
-  const [regiData, setRegiData] = useState({
-    introduction: '',
+  const [address, setAddress] = useState<FinalPostcodeDataType>({
+    zonecode: '',
+    sido: '',
+    sigungu: '',
+    bname: '',
+    road_address: '',
+    building_name: '',
+    detail_address: '',
   });
+
+  const [accommodationLabel, setAccommodationLabel] = useState('');
+  const [introduction, setIntroduction] = useState('');
   const [rooms, setRooms] = useState<AddRoomContentsType[]>([
     {
       label: '',
@@ -39,6 +65,11 @@ const ManageAccommodationRegistration = () => {
       switch (modal_confirm.data.target) {
         case 'upload_image':
           setPrevieImages();
+          break;
+        case 'create_accommodation':
+          createAccommodation();
+          break;
+        default:
           break;
       }
     }
@@ -100,6 +131,35 @@ const ManageAccommodationRegistration = () => {
     ]);
   };
 
+  const createAccommodation = async () => {
+    const rooms_data = [
+      ...rooms.map((room, room_idx) => {
+        return {
+          label: room.label,
+          price: room.price,
+          standard_num: room.standard_num,
+          maximum_num: room.maximum_num,
+          seq: room_idx,
+        };
+      }),
+    ];
+
+    const accom_data = {
+      ...address,
+      label: accommodationLabel,
+      introduction,
+      manager: 1,
+      rooms: [...rooms_data],
+    };
+    const accommodation: CreateAccommodationResponse = await fetchPostApi(`/manager/1/accommodation`, accom_data);
+    const accommodation_id = accommodation.accommodation_id;
+
+    console.log(accommodation);
+    // console.log(address, 'address');
+    // console.log(exposureImages, 'expsure_images');
+    // console.log(rooms, 'rooms');
+  };
+
   return (
     <>
       <ContainerRegistrationItem title='대표이미지 등록'>
@@ -111,16 +171,27 @@ const ManageAccommodationRegistration = () => {
           />
         </UtilBox>
       </ContainerRegistrationItem>
+      <ContainerRegistrationItem title='숙박업소 이름'>
+        <InputOutlined
+          placeholder='숙박업소명을 작성해주세요..'
+          value={accommodationLabel}
+          onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setAccommodationLabel(e.target.value)}
+        />
+      </ContainerRegistrationItem>
       <ContainerRegistrationItem title='주소 등록'>
-        <FormPostcode />
+        <FormPostcode
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+            setAddress({ ...address, detail_address: e.target.value })
+          }
+          onChangeAddress={data => setAddress({ ...address, ...data })}
+          address={address}
+        />
       </ContainerRegistrationItem>
       <ContainerRegistrationItem title='숙박업소 소개'>
         <Textarea
           placeholder='숙박업소에 대해 자유롭게 작성해주세요.'
-          value={regiData.introduction}
-          onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
-            setRegiData({ ...regiData, introduction: e.target.value })
-          }
+          value={introduction}
+          onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setIntroduction(e.target.value)}
         />
       </ContainerRegistrationItem>
       <ChevronDivder />
@@ -138,6 +209,15 @@ const ManageAccommodationRegistration = () => {
         <UtilBox justifyContent='flex-end' sx={{ marginTop: '1rem' }}>
           <Button color='blue' variant='contained' onClick={addRoom}>
             객실 추가
+          </Button>
+        </UtilBox>
+        <UtilBox>
+          <Button
+            color='orange'
+            variant='contained'
+            onClick={() => modal_confirm.openModalConfirm(`숙박업소를 등록하시겠습니까?`, 'create_accommodation')}
+          >
+            숙박업소 등록
           </Button>
         </UtilBox>
       </ContainerRegistrationItem>
