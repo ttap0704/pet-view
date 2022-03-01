@@ -4,8 +4,8 @@ import { Box } from '@mui/material';
 import { useState, useContext, useEffect } from 'react';
 
 import { ModalContext } from '../../../src/provider/ModalProvider';
-import { setFileArray } from '../../../src/utils/tools';
-import { fetchPostApi } from '../../../src/utils/api';
+import { setFileArray, setFileToImage, setImageFormData } from '../../../src/utils/tools';
+import { fetchFileApi, fetchPostApi } from '../../../src/utils/api';
 
 import ContainerRegistrationItem from '../../../src/components/container/ContainerRegistrationItem';
 import ImageBox from '../../../src/components/image/ImageBox';
@@ -31,7 +31,7 @@ interface CreateAccommodationResponse {
     seq: number;
     standard_num: string;
     updatedAt: string;
-  };
+  }[];
 }
 
 const ManageAccommodationRegistration = () => {
@@ -67,6 +67,7 @@ const ManageAccommodationRegistration = () => {
           setPrevieImages();
           break;
         case 'create_accommodation':
+          console.log(modal_confirm.data.target);
           createAccommodation();
           break;
         default:
@@ -154,10 +155,33 @@ const ManageAccommodationRegistration = () => {
     const accommodation: CreateAccommodationResponse = await fetchPostApi(`/manager/1/accommodation`, accom_data);
     const accommodation_id = accommodation.accommodation_id;
 
-    console.log(accommodation);
-    // console.log(address, 'address');
-    // console.log(exposureImages, 'expsure_images');
-    // console.log(rooms, 'rooms');
+    let exposure_images = [];
+    for (const item of exposureImages) {
+      if (item.file) exposure_images.push(item.file);
+    }
+
+    let rooms_payload = [];
+    for (const room of rooms) {
+      const res_room = accommodation.rooms.find(room_item => room_item.label == room.label);
+      let room_images = [];
+      for (const room_item of room.image_list) {
+        if (room_item.file) room_images.push(room_item.file);
+      }
+      if (res_room) {
+        rooms_payload.push({ target_id: res_room.id, files: room_images });
+      }
+    }
+
+    const exposure_image_data = await setImageFormData(
+      [{ target_id: accommodation_id, files: exposure_images }],
+      'accommodation',
+    );
+    const rooms_image_data = await setImageFormData(rooms_payload, 'rooms', accommodation_id);
+
+    const upload_exposure_response = await fetchFileApi('/upload/image', exposure_image_data);
+    const upload_rooms_response = await fetchFileApi('/upload/image', rooms_image_data);
+    console.log(upload_exposure_response);
+    console.log(upload_rooms_response);
   };
 
   return (

@@ -1,8 +1,17 @@
 export function setImageArray(data: { file_name: string }[]) {
   let image_arr = [];
+  let count = 0;
+
   for (const x of data) {
-    image_arr.push(x.file_name)
+    image_arr.push({
+      new: false,
+      src: x.file_name,
+      origin: count,
+      file: null
+    })
+    count++;
   }
+
   return image_arr;
 }
 
@@ -39,32 +48,44 @@ export function setFileArray(image_list: ImageListType[]) {
   return file_array;
 }
 
-export function setImageFormData(files: File[], target: string, target_id: number) {
+export async function setImageFormData(data: { target_id: number, files: File[] }[], type: string, parent_id?: number) {
   let upload_images = new FormData();
-  for (let i = 0, leng = files.length; i < leng; i++) {
-    const file_name_arr = files[i].name.split(".");
-    const file_extention = file_name_arr[file_name_arr.length - 1];
-    let file_name = "";
-    // if (target == "accommodation") {
-    //   file_name = `${target_id}_${i}_${new Date().getTime()}.${file_extention}`;
-    // } else if (target == "rooms") {
-    //   file_name = `${item.accommodation_id}_${target_id}_${i}_${new Date().getTime()}.${file_extention}`;
-    // }
+  let count = 0;
+  for (const item of data) {
+    const target_id = item.target_id;
+    const files = item.files;
 
-    const new_file = new File([files[i]], file_name, {
-      type: "image/jpeg",
-    });
+    for (let i = 0, leng = files.length; i < leng; i++) {
+      if (files[i]) {
+        const file_name_arr = files[i].name.split(".");
+        const file_extention = file_name_arr[file_name_arr.length - 1];
+        let file_name = "";
+        if (type == "accommodation") {
+          file_name = `${target_id}_${i}_${new Date().getTime()}.${file_extention}`;
+        } else if (type == "rooms") {
+          file_name = `${parent_id}_${target_id}_${i}_${new Date().getTime()}.${file_extention}`;
+        }
 
-    upload_images.append(`files_${i}`, new_file);
+        const new_file = new File([files[i]], file_name, {
+          type: "image/jpeg",
+        });
+
+        upload_images.append(`files_${count}`, new_file);
+        count++;
+      }
+    }
   }
+
   let category = "";
-  if (target == "accommodation") {
+  if (type == "accommodation") {
     category = "2";
-  } else if (target == "rooms") {
+  } else if (type == "rooms") {
     category = "21";
   }
-  upload_images.append("length", files.length.toString());
+  upload_images.append("length", count.toString());
   upload_images.append("category", category);
+
+  return upload_images;
 }
 
 export function readFile(file: File): Promise<string> {

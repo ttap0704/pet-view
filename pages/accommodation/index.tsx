@@ -8,6 +8,7 @@ import { setImageArray } from '../../src/utils/tools';
 
 import ImageBox from '../../src/components/image/ImageBox';
 import LabelList from '../../src/components/label/LabelList';
+import ContainerList from '../../src/components/container/ContainerList';
 import SideSearchBox from '../../src/components/common/SideSearchBox';
 interface AccommodationList {
   accommodation_images: { file_name: string }[];
@@ -41,14 +42,16 @@ const AccommodationIndex = (props: { list: AccommodationList[]; style: { [key: s
 
   return (
     <AccommodationContainer>
-      {list.map((item, index) => {
-        return (
-          <ListBox key={`accommodation_list_${index}`}>
-            <ImageBox imageList={setImageArray(item.accommodation_images)} type='accommodation' slide={false} />
-            <LabelList title={item.label} subtitle={item.bname} />
-          </ListBox>
-        );
-      })}
+      <ContainerList>
+        {list.map((item, index) => {
+          return (
+            <ListBox key={`accommodation_list_${index}`}>
+              <ImageBox imageList={setImageArray(item.accommodation_images)} type='accommodation' slide={false} />
+              <LabelList title={item.label} subtitle={item.bname} />
+            </ListBox>
+          );
+        })}
+      </ContainerList>
       <SideSearchBox onDateChange={test} />
     </AccommodationContainer>
   );

@@ -205,6 +205,17 @@ function ModalProvider(props: { children: React.ReactNode }) {
             title: '',
           };
         });
+
+        setTimeout(() => {
+          setModalConfirmData(state => {
+            return {
+              ...state,
+              confirm: false,
+              target: '',
+              target_idx: null,
+            };
+          });
+        }, 200);
       },
     },
     modal_alert: {

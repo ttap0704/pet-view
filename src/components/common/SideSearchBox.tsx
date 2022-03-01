@@ -15,6 +15,7 @@ interface SideSearchBoxProps {
 const SideBox = styled(Box)(({ theme }) => ({
   width: '15rem',
   height: 'auto',
+  maxHeight: '100vh',
   display: 'flex',
   flexDirection: 'column',
   gap: '2rem',
