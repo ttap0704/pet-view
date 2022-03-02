@@ -21,7 +21,7 @@ interface AccommodationList {
 const AccommodationContainer = styled(Box)(({ theme }) => ({
   width: '100%',
   height: 'auto',
-  display: 'flex',
+  display: 'inline-flex',
   justifyContent: 'space-between',
 }));
 

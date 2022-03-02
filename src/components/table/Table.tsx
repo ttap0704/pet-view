@@ -7,16 +7,13 @@ import TableFooter from '@mui/material/TableFooter';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import { HiChevronRight, HiChevronLeft } from 'react-icons/hi';
-import { IconButton, Box } from '@mui/material';
-import { useState, useEffect } from 'react';
+import { IconButton, Box, Checkbox } from '@mui/material';
+import { useState, useEffect, useContext } from 'react';
 import { styled } from '@mui/material/styles';
+import { TableContext } from '../../../src/provider/TableProvider';
 
 interface TableProps {
-  header: { label: string; center: Boolean }[];
-  footerColspan: number;
-  rowsLength: number;
-  changePerPage: (page: number) => void;
-  children: React.ReactNode;
+  contents: ChildrenDataType;
 }
 
 const TablePaginationBox = styled(Box)(({ theme }) => ({
@@ -33,89 +30,19 @@ const TablePaginationLabel = styled(Box)(({ theme }) => ({
 }));
 
 const CustomTable = (props: TableProps) => {
-  const header = props.header;
-  const footer_colspan = props.footerColspan;
-  const max: number = Math.ceil(props.rowsLength / 5);
-  const changePerPage = props.changePerPage;
-  const [perPage, setPerPage] = useState(1);
-  const [btnDisabled, setBtnDisabled] = useState({
-    left: false,
-    right: false,
-  });
+  const TableController = useContext(TableContext);
+  const children_contents = props.contents;
 
   useEffect(() => {
-    if (max == 1) {
-      setBtnDisabled(state => {
-        return {
-          ...state,
-          left: true,
-          right: true,
-        };
-      });
-    } else {
-      setBtnDisabled(state => {
-        return {
-          ...state,
-          left: true,
-          right: false,
-        };
-      });
-    }
-  }, [max]);
-
-  function clickDirection(dir: string) {
-    let page = 0;
-    if (dir == 'left') {
-      if (perPage == 2) {
-        page = 1;
-        setBtnDisabled(state => {
-          return {
-            ...state,
-            left: true,
-            right: false,
-          };
-        });
-      } else if (perPage > 2) {
-        page = perPage - 1;
-        setBtnDisabled(state => {
-          return {
-            ...state,
-            right: false,
-            left: false,
-          };
-        });
-      }
-    } else if (dir == 'right') {
-      if (perPage == max - 1) {
-        page = max;
-        setBtnDisabled(state => {
-          return {
-            ...state,
-            left: false,
-            right: true,
-          };
-        });
-      } else if (perPage < max) {
-        page = perPage + 1;
-        setBtnDisabled(state => {
-          return {
-            ...state,
-            right: false,
-            left: false,
-          };
-        });
-      }
-    }
-    setPerPage(page);
-    changePerPage(page);
-  }
+    TableController.setTableContents(children_contents);
+  }, [children_contents.table_items]);
 
   return (
     <TableContainer component={Paper}>
       <Table aria-label='custom table'>
         <TableHead>
           <TableRow>
-            {header.map((data, index) => {
+            {TableController.data.header.map((data, index) => {
               return (
                 <TableCell align={data.center ? 'center' : 'left'} key={`custom_table_header_${index}`}>
                   {data.label}
@@ -124,16 +51,35 @@ const CustomTable = (props: TableProps) => {
             })}
           </TableRow>
         </TableHead>
-        <TableBody>{props.children}</TableBody>
+        <TableBody>
+          {/* {tableItems.map((data, index) => {
+            return (
+              <TableRow key={`${contents.type}_row_${index}`}>
+                {contents.header.map((cell, index2) => {
+                  return (
+                    <TableCell align={cell.center ? 'center' : 'left'} key={`${contents.type}_cell_${index2}`}>
+                      {setTableCell(cell.label, index, contents.type)}
+                    </TableCell>
+                  );
+                })}
+              </TableRow>
+            );
+          })} */}
+        </TableBody>
         <TableFooter>
           <TableRow>
-            <TableCell colSpan={footer_colspan}>
+            <TableCell colSpan={TableController.data.footer_colspan}>
               <TablePaginationBox>
-                <IconButton disabled={btnDisabled.left} onClick={() => clickDirection('left')}>
+                <IconButton disabled={TableController.data.left} onClick={() => TableController.clickDirection('left')}>
                   <HiChevronLeft />
                 </IconButton>
-                <TablePaginationLabel>{`${perPage} / ${max}`}</TablePaginationLabel>
-                <IconButton disabled={btnDisabled.right} onClick={() => clickDirection('right')}>
+                <TablePaginationLabel>{`${TableController.data.per_page} / ${Math.ceil(
+                  TableController.data.rows_length / 5,
+                )}`}</TablePaginationLabel>
+                <IconButton
+                  disabled={TableController.data.right}
+                  onClick={() => TableController.clickDirection('right')}
+                >
                   <HiChevronRight />
                 </IconButton>
               </TablePaginationBox>

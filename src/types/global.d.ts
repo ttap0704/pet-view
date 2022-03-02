@@ -31,3 +31,13 @@ interface FinalPostcodeDataType {
   building_name: string;
   detail_address: string;
 }
+
+interface ChildrenDataType {
+  header: { label: string; center: boolean }[];
+  edit_items: string[];
+  type: string;
+  title: string;
+  rows_length: number;
+  footer_colspan: number;
+  table_items: { [key: string]: any }[];
+}
