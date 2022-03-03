@@ -5,7 +5,7 @@ import { Box, List, Typography } from '@mui/material';
 import { styled } from '@mui/material/styles';
 
 import ModalDefault from './ModalDefault';
-import ModalTitle from './ModalTitle';
+import LabelModal from '../label/LabelModal';
 import { ModalContext } from '../../provider/ModalProvider';
 import ImageBox from '../image/ImageBox';
 import OrderList from '../common/OrderList';
@@ -14,18 +14,7 @@ import ButtonFileInput from '../button/ButtonFileInput';
 import { setFileToImage } from '../../utils/tools';
 import UtilBox from '../common/UtilBox';
 import Button from '../button/Button';
-
-const ModalUploadBox = styled(Box)(({ theme }) => ({
-  width: '50rem',
-  height: 'auto',
-  border: '1px solid',
-  borderColor: theme.palette.gray_4.main,
-  backgroundColor: theme.palette.white.main,
-  display: 'flex',
-  flexDirection: 'column',
-  alignItems: 'center',
-  justifyContent: 'center',
-}));
+import ContainerModalContents from '../container/ContainerModalContents';
 
 const ModalUploadContents = styled(Box)(({ theme }) => ({
   width: '50rem',
@@ -164,8 +153,8 @@ function ModalUpload() {
         visible={modal_upload.data.visible}
         onClose={modal_upload.closeModalUpload}
       >
-        <ModalUploadBox>
-          <ModalTitle title={modal_upload.data.title} onClose={modal_upload.closeModalUpload} />
+        <ContainerModalContents>
+          <LabelModal title={modal_upload.data.title} onClose={modal_upload.closeModalUpload} />
           <ModalUploadContents>
             <ImageBox
               type={modal_upload.data.type}
@@ -201,7 +190,7 @@ function ModalUpload() {
               등록
             </Button>
           </UtilBox>
-        </ModalUploadBox>
+        </ContainerModalContents>
       </ModalDefault>
     </>
   );

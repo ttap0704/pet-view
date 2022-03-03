@@ -11,6 +11,9 @@ import { IconButton, Box, Checkbox } from '@mui/material';
 import { useState, useEffect, useContext } from 'react';
 import { styled } from '@mui/material/styles';
 import { TableContext } from '../../../src/provider/TableProvider';
+import Button from '../button/Button';
+import UtilBox from '../common/UtilBox';
+import Dropdown from '../dropdown/Dropdown';
 
 interface TableProps {
   contents: ChildrenDataType;
@@ -38,56 +41,98 @@ const CustomTable = (props: TableProps) => {
   }, [children_contents.table_items]);
 
   return (
-    <TableContainer component={Paper}>
-      <Table aria-label='custom table'>
-        <TableHead>
-          <TableRow>
-            {TableController.data.header.map((data, index) => {
+    <>
+      <UtilBox justifyContent='flex-end'>
+        <Dropdown
+          items={TableController.data.edit_items}
+          onClick={(idx: number) => TableController.setClickedDropdownIndex(idx)}
+          buttonDisabled={TableController.data.button_disabled}
+        />
+      </UtilBox>
+      <TableContainer component={Paper}>
+        <Table aria-label='custom table'>
+          <TableHead>
+            <TableRow>
+              {TableController.data.header.map((data, index) => {
+                return (
+                  <TableCell align={data.center ? 'center' : 'left'} key={`custom_table_header_${index}`}>
+                    {data.label == 'check' ? '' : data.label}
+                  </TableCell>
+                );
+              })}
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {TableController.data.table_items.map((data, index) => {
               return (
-                <TableCell align={data.center ? 'center' : 'left'} key={`custom_table_header_${index}`}>
-                  {data.label}
-                </TableCell>
+                <TableRow
+                  key={`body_row_${index}`}
+                  onClick={() => TableController.setChecked(index, 'click')}
+                  sx={{ cursor: 'pointer' }}
+                >
+                  {TableController.data.header.map((cell, index2) => {
+                    let contents: React.ReactNode | string = '';
+                    if (cell.type) {
+                      if (cell.type == 'button') {
+                        contents = (
+                          <Button
+                            variant='contained'
+                            color='blue'
+                            sx={{ margin: '0 auto', fontSize: '0.875rem' }}
+                            onClick={() => TableController.setClickedButtonIndex(index, cell.key)}
+                          >
+                            확인
+                          </Button>
+                        );
+                      } else if (cell.type == 'checkbox') {
+                        contents = (
+                          <Checkbox
+                            checked={data.checked}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                              TableController.setChecked(index, 'change', e)
+                            }
+                          />
+                        );
+                      }
+                    } else {
+                      contents = data[cell.key];
+                    }
+                    return (
+                      <TableCell align={cell.center ? 'center' : 'left'} key={`body_row_${index}_cell_${index2}`}>
+                        {contents}
+                      </TableCell>
+                    );
+                  })}
+                </TableRow>
               );
             })}
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {/* {tableItems.map((data, index) => {
-            return (
-              <TableRow key={`${contents.type}_row_${index}`}>
-                {contents.header.map((cell, index2) => {
-                  return (
-                    <TableCell align={cell.center ? 'center' : 'left'} key={`${contents.type}_cell_${index2}`}>
-                      {setTableCell(cell.label, index, contents.type)}
-                    </TableCell>
-                  );
-                })}
-              </TableRow>
-            );
-          })} */}
-        </TableBody>
-        <TableFooter>
-          <TableRow>
-            <TableCell colSpan={TableController.data.footer_colspan}>
-              <TablePaginationBox>
-                <IconButton disabled={TableController.data.left} onClick={() => TableController.clickDirection('left')}>
-                  <HiChevronLeft />
-                </IconButton>
-                <TablePaginationLabel>{`${TableController.data.per_page} / ${Math.ceil(
-                  TableController.data.rows_length / 5,
-                )}`}</TablePaginationLabel>
-                <IconButton
-                  disabled={TableController.data.right}
-                  onClick={() => TableController.clickDirection('right')}
-                >
-                  <HiChevronRight />
-                </IconButton>
-              </TablePaginationBox>
-            </TableCell>
-          </TableRow>
-        </TableFooter>
-      </Table>
-    </TableContainer>
+          </TableBody>
+          <TableFooter>
+            <TableRow>
+              <TableCell colSpan={TableController.data.footer_colspan}>
+                <TablePaginationBox>
+                  <IconButton
+                    disabled={TableController.data.left}
+                    onClick={() => TableController.clickDirection('left')}
+                  >
+                    <HiChevronLeft />
+                  </IconButton>
+                  <TablePaginationLabel>{`${TableController.data.per_page} / ${Math.ceil(
+                    TableController.data.rows_length / 5,
+                  )}`}</TablePaginationLabel>
+                  <IconButton
+                    disabled={TableController.data.right}
+                    onClick={() => TableController.clickDirection('right')}
+                  >
+                    <HiChevronRight />
+                  </IconButton>
+                </TablePaginationBox>
+              </TableCell>
+            </TableRow>
+          </TableFooter>
+        </Table>
+      </TableContainer>
+    </>
   );
 };
 export default CustomTable;

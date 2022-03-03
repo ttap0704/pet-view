@@ -4,7 +4,7 @@ import { useState, createContext, useContext } from 'react';
 // Type 설정
 
 interface TableDataType {
-  header: { label: string; center: boolean }[];
+  header: { label: string; center: boolean; key: string; type?: string }[];
   edit_items: string[];
   type: string;
   title: string;
@@ -18,19 +18,25 @@ interface TableDataType {
   max: number;
   footer_colspan: number;
   table_items: { [key: string]: any }[];
+  clicked_row_button_idx: null | number;
+  clicked_row_button_key: null | string;
+  clicked_dropdown_idx: null | number;
 }
 
-interface ModalControllerType {
+interface TableControllerType {
   data: TableDataType;
   clearTableData: () => void;
   setTableContents: (contents: ChildrenDataType) => void;
   setButtonDisabled: (max: number) => void;
   clickDirection: (dir: string) => void;
+  setChecked: (idx: number, event_type: string, e?: React.ChangeEvent<HTMLInputElement>) => void;
+  setClickedButtonIndex: (idx: number, key: string) => void;
+  setClickedDropdownIndex: (idx: number) => void;
 }
 
 // ========================================================================================
 // 초기값 설정
-export const TableContext = createContext<ModalControllerType>({
+export const TableContext = createContext<TableControllerType>({
   data: {
     header: [],
     edit_items: [],
@@ -46,6 +52,9 @@ export const TableContext = createContext<ModalControllerType>({
     max: 0,
     footer_colspan: 1,
     table_items: [],
+    clicked_row_button_idx: null,
+    clicked_row_button_key: null,
+    clicked_dropdown_idx: null,
   },
   clearTableData: () => {
     return;
@@ -57,6 +66,15 @@ export const TableContext = createContext<ModalControllerType>({
     return;
   },
   clickDirection: (dir: string) => {
+    return;
+  },
+  setChecked: (idx: number, event_type: string, e?: React.ChangeEvent<HTMLInputElement>) => {
+    return;
+  },
+  setClickedButtonIndex: (idx: number, key: string) => {
+    return;
+  },
+  setClickedDropdownIndex: (idx: number) => {
     return;
   },
 });
@@ -81,10 +99,13 @@ function TableProvider(props: { children: React.ReactNode }) {
     max: 0,
     footer_colspan: 1,
     table_items: [],
+    clicked_row_button_idx: null,
+    clicked_row_button_key: null,
+    clicked_dropdown_idx: null,
   });
 
   // 모달 컨트롤러
-  const modalController: ModalControllerType = {
+  const modalController: TableControllerType = {
     data: tableData,
     clearTableData: () => {
       setTableData({
@@ -102,11 +123,14 @@ function TableProvider(props: { children: React.ReactNode }) {
         max: 0,
         footer_colspan: 1,
         table_items: [],
+        clicked_row_button_idx: null,
+        clicked_row_button_key: null,
+        clicked_dropdown_idx: null,
       });
     },
     setTableContents: (contents: ChildrenDataType) => {
       console.log(contents);
-      const max = contents.rows_length / 5;
+      const max = Math.ceil(contents.rows_length / 5);
       let left = false;
       let right = false;
 
@@ -126,7 +150,25 @@ function TableProvider(props: { children: React.ReactNode }) {
         right,
       });
     },
+    setClickedButtonIndex: (idx: number, key: string) => {
+      setTableData(state => {
+        return {
+          ...state,
+          clicked_row_button_idx: idx,
+          clicked_row_button_key: key,
+        };
+      });
 
+      setTimeout(() => {
+        setTableData(state => {
+          return {
+            ...state,
+            clicked_row_button_idx: null,
+            clicked_row_button_key: null,
+          };
+        });
+      }, 100);
+    },
     setButtonDisabled: (max: number) => {},
     clickDirection: (dir: string) => {
       const per_page = tableData.per_page;
@@ -163,6 +205,59 @@ function TableProvider(props: { children: React.ReactNode }) {
         left,
         right,
       });
+    },
+    setChecked: (idx: number, event_type: string, e?: React.ChangeEvent<HTMLInputElement>) => {
+      let checked: string | boolean | undefined = undefined;
+      if (event_type == 'change' && e) {
+        checked = e.target.checked;
+      } else {
+        checked = !tableData.table_items[idx].checked;
+      }
+
+      setTableData(state => {
+        return {
+          ...state,
+          table_items: [
+            ...state.table_items.map((data, index) => {
+              if (checked) {
+                if (index != idx) {
+                  data.checked = false;
+                  return data;
+                } else {
+                  data.checked = true;
+                  return data;
+                }
+              } else {
+                if (index == idx) {
+                  data.checked = false;
+                  return data;
+                } else {
+                  return data;
+                }
+              }
+            }),
+          ],
+          button_disabled: !checked,
+        };
+      });
+    },
+    setClickedDropdownIndex: (idx: number) => {
+      setTableData(state => {
+        return {
+          ...state,
+          clicked_dropdown_idx: idx,
+        };
+      });
+
+      setTimeout(() => {
+        setTableData(state => {
+          return {
+            ...state,
+            clicked_dropdown_idx: null,
+          };
+        });
+      }, 100);
+      return;
     },
   };
 

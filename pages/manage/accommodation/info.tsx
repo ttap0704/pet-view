@@ -1,81 +1,49 @@
 import { GetServerSideProps, GetStaticProps } from 'next';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useContext } from 'react';
 
 import { fetchGetApi } from '../../../src/utils/api';
 import { getDate } from '../../../src/utils/tools';
 
+import ModalEdit from '../../../src/components/modal/ModalEdit';
 import Table from '../../../src/components/table/Table';
+import { TableContext } from '../../../src/provider/TableProvider';
 import { AccordionSummaryClasses, Checkbox } from '@mui/material';
 
-interface AccommodationListType {
-  count: number;
-  rows: {
-    accommodation_images: {
-      accommodation_id: number;
-      category: number;
-      exposure_menu_id: null;
-      file_name: string;
-      id: number;
-      restaurant_id: null;
-      rooms_id: null;
-      seq: number;
-    }[];
-    accommodation_rooms: {
-      accommodation_id: 1;
-      additional_info: null | string;
-      amenities: null | string;
-      createdAt: string;
-      deletedAt: null | string;
-      id: number;
-      label: string;
-      maximum_num: number;
-      price: number;
-      seq: number;
-      standard_num: number;
-      updatedAt: string;
-    }[];
-    bname: string;
-    building_name: string;
-    createdAt: string;
-    deletedAt: null;
-    detail_address: string;
-    id: number;
-    introduction: string;
-    label: string;
-    manager: number;
-    sido: string;
-    sigungu: string;
-    updatedAt: string;
-    zonecode: string;
-  }[];
-}
-
 const ManageAccommodationInfo = (props: { list: AccommodationListType; style: { [key: string]: string } }) => {
+  const { data } = useContext(TableContext);
   const [infoContents, setInfoContents] = useState<ChildrenDataType>({
     header: [
       {
-        label: '',
+        label: 'check',
         center: true,
+        key: 'check',
+        type: 'checkbox',
       },
       {
         label: '이름',
         center: false,
+        key: 'label',
       },
       {
         label: '주소',
         center: false,
+        key: 'address',
       },
       {
         label: '방 개수',
         center: false,
+        key: 'rooms_num',
       },
       {
         label: '소개',
         center: true,
+        key: 'introduction',
+        type: 'button',
       },
       {
         label: '등록일',
         center: false,
+        key: 'created_at',
       },
     ],
     edit_items: [
@@ -98,6 +66,18 @@ const ManageAccommodationInfo = (props: { list: AccommodationListType; style: { 
     getTableItems(props.list);
   }, []);
 
+  useEffect(() => {
+    if (data.clicked_dropdown_idx) {
+      console.log(data.clicked_dropdown_idx);
+    }
+  }, [data.clicked_dropdown_idx]);
+
+  useEffect(() => {
+    if ((data.clicked_row_button_idx, data.clicked_row_button_key)) {
+      console.log(data.clicked_row_button_idx, data.clicked_row_button_key);
+    }
+  }, [data.clicked_row_button_idx, data.clicked_row_button_key]);
+
   const getTableItems = async (list?: AccommodationListType) => {
     let count = 0;
     let rows = [];
@@ -105,7 +85,7 @@ const ManageAccommodationInfo = (props: { list: AccommodationListType; style: { 
       count = list.count;
       rows = list.rows;
     } else {
-      const accommodation: AccommodationListType = await fetchGetApi('/manager/1/accommodation');
+      const accommodation: AccommodationListType = await fetchGetApi(`/manager/1/accommodation?page=${data.per_page}`);
 
       count = accommodation.count;
       rows = accommodation.rows;
@@ -115,6 +95,7 @@ const ManageAccommodationInfo = (props: { list: AccommodationListType; style: { 
     for (let x of rows) {
       tmp_table_items.push({
         id: x.id,
+        address: `${x.sido} ${x.sigungu} ${x.bname}`,
         bname: x.bname,
         building_name: x.building_name,
         detail_address: x.detail_address,
@@ -125,7 +106,7 @@ const ManageAccommodationInfo = (props: { list: AccommodationListType; style: { 
         zonecode: x.zonecode,
         rooms: x.accommodation_rooms,
         rooms_num: x.accommodation_rooms.length,
-        created_at: x.createdAt,
+        created_at: getDate(x.createdAt),
         images: x.accommodation_images,
         checked: false,
       });
@@ -138,54 +119,10 @@ const ManageAccommodationInfo = (props: { list: AccommodationListType; style: { 
     });
   };
 
-  // const setTableCell = (cell: string, idx: number) => {
-  //   let tag: React.ReactNode | string;
-  //   switch (cell) {
-  //     case '':
-  //       tag = (
-  //         <Checkbox
-  //           checked={tableItems[idx].checked}
-  //           onChange={e => setChecked(idx, 'accommodation', 'change', e)}
-  //         ></Checkbox>
-  //       );
-  //       break;
-  //     case '이름':
-  //       tag = tableItems[idx].label;
-  //       break;
-  //     case '주소':
-  //       tag = `${tableItems[idx].sido} ${tableItems[idx].sigungu} ${tableItems[idx].bname}`;
-  //       break;
-  //     case '방 개수':
-  //       tag = tableItems[idx].rooms_num;
-  //       break;
-  //     case '소개':
-  //       tag = (
-  //         <Button
-  //           onClick={() => {
-  //             setEditModal({
-  //               title: '소개',
-  //               visible: true,
-  //               value: tableItems[idx].introduction,
-  //               type: 'textarea',
-  //               read_only: true,
-  //               target: 'accommodation',
-  //               edit_target: '',
-  //             });
-  //           }}
-  //         >
-  //           확인
-  //         </Button>
-  //       );
-  //       break;
-  //     case '등록일':
-  //       tag = getDate(tableItems[idx].created_at);
-  //       break;
-  //   }
-  // };
-
   return (
     <>
       <Table contents={infoContents} />
+      <ModalEdit title='test' visible={false} />
     </>
   );
 };
