@@ -4,8 +4,9 @@ import { styled } from '@mui/material/styles';
 import { TextareaAutosizeProps } from '@mui/base';
 
 interface TextareaProps {
-  value: string;
+  value: string | number;
   onChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
+  readOnly?: boolean;
   placeholder: string;
 }
 
@@ -25,8 +26,9 @@ function Textarea(props: TextareaProps) {
   const value = props.value;
   const onChange = props.onChange;
   const placeholder = props.placeholder;
+  const read_only = props.readOnly;
 
-  return <CustomTextarea value={value} onChange={onChange} placeholder={placeholder} />;
+  return <CustomTextarea value={value} onChange={onChange} placeholder={placeholder} readOnly={read_only} />;
 }
 
 export default Textarea;

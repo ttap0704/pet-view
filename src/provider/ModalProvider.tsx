@@ -10,9 +10,7 @@ import ModalNotice from '../components/modal/ModalNotice';
 interface ModalConfirmDataType {
   visible: boolean;
   title: string;
-  confirm: boolean;
-  target: string;
-  target_idx?: number | null;
+  callback: () => void;
 }
 
 interface ModalAlertDataType {
@@ -36,17 +34,27 @@ interface ModalUploadDataType {
   target_idx: number | null;
 }
 
+interface ModalEditDataType {
+  visible: boolean;
+  title: string;
+  value: string | number;
+  target: string;
+  type: 'input' | 'textarea';
+  format?: string;
+  read_only?: boolean;
+}
+
 interface ModalControllerType {
   modal_confirm: {
     data: ModalConfirmDataType;
     closeModalConfirm: () => void;
-    openModalConfirm: (title: string, target: string, target_idx?: number) => void;
+    openModalConfirm: (title: string, callback: () => void) => void;
     checkModalConfirm: () => void;
   };
   modal_alert: {
     data: ModalAlertDataType;
     closeModalAlert: () => void;
-    openModalAlert: (type: string) => void;
+    openModalAlert: (title: string) => void;
   };
   modal_notice: {
     data: ModalNoticeDataType;
@@ -60,6 +68,18 @@ interface ModalControllerType {
     setModalUploadImageList: (image_list: ImageListType[]) => void;
     setCurNum: (number: number) => void;
   };
+  modal_edit: {
+    data: ModalEditDataType;
+    closeModalEdit: () => void;
+    openModalEdit: (
+      title: string,
+      value: string,
+      target: string,
+      type: 'input' | 'textarea',
+      read_only?: boolean,
+      format?: string,
+    ) => void;
+  };
 }
 
 // ========================================================================================
@@ -69,14 +89,14 @@ export const ModalContext = createContext<ModalControllerType>({
     data: {
       visible: false,
       title: '',
-      confirm: false,
-      target: '',
-      target_idx: null,
+      callback: () => {
+        return;
+      },
     },
     closeModalConfirm: () => {
       return;
     },
-    openModalConfirm: (title: string, target: string, target_idx?: number) => {
+    openModalConfirm: (title: string, callback: () => void) => {
       return;
     },
     checkModalConfirm: () => {
@@ -131,6 +151,30 @@ export const ModalContext = createContext<ModalControllerType>({
       return;
     },
   },
+  modal_edit: {
+    data: {
+      visible: false,
+      title: '',
+      target: '',
+      type: 'input',
+      value: '',
+      format: '',
+      read_only: false,
+    },
+    closeModalEdit: () => {
+      return;
+    },
+    openModalEdit: (
+      title: string,
+      value: string,
+      target: string,
+      type: 'input' | 'textarea',
+      read_only?: boolean,
+      format?: string,
+    ) => {
+      return;
+    },
+  },
 });
 
 // ========================================================================================
@@ -146,8 +190,9 @@ function ModalProvider(props: { children: React.ReactNode }) {
   const [modalConfirmData, setModalConfirmData] = useState<ModalConfirmDataType>({
     visible: false,
     title: '',
-    confirm: false,
-    target: '',
+    callback: () => {
+      return;
+    },
   });
 
   const [modalAlertData, setModalAlertData] = useState<ModalAlertDataType>({
@@ -171,6 +216,16 @@ function ModalProvider(props: { children: React.ReactNode }) {
     target_idx: null,
   });
 
+  const [modalEditData, setModalEditData] = useState<ModalEditDataType>({
+    visible: false,
+    title: '',
+    target: '',
+    value: '',
+    type: 'input',
+    format: '',
+    read_only: false,
+  });
+
   // 모달 컨트롤러
   const modalController: ModalControllerType = {
     modal_confirm: {
@@ -179,43 +234,34 @@ function ModalProvider(props: { children: React.ReactNode }) {
         setModalConfirmData({
           visible: false,
           title: '',
-          confirm: false,
-          target: '',
-          target_idx: null,
+          callback: () => {
+            return;
+          },
         });
       },
-      openModalConfirm: (title: string, target: string, target_idx?: number) => {
+      openModalConfirm: (title: string, callback: () => void) => {
         setModalConfirmData(state => {
           return {
             ...state,
-            confirm: false,
             visible: true,
             title: title,
-            target: target,
-            target_idx: Number(target_idx) >= 0 ? target_idx : null,
+            callback,
           };
         });
       },
       checkModalConfirm: () => {
+        modalController.modal_confirm.data.callback();
+
         setModalConfirmData(state => {
           return {
             ...state,
-            confirm: true,
             visible: false,
             title: '',
+            callback: () => {
+              return;
+            },
           };
         });
-
-        setTimeout(() => {
-          setModalConfirmData(state => {
-            return {
-              ...state,
-              confirm: false,
-              target: '',
-              target_idx: null,
-            };
-          });
-        }, 200);
       },
     },
     modal_alert: {
@@ -294,6 +340,39 @@ function ModalProvider(props: { children: React.ReactNode }) {
           };
         });
         return;
+      },
+    },
+    modal_edit: {
+      data: modalEditData,
+      closeModalEdit: () => {
+        setModalEditData({
+          visible: false,
+          title: '',
+          target: '',
+          value: '',
+          type: 'input',
+          format: '',
+        });
+      },
+      openModalEdit: (
+        title: string,
+        value: string,
+        target: string,
+        type: 'input' | 'textarea',
+        read_only?: boolean,
+        format?: string,
+      ) => {
+        setModalEditData(state => {
+          return {
+            visible: true,
+            title: title,
+            value: value,
+            target: target,
+            type: type,
+            read_only: read_only ? read_only : false,
+            format: format ? format : '',
+          };
+        });
       },
     },
   };

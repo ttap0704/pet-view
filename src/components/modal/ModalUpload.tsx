@@ -16,6 +16,10 @@ import UtilBox from '../common/UtilBox';
 import Button from '../button/Button';
 import ContainerModalContents from '../container/ContainerModalContents';
 
+interface ModalUploadProps {
+  onUpload: () => void;
+}
+
 const ModalUploadContents = styled(Box)(({ theme }) => ({
   width: '50rem',
   height: 'auto',
@@ -27,9 +31,10 @@ const ModalUploadContents = styled(Box)(({ theme }) => ({
   padding: '2rem 1rem',
 }));
 
-function ModalUpload() {
-  const { modal_upload, modal_confirm } = useContext(ModalContext);
+function ModalUpload(props: ModalUploadProps) {
+  const onUpload = props.onUpload;
 
+  const { modal_upload, modal_confirm } = useContext(ModalContext);
   const [orderList, setOrderList] = useState<{ label: string; number: string; origin: number }[]>([]);
 
   useEffect(() => {
@@ -38,19 +43,6 @@ function ModalUpload() {
       setImageList(modal_upload.data.image_list);
     }
   }, [modal_upload.data.visible]);
-
-  useEffect(() => {
-    if (modal_confirm.data.confirm) {
-      const target = modal_confirm.data.target;
-      const target_idx = modal_confirm.data.target_idx;
-
-      switch (target) {
-        case 'delete_list':
-          deleteList(target_idx);
-          break;
-      }
-    }
-  }, [modal_confirm.data.confirm]);
 
   const uploadImages = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const exclude_origin_idx = [...modal_upload.data.image_list.map(item => item.origin)];
@@ -175,7 +167,9 @@ function ModalUpload() {
               onChange={setImageOrder}
               onComplete={completeChangeOrder}
               onDeleteList={(origin_idx: number, idx: number) =>
-                modal_confirm.openModalConfirm(`${idx + 1}번째 이미지를 삭제하시겠습니까?`, 'delete_list', origin_idx)
+                modal_confirm.openModalConfirm(`${idx + 1}번째 이미지를 삭제하시겠습니까?`, () => {
+                  deleteList(origin_idx);
+                })
               }
             />
           </ModalUploadContents>
@@ -183,9 +177,7 @@ function ModalUpload() {
             <Button
               variant='contained'
               color='orange'
-              onClick={() =>
-                modal_confirm.openModalConfirm(`등록하신 순서대로 이미지를 업로드하시겠습니까?`, 'upload_image')
-              }
+              onClick={() => modal_confirm.openModalConfirm(`등록하신 순서대로 이미지를 업로드하시겠습니까?`, onUpload)}
             >
               등록
             </Button>

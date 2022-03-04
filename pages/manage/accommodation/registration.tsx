@@ -16,8 +16,9 @@ import FormPostcode from '../../../src/components/form/FormPostcode';
 import FormAddRoom from '../../../src/components/form/FormAddRoom';
 import Textarea from '../../../src/components/textarea/Textarea';
 import ChevronDivder from '../../../src/components/common/ChevronDivder';
-import ModalUpload from '../../../src/components/modal/ModalUpload';
 import InputOutlined from '../../../src/components/input/InputOutlined';
+
+import ModalUpload from '../../../src/components/modal/ModalUpload';
 
 interface CreateAccommodationResponse {
   accommodation_id: number;
@@ -59,22 +60,6 @@ const ManageAccommodationRegistration = () => {
       image_list: [],
     },
   ]);
-
-  useEffect(() => {
-    if (modal_confirm.data.confirm) {
-      switch (modal_confirm.data.target) {
-        case 'upload_image':
-          setPrevieImages();
-          break;
-        case 'create_accommodation':
-          console.log(modal_confirm.data.target);
-          createAccommodation();
-          break;
-        default:
-          break;
-      }
-    }
-  }, [modal_confirm.data.confirm]);
 
   const setPrevieImages = () => {
     console.log(modal_upload.data.image_list);
@@ -239,14 +224,14 @@ const ManageAccommodationRegistration = () => {
           <Button
             color='orange'
             variant='contained'
-            onClick={() => modal_confirm.openModalConfirm(`숙박업소를 등록하시겠습니까?`, 'create_accommodation')}
+            onClick={() => modal_confirm.openModalConfirm(`숙박업소를 등록하시겠습니까?`, createAccommodation)}
           >
             숙박업소 등록
           </Button>
         </UtilBox>
       </ContainerRegistrationItem>
 
-      <ModalUpload />
+      <ModalUpload onUpload={setPrevieImages} />
     </>
   );
 };

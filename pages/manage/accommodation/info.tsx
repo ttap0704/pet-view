@@ -1,16 +1,20 @@
 import { GetServerSideProps, GetStaticProps } from 'next';
 import { useEffect, useState, useContext } from 'react';
 
-import { fetchGetApi } from '../../../src/utils/api';
+import { fetchGetApi, fetchPatchApi } from '../../../src/utils/api';
 import { getDate } from '../../../src/utils/tools';
 
 import ModalEdit from '../../../src/components/modal/ModalEdit';
+import ModalPostcodeForm from '../../../src/components/modal/ModalPostcodeForm';
 import Table from '../../../src/components/table/Table';
 import { TableContext } from '../../../src/provider/TableProvider';
-import { AccordionSummaryClasses, Checkbox } from '@mui/material';
+import { ModalContext } from '../../../src/provider/ModalProvider';
 
 const ManageAccommodationInfo = (props: { list: AccommodationListType; style: { [key: string]: string } }) => {
   const { data } = useContext(TableContext);
+  const { modal_edit, modal_alert } = useContext(ModalContext);
+
+  const [postcodeVisible, setPostcodeVisible] = useState<boolean>(false);
   const [infoContents, setInfoContents] = useState<ChildrenDataType>({
     header: [
       {
@@ -68,15 +72,74 @@ const ManageAccommodationInfo = (props: { list: AccommodationListType; style: { 
 
   useEffect(() => {
     if (data.clicked_dropdown_idx) {
+      if ([1, 3].includes(data.clicked_dropdown_idx)) {
+        setModalEdit();
+      } else if (data.clicked_dropdown_idx == 2) {
+        setPostcodeVisible(true);
+      }
       console.log(data.clicked_dropdown_idx);
     }
   }, [data.clicked_dropdown_idx]);
 
   useEffect(() => {
-    if ((data.clicked_row_button_idx, data.clicked_row_button_key)) {
+    if (data.clicked_row_button_idx != null && data.clicked_row_button_idx >= 0 && data.clicked_row_button_key) {
+      modal_edit.openModalEdit(
+        '소개',
+        data.table_items[data.clicked_row_button_idx][data.clicked_row_button_key],
+        '',
+        'textarea',
+        true,
+      );
       console.log(data.clicked_row_button_idx, data.clicked_row_button_key);
     }
   }, [data.clicked_row_button_idx, data.clicked_row_button_key]);
+
+  const setModalEdit = () => {
+    const index = data.clicked_dropdown_idx;
+    const target = data.table_items.find(item => item.checked);
+
+    let value = '';
+    let title = '';
+    let target_string = '';
+    let type: 'input' | 'textarea' = 'input';
+    let format = '';
+
+    if (target) {
+      switch (index) {
+        case 1:
+          value = target.label;
+          title = '업소명 수정';
+          target_string = 'label';
+          break;
+        case 3:
+          value = target.introduction;
+          title = '소개 수정';
+          target_string = 'introduction';
+          type = 'textarea';
+          break;
+      }
+
+      modal_edit.openModalEdit(title, value, target_string, type);
+    }
+  };
+
+  const editContents = async (value: string | number) => {
+    const target = data.table_items.find(item => item.checked);
+    const target_string = modal_edit.data.target;
+
+    if (target) {
+      let url = `/manager/1/accommodation/${target.id}`;
+
+      const status = await fetchPatchApi(url, { target: target_string, value });
+
+      if (status == 200) {
+        modal_alert.openModalAlert('수정이 완료되었습니다.');
+        getTableItems();
+      } else {
+        modal_alert.openModalAlert('오류로 인해 수정이 실패되었습니다.');
+      }
+    }
+  };
 
   const getTableItems = async (list?: AccommodationListType) => {
     let count = 0;
@@ -122,7 +185,12 @@ const ManageAccommodationInfo = (props: { list: AccommodationListType; style: { 
   return (
     <>
       <Table contents={infoContents} />
-      <ModalEdit title='test' visible={false} />
+      <ModalEdit onChange={(value: string | number) => editContents(value)} />
+      <ModalPostcodeForm
+        visible={postcodeVisible}
+        onClose={() => setPostcodeVisible(false)}
+        onChangeAddress={(address: ResponsePostcodeDataType) => console.log(address)}
+      />
     </>
   );
 };
