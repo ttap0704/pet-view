@@ -22,7 +22,7 @@ export async function setImageArray(data: { file_name: string }[], set_file?: bo
 
 export function imageToBlob(src: string, type: string): Promise<File> {
   return new Promise((resolve, reject) => {
-    fetch(`http://localhost:3080/api/image/${type}/${src}`).then((res) => {
+    fetch(`http://localhost:3080/image/${type}/${src}`).then((res) => {
       res
         .blob()
         .then((blob) => {
@@ -30,7 +30,6 @@ export function imageToBlob(src: string, type: string): Promise<File> {
             lastModified: new Date().getTime(),
             type: blob.type,
           });
-
           resolve(file)
         })
     });

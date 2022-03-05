@@ -37,7 +37,6 @@ function ModalEdit(props: ModalEditProps) {
   const [newValue, setNewValue] = useState<string | number>('');
 
   useEffect(() => {
-    console.log(modal_edit.data.type);
     setNewValue(modal_edit.data.value);
   }, [modal_edit.data.value]);
 

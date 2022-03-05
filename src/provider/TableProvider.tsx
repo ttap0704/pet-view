@@ -129,7 +129,6 @@ function TableProvider(props: { children: React.ReactNode }) {
       });
     },
     setTableContents: (contents: ChildrenDataType) => {
-      console.log(contents);
       const max = Math.ceil(contents.rows_length / 5);
       let left = false;
       let right = false;

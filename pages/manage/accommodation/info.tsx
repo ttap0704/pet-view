@@ -68,7 +68,7 @@ const ManageAccommodationInfo = (props: { list: AccommodationListType; style: { 
     if (accommodation_id && accommodation_id >= 0) {
       let exposure_images = [];
 
-      // const delete_res = await fetchDeleteApi(`/image/accommodation/${accommodation_id}`);
+      const delete_res = await fetchDeleteApi(`/image/accommodation/${accommodation_id}`);
 
       for (const item of modal_upload.data.image_list) {
         if (item.file) exposure_images.push(item.file);
@@ -79,7 +79,7 @@ const ManageAccommodationInfo = (props: { list: AccommodationListType; style: { 
         'accommodation',
       );
 
-      // const upload_res = await fetchFileApi('/upload/image', exposure_image_data);
+      const upload_res = await fetchFileApi('/upload/image', exposure_image_data);
 
       // console.log(delete_res);
       // console.log(upload_res);
