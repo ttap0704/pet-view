@@ -36,10 +36,16 @@ function ModalUpload(props: ModalUploadProps) {
 
   const { modal_upload, modal_confirm } = useContext(ModalContext);
   const [orderList, setOrderList] = useState<{ label: string; number: string; origin: number }[]>([]);
+  const [buttonLabel, setButtonLabel] = useState('');
 
   useEffect(() => {
     if (!modal_upload.data.visible) setOrderList([]);
     else {
+      if (modal_upload.data.title.indexOf('수정') >= 0) {
+        setButtonLabel('수정');
+      } else {
+        setButtonLabel('등록');
+      }
       setImageList(modal_upload.data.image_list);
     }
   }, [modal_upload.data.visible]);
@@ -179,7 +185,7 @@ function ModalUpload(props: ModalUploadProps) {
               color='orange'
               onClick={() => modal_confirm.openModalConfirm(`등록하신 순서대로 이미지를 업로드하시겠습니까?`, onUpload)}
             >
-              등록
+              {buttonLabel}
             </Button>
           </UtilBox>
         </ContainerModalContents>

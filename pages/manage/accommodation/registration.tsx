@@ -62,7 +62,6 @@ const ManageAccommodationRegistration = () => {
   ]);
 
   const setPrevieImages = () => {
-    console.log(modal_upload.data.image_list);
     if (modal_upload.data.type == 'room') {
       setRooms(state => {
         return [

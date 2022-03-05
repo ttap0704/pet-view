@@ -24,6 +24,10 @@ const ModalEditContentsBox = styled(Box)(({ theme }) => ({
   alignItems: 'center',
   padding: '1rem 2rem',
   gap: '1rem',
+
+  '&.column': {
+    flexDirection: 'column',
+  },
 }));
 
 function ModalEdit(props: ModalEditProps) {
@@ -47,7 +51,7 @@ function ModalEdit(props: ModalEditProps) {
       <ModalDefault bottom={false} white={false} visible={modal_edit.data.visible} onClose={modal_edit.closeModalEdit}>
         <ContainerModalContents>
           <LabelModal title={modal_edit.data.title} onClose={modal_edit.closeModalEdit} />
-          <ModalEditContentsBox>
+          <ModalEditContentsBox className={modal_edit.data.type == 'textarea' ? 'column' : ''}>
             {modal_edit.data.type == 'input' ? (
               <InputOutlined
                 readOnly={modal_edit.data.read_only}

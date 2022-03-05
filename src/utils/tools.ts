@@ -1,18 +1,40 @@
-export function setImageArray(data: { file_name: string }[]) {
+export async function setImageArray(data: { file_name: string }[], set_file?: boolean, type?: string) {
   let image_arr = [];
   let count = 0;
 
   for (const x of data) {
+    let file = null
+    if (set_file && type) {
+      file = await imageToBlob(x.file_name, type)
+    }
+
     image_arr.push({
       new: false,
       src: x.file_name,
       origin: count,
-      file: null
+      file: file
     })
     count++;
   }
 
   return image_arr;
+}
+
+export function imageToBlob(src: string, type: string): Promise<File> {
+  return new Promise((resolve, reject) => {
+    fetch(`http://localhost:3080/api/image/${type}/${src}`).then((res) => {
+      res
+        .blob()
+        .then((blob) => {
+          const file = new File([blob], src, {
+            lastModified: new Date().getTime(),
+            type: blob.type,
+          });
+
+          resolve(file)
+        })
+    });
+  })
 }
 
 export function setFileToImage(files: FileList | null, exclude_origin_idx: number[]): Promise<ImageListType[]> {
@@ -37,6 +59,8 @@ export function setFileToImage(files: FileList | null, exclude_origin_idx: numbe
     }
   })
 }
+
+
 
 export function setFileArray(image_list: ImageListType[]) {
   const file_array: File[] = [];

@@ -1,10 +1,12 @@
 import { GetServerSideProps, GetStaticProps } from 'next';
 import { useEffect, useState, useContext } from 'react';
 
-import { fetchGetApi, fetchPatchApi } from '../../../src/utils/api';
-import { getDate } from '../../../src/utils/tools';
+import { fetchGetApi, fetchPatchApi, fetchDeleteApi, fetchFileApi } from '../../../src/utils/api';
+import { getDate, setImageArray, setImageFormData } from '../../../src/utils/tools';
+import { accommodation_info } from '../../../src/utils/manage_items';
 
 import ModalEdit from '../../../src/components/modal/ModalEdit';
+import ModalUpload from '../../../src/components/modal/ModalUpload';
 import ModalPostcodeForm from '../../../src/components/modal/ModalPostcodeForm';
 import Table from '../../../src/components/table/Table';
 import { TableContext } from '../../../src/provider/TableProvider';
@@ -12,70 +14,24 @@ import { ModalContext } from '../../../src/provider/ModalProvider';
 
 const ManageAccommodationInfo = (props: { list: AccommodationListType; style: { [key: string]: string } }) => {
   const { data } = useContext(TableContext);
-  const { modal_edit, modal_alert } = useContext(ModalContext);
+  const { modal_edit, modal_alert, modal_upload } = useContext(ModalContext);
 
   const [postcodeVisible, setPostcodeVisible] = useState<boolean>(false);
-  const [infoContents, setInfoContents] = useState<ChildrenDataType>({
-    header: [
-      {
-        label: 'check',
-        center: true,
-        key: 'check',
-        type: 'checkbox',
-      },
-      {
-        label: '이름',
-        center: false,
-        key: 'label',
-      },
-      {
-        label: '주소',
-        center: false,
-        key: 'address',
-      },
-      {
-        label: '방 개수',
-        center: false,
-        key: 'rooms_num',
-      },
-      {
-        label: '소개',
-        center: true,
-        key: 'introduction',
-        type: 'button',
-      },
-      {
-        label: '등록일',
-        center: false,
-        key: 'created_at',
-      },
-    ],
-    edit_items: [
-      '객실 추가',
-      '업소명 수정',
-      '주소 수정',
-      '소개 수정',
-      '대표이미지 수정',
-      '객실 순서 변경',
-      '업소 삭제',
-    ],
-    type: 'accommodation',
-    title: '숙박업소 관리',
-    rows_length: 0,
-    footer_colspan: 6,
-    table_items: [],
-  });
+  const [infoContents, setInfoContents] = useState<ChildrenDataType>(accommodation_info);
 
   useEffect(() => {
     getTableItems(props.list);
   }, []);
 
   useEffect(() => {
-    if (data.clicked_dropdown_idx) {
-      if ([1, 3].includes(data.clicked_dropdown_idx)) {
+    const target_idx = data.clicked_dropdown_idx;
+    if (target_idx && target_idx >= 0) {
+      if ([1, 3].includes(target_idx)) {
         setModalEdit();
-      } else if (data.clicked_dropdown_idx == 2) {
+      } else if (target_idx == 2) {
         setPostcodeVisible(true);
+      } else if (target_idx == 4) {
+        setUploadModal();
       }
       console.log(data.clicked_dropdown_idx);
     }
@@ -93,6 +49,43 @@ const ManageAccommodationInfo = (props: { list: AccommodationListType; style: { 
       console.log(data.clicked_row_button_idx, data.clicked_row_button_key);
     }
   }, [data.clicked_row_button_idx, data.clicked_row_button_key]);
+
+  const setUploadModal = async () => {
+    const target = data.table_items.find(item => item.checked);
+    if (target) {
+      const images = target.images.map((item: { file_name: string }) => {
+        return {
+          file_name: item.file_name,
+        };
+      });
+      const new_images = await setImageArray(images, true, 'accommodation');
+      modal_upload.openModalUpload('대표 이미지 수정', 'accommodation', new_images, target.id);
+    }
+  };
+
+  const updateExposureImages = async () => {
+    const accommodation_id = modal_upload.data.target_idx;
+    if (accommodation_id && accommodation_id >= 0) {
+      let exposure_images = [];
+
+      // const delete_res = await fetchDeleteApi(`/image/accommodation/${accommodation_id}`);
+
+      for (const item of modal_upload.data.image_list) {
+        if (item.file) exposure_images.push(item.file);
+      }
+
+      const exposure_image_data = await setImageFormData(
+        [{ target_id: accommodation_id, files: exposure_images }],
+        'accommodation',
+      );
+
+      // const upload_res = await fetchFileApi('/upload/image', exposure_image_data);
+
+      // console.log(delete_res);
+      // console.log(upload_res);
+      console.log(exposure_image_data);
+    }
+  };
 
   const setModalEdit = () => {
     const index = data.clicked_dropdown_idx;
@@ -185,6 +178,7 @@ const ManageAccommodationInfo = (props: { list: AccommodationListType; style: { 
   return (
     <>
       <Table contents={infoContents} />
+      <ModalUpload onUpload={updateExposureImages} />
       <ModalEdit onChange={(value: string | number) => editContents(value)} />
       <ModalPostcodeForm
         visible={postcodeVisible}
