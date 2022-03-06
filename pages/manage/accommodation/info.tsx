@@ -7,16 +7,28 @@ import { accommodation_info } from '../../../src/utils/manage_items';
 
 import ModalEdit from '../../../src/components/modal/ModalEdit';
 import ModalUpload from '../../../src/components/modal/ModalUpload';
+import ModalAddRoom from '../../../src/components/modal/ModalAddRoom';
 import ModalPostcodeForm from '../../../src/components/modal/ModalPostcodeForm';
 import Table from '../../../src/components/table/Table';
 import { TableContext } from '../../../src/provider/TableProvider';
 import { ModalContext } from '../../../src/provider/ModalProvider';
+
+interface AddRoomContents {
+  visible: boolean;
+  rooms_num: number;
+  upload_idx: number | null;
+}
 
 const ManageAccommodationInfo = (props: { list: AccommodationListType; style: { [key: string]: string } }) => {
   const { data } = useContext(TableContext);
   const { modal_edit, modal_alert, modal_upload } = useContext(ModalContext);
 
   const [postcodeVisible, setPostcodeVisible] = useState<boolean>(false);
+  const [addRoomContents, setAddRoomContents] = useState<AddRoomContents>({
+    visible: false,
+    rooms_num: 0,
+    upload_idx: null,
+  });
   const [infoContents, setInfoContents] = useState<ChildrenDataType>(accommodation_info);
 
   useEffect(() => {
@@ -25,8 +37,11 @@ const ManageAccommodationInfo = (props: { list: AccommodationListType; style: { 
 
   useEffect(() => {
     const target_idx = data.clicked_dropdown_idx;
-    if (target_idx && target_idx >= 0) {
-      if ([1, 3].includes(target_idx)) {
+    if (target_idx != null && target_idx >= 0) {
+      if (target_idx == 0) {
+        console.log(target_idx, '2');
+        setAddRoomModalContents();
+      } else if ([1, 3].includes(target_idx)) {
         setModalEdit();
       } else if (target_idx == 2) {
         setPostcodeVisible(true);
@@ -63,27 +78,49 @@ const ManageAccommodationInfo = (props: { list: AccommodationListType; style: { 
     }
   };
 
+  const setAddRoomModalContents = () => {
+    const target = data.table_items.find(item => item.checked);
+    if (target) {
+      setAddRoomContents({
+        ...addRoomContents,
+        visible: true,
+        rooms_num: target.rooms_num,
+      });
+    }
+  };
+
   const updateExposureImages = async () => {
-    const accommodation_id = modal_upload.data.target_idx;
-    if (accommodation_id && accommodation_id >= 0) {
-      let exposure_images = [];
+    const target_idx = modal_upload.data.target_idx;
+    const type = modal_upload.data.type;
+    if (target_idx != null && target_idx >= 0) {
+      if (type == 'accommodation') {
+        let exposure_images = [];
 
-      const delete_res = await fetchDeleteApi(`/image/accommodation/${accommodation_id}`);
+        const delete_res = await fetchDeleteApi(`/image/accommodation/${target_idx}`);
 
-      for (const item of modal_upload.data.image_list) {
-        if (item.file) exposure_images.push(item.file);
+        for (const item of modal_upload.data.image_list) {
+          if (item.file) exposure_images.push(item.file);
+        }
+
+        const exposure_image_data = await setImageFormData(
+          [{ target_id: target_idx, files: exposure_images }],
+          'accommodation',
+        );
+
+        const upload_res = await fetchFileApi('/upload/image', exposure_image_data);
+
+        console.log(delete_res);
+        console.log(upload_res);
+        if (delete_res == 200 && upload_res.length > 0) {
+          modal_alert.openModalAlert('대표 이미지 수정이 완료되었습니다.');
+        } else {
+          modal_alert.openModalAlert('오류로 인해 수정이 실패되었습니다.');
+        }
+        getTableItems();
+        modal_upload.closeModalUpload();
+      } else {
+        setAddRoomContents({ ...addRoomContents, upload_idx: target_idx });
       }
-
-      const exposure_image_data = await setImageFormData(
-        [{ target_id: accommodation_id, files: exposure_images }],
-        'accommodation',
-      );
-
-      const upload_res = await fetchFileApi('/upload/image', exposure_image_data);
-
-      // console.log(delete_res);
-      // console.log(upload_res);
-      console.log(exposure_image_data);
     }
   };
 
@@ -134,6 +171,10 @@ const ManageAccommodationInfo = (props: { list: AccommodationListType; style: { 
     }
   };
 
+  const addRoom = (rooms: AddRoomContentsType[]) => {
+    console.log(rooms);
+  };
+
   const getTableItems = async (list?: AccommodationListType) => {
     let count = 0;
     let rows = [];
@@ -180,6 +221,13 @@ const ManageAccommodationInfo = (props: { list: AccommodationListType; style: { 
       <Table contents={infoContents} />
       <ModalUpload onUpload={updateExposureImages} />
       <ModalEdit onChange={(value: string | number) => editContents(value)} />
+      <ModalAddRoom
+        visible={addRoomContents.visible}
+        rooms_num={addRoomContents.rooms_num}
+        upload_idx={addRoomContents.upload_idx}
+        onClose={() => setAddRoomContents({ visible: false, rooms_num: 0, upload_idx: null })}
+        onAddRoom={addRoom}
+      />
       <ModalPostcodeForm
         visible={postcodeVisible}
         onClose={() => setPostcodeVisible(false)}

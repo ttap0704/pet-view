@@ -111,7 +111,6 @@ const ImageBox = (props: ImageBoxProps) => {
         src = `http://localhost:3080/image/${type}/${image_list[curNum].src}`;
       }
     }
-    console.log(src);
 
     return src;
   };

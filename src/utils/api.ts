@@ -42,7 +42,7 @@ export const fetchDeleteApi = async function (uri: string) {
   let response = await fetch(servername + uri, {
     method: 'DELETE'
   });
-  return response;
+  return response.status;
 };
 
 // Fetch PATCH
