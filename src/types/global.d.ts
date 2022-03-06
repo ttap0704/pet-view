@@ -84,3 +84,20 @@ interface AccommodationListType {
     zonecode: string;
   }[];
 }
+
+interface CreateAccommodationResponse {
+  accommodation_id: number;
+  rooms: CreateRoomsResponse[];
+}
+
+interface CreateRoomsResponse {
+  accommodation_id: number;
+  createdAt: string;
+  id: number;
+  label: string;
+  maximum_num: string;
+  price: string;
+  seq: number;
+  standard_num: string;
+  updatedAt: string;
+}

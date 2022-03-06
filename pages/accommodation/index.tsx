@@ -16,6 +16,7 @@ interface AccommodationList {
   id: number;
   label: string;
   sigungu: string;
+  image_list: ImageListType[];
 }
 
 const AccommodationContainer = styled(Box)(({ theme }) => ({
@@ -33,7 +34,7 @@ const ListBox = styled(Box)(({ theme }) => ({
 const AccommodationIndex = (props: { list: AccommodationList[]; style: { [key: string]: string } }) => {
   const [list, setList] = useState<AccommodationList[]>([]);
   useEffect(() => {
-    setList([...props.list]);
+    setList(props.list);
   }, []);
 
   const test = (date: Date, type: string) => {
@@ -46,7 +47,7 @@ const AccommodationIndex = (props: { list: AccommodationList[]; style: { [key: s
         {list.map((item, index) => {
           return (
             <ListBox key={`accommodation_list_${index}`}>
-              <ImageBox imageList={setImageArray(item.accommodation_images)} type='accommodation' slide={false} />
+              <ImageBox imageList={item.image_list} type='accommodation' slide={false} />
               <LabelList title={item.label} subtitle={item.bname} />
             </ListBox>
           );
@@ -58,11 +59,19 @@ const AccommodationIndex = (props: { list: AccommodationList[]; style: { [key: s
 };
 
 export const getStaticProps: GetStaticProps = async () => {
-  const data: AccommodationList = await fetchGetApi(`/accommodation`);
+  const data: AccommodationList[] = await fetchGetApi(`/accommodation`);
+
+  const list: AccommodationList[] = [];
+  for await (const item of data) {
+    list.push({
+      ...item,
+      image_list: await setImageArray(item.accommodation_images),
+    });
+  }
 
   return {
     props: {
-      list: data,
+      list: list,
     },
   };
 };

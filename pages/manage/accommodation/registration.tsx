@@ -20,21 +20,6 @@ import InputOutlined from '../../../src/components/input/InputOutlined';
 
 import ModalUpload from '../../../src/components/modal/ModalUpload';
 
-interface CreateAccommodationResponse {
-  accommodation_id: number;
-  rooms: {
-    accommodation_id: number;
-    createdAt: string;
-    id: number;
-    label: string;
-    maximum_num: string;
-    price: string;
-    seq: number;
-    standard_num: string;
-    updatedAt: string;
-  }[];
-}
-
 const ManageAccommodationRegistration = () => {
   const { modal_upload, modal_confirm } = useContext(ModalContext);
 

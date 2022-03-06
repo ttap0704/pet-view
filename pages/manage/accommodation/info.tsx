@@ -1,7 +1,7 @@
 import { GetServerSideProps, GetStaticProps } from 'next';
 import { useEffect, useState, useContext } from 'react';
 
-import { fetchGetApi, fetchPatchApi, fetchDeleteApi, fetchFileApi } from '../../../src/utils/api';
+import { fetchGetApi, fetchPatchApi, fetchDeleteApi, fetchFileApi, fetchPostApi } from '../../../src/utils/api';
 import { getDate, setImageArray, setImageFormData } from '../../../src/utils/tools';
 import { accommodation_info } from '../../../src/utils/manage_items';
 
@@ -171,8 +171,50 @@ const ManageAccommodationInfo = (props: { list: AccommodationListType; style: { 
     }
   };
 
-  const addRoom = (rooms: AddRoomContentsType[]) => {
-    console.log(rooms);
+  const addRoom = async (rooms: AddRoomContentsType[]) => {
+    const target = data.table_items.find(item => item.checked);
+
+    if (target) {
+      const add_room_data = rooms.map(room => {
+        return {
+          label: room.label,
+          standard_num: room.standard_num,
+          maximum_num: room.maximum_num,
+          price: Number(room.price),
+          accommodation_id: target.id,
+        };
+      });
+
+      let rooms_payload = [];
+      const res_rooms: CreateRoomsResponse[] = await fetchPostApi(
+        `/manager/1/accommodation/${target.id}/rooms`,
+        add_room_data,
+      );
+      for (const room of rooms) {
+        const target_room = res_rooms.find(room_item => room_item.label == room.label);
+        let room_images = [];
+        for (const room_item of room.image_list) {
+          if (room_item.file) room_images.push(room_item.file);
+        }
+        if (target_room) {
+          rooms_payload.push({ target_id: target_room.id, files: room_images });
+        }
+      }
+
+      const rooms_image_data = await setImageFormData(rooms_payload, 'rooms', target.id);
+      const upload_rooms_response = await fetchFileApi('/upload/image', rooms_image_data);
+      if (res_rooms.length > 0 && upload_rooms_response.length > 0) {
+        modal_alert.openModalAlert('객실 등록이 완료되었습니다.');
+      } else {
+        modal_alert.openModalAlert('오류로 인해 객실 등록이 실패되었습니다.');
+      }
+      setAddRoomContents({
+        visible: false,
+        rooms_num: 0,
+        upload_idx: null,
+      });
+      getTableItems();
+    }
   };
 
   const getTableItems = async (list?: AccommodationListType) => {
