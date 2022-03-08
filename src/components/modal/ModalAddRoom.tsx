@@ -19,6 +19,7 @@ interface ModalAddRoomProps {
   upload_idx: null | number;
   onClose: () => void;
   onAddRoom: (data: AddRoomContentsType[]) => void;
+  onChangeImage: () => void;
 }
 
 const ModalAddRoomContentsBox = styled(Box)(({ theme }) => ({
@@ -41,6 +42,7 @@ function ModalAddRoom(props: ModalAddRoomProps) {
   const upload_idx = props.upload_idx;
   const onClose = props.onClose;
   const onAddRoom = props.onAddRoom;
+  const onChangeImage = props.onChangeImage;
 
   const [rooms, setRooms] = useState<AddRoomContentsType[]>([
     {
@@ -85,6 +87,7 @@ function ModalAddRoom(props: ModalAddRoomProps) {
     });
 
     modal_upload.closeModalUpload();
+    onChangeImage();
     setRooms([...tmp_rooms]);
   };
 

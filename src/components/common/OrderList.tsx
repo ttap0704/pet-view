@@ -5,14 +5,12 @@ import { styled } from '@mui/material/styles';
 import InputOutlined from '../input/InputOutlined';
 import { FaRegImage } from 'react-icons/fa';
 import { TiDelete } from 'react-icons/ti';
+import { RiCheckboxBlankCircleFill } from 'react-icons/ri';
 
 interface OrderListProps {
   type?: string;
-  data: {
-    label: string;
-    number: string;
-    origin: number;
-  }[];
+  delete: boolean;
+  data: OrderListDataType[];
   onClick: (idx: number) => void;
   onChange: (e: React.ChangeEvent<HTMLInputElement>, idx: number) => void;
   onComplete: (origin_idx: number) => void;
@@ -77,12 +75,13 @@ const ListLabelBox = styled(Box)(({ theme }) => ({
 function OrderList(props: OrderListProps) {
   const list = props.data;
   const type = props.type;
+  const del_mode = props.delete;
   const onClick = props.onClick;
   const onChange = props.onChange;
   const onComplete = props.onComplete;
   const onDeleteList = props.onDeleteList;
 
-  const icon = type == 'image' ? <FaRegImage /> : null;
+  const icon = type == 'image' ? <FaRegImage /> : <RiCheckboxBlankCircleFill />;
 
   const setInputBlur = (idx: number) => {
     const el = document.getElementById(`order_list_input_${idx}`);
@@ -94,7 +93,11 @@ function OrderList(props: OrderListProps) {
       {list && list.length > 0 ? (
         list.map((item, idx) => {
           return (
-            <ListItem key={`order_list_item_${idx}`} onClick={() => onClick(idx)} sx={{ cursor: 'pointer' }}>
+            <ListItem
+              key={`order_list_item_${idx}`}
+              onClick={() => onClick(idx)}
+              sx={{ cursor: type == 'image' ? 'pounter' : 'initial' }}
+            >
               {icon != null ? (
                 <ListIconBox>
                   <ListItemIcon>{icon}</ListItemIcon>
@@ -123,9 +126,11 @@ function OrderList(props: OrderListProps) {
               )}
               <ListLabelBox>
                 <Typography>{item.label}</Typography>
-                <IconButton onClick={() => onDeleteList(item.origin, idx)}>
-                  <TiDelete />
-                </IconButton>
+                {del_mode ? (
+                  <IconButton onClick={() => onDeleteList(item.origin, idx)}>
+                    <TiDelete />
+                  </IconButton>
+                ) : null}
               </ListLabelBox>
             </ListItem>
           );

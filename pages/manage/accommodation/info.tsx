@@ -8,6 +8,7 @@ import { accommodation_info } from '../../../src/utils/manage_items';
 import ModalEdit from '../../../src/components/modal/ModalEdit';
 import ModalUpload from '../../../src/components/modal/ModalUpload';
 import ModalAddRoom from '../../../src/components/modal/ModalAddRoom';
+import Modalorder from '../../../src/components/modal/ModalOrder';
 import ModalPostcodeForm from '../../../src/components/modal/ModalPostcodeForm';
 import Table from '../../../src/components/table/Table';
 import { TableContext } from '../../../src/provider/TableProvider';
@@ -19,9 +20,15 @@ interface AddRoomContents {
   upload_idx: number | null;
 }
 
+interface orderContents {
+  visible: boolean;
+  list: OrderListDataType[];
+  title: string;
+}
+
 const ManageAccommodationInfo = (props: { list: AccommodationListType; style: { [key: string]: string } }) => {
   const { data } = useContext(TableContext);
-  const { modal_edit, modal_alert, modal_upload } = useContext(ModalContext);
+  const { modal_confirm, modal_edit, modal_alert, modal_upload } = useContext(ModalContext);
 
   const [postcodeVisible, setPostcodeVisible] = useState<boolean>(false);
   const [addRoomContents, setAddRoomContents] = useState<AddRoomContents>({
@@ -30,6 +37,11 @@ const ManageAccommodationInfo = (props: { list: AccommodationListType; style: { 
     upload_idx: null,
   });
   const [infoContents, setInfoContents] = useState<ChildrenDataType>(accommodation_info);
+  const [orderContents, setOrderContents] = useState<orderContents>({
+    visible: false,
+    list: [],
+    title: '',
+  });
 
   useEffect(() => {
     getTableItems(props.list);
@@ -37,7 +49,8 @@ const ManageAccommodationInfo = (props: { list: AccommodationListType; style: { 
 
   useEffect(() => {
     const target_idx = data.clicked_dropdown_idx;
-    if (target_idx != null && target_idx >= 0) {
+    const target = data.table_items.find(item => item.checked);
+    if (target && target_idx != null && target_idx >= 0) {
       if (target_idx == 0) {
         console.log(target_idx, '2');
         setAddRoomModalContents();
@@ -47,8 +60,13 @@ const ManageAccommodationInfo = (props: { list: AccommodationListType; style: { 
         setPostcodeVisible(true);
       } else if (target_idx == 4) {
         setUploadModal();
+      } else if (target_idx == 5) {
+        setOrderModalContents();
+      } else if (target_idx == 6) {
+        modal_confirm.openModalConfirm(`정말 [${target.label}] 업소를 삭제하시겠습니까?`, () =>
+          deleteAccommodation(target.id),
+        );
       }
-      console.log(data.clicked_dropdown_idx);
     }
   }, [data.clicked_dropdown_idx]);
 
@@ -64,6 +82,30 @@ const ManageAccommodationInfo = (props: { list: AccommodationListType; style: { 
       console.log(data.clicked_row_button_idx, data.clicked_row_button_key);
     }
   }, [data.clicked_row_button_idx, data.clicked_row_button_key]);
+
+  const deleteAccommodation = async (id: number) => {
+    const response = await fetchDeleteApi(`/manager/1/accommodation/${id}`);
+    if (response == 200) {
+      modal_alert.openModalAlert('삭제가 완료되었습니다.');
+    } else {
+      modal_alert.openModalAlert('오류로 인해 삭제가 실패되었습니다.');
+    }
+    getTableItems();
+  };
+
+  const setOrderModalContents = () => {
+    const target = data.table_items.find(item => item.checked);
+    if (target) {
+      const tmp_list: OrderListDataType[] = target.rooms.map((room: AccommodationRoomsResponse, room_idx: number) => {
+        return {
+          label: room.label,
+          origin: room_idx,
+          number: room_idx + 1,
+        };
+      });
+      setOrderContents({ visible: true, list: tmp_list, title: '객실 순서 변경' });
+    }
+  };
 
   const setUploadModal = async () => {
     const target = data.table_items.find(item => item.checked);
@@ -92,6 +134,8 @@ const ManageAccommodationInfo = (props: { list: AccommodationListType; style: { 
   const updateExposureImages = async () => {
     const target_idx = modal_upload.data.target_idx;
     const type = modal_upload.data.type;
+    console.log('여기');
+
     if (target_idx != null && target_idx >= 0) {
       if (type == 'accommodation') {
         let exposure_images = [];
@@ -258,10 +302,45 @@ const ManageAccommodationInfo = (props: { list: AccommodationListType; style: { 
     });
   };
 
+  const completeChangeOrder = async (list: OrderListDataType[]) => {
+    const target = data.table_items.find(item => item.checked);
+    if (target) {
+      const rooms = target.rooms;
+      const change_data = [];
+      for (const data of list) {
+        const cur_room = rooms.find((item: AccommodationRoomsResponse) => item.label == data.label);
+        if (cur_room) {
+          change_data.push({
+            id: cur_room.id,
+            seq: Number(data.number) - 1,
+          });
+        }
+      }
+
+      const response = await fetchPostApi(`/manager/1/accommodation/${target.id}/rooms/order`, change_data);
+      if (response) {
+        getTableItems();
+        setOrderContents({ visible: false, title: '', list: [] });
+        modal_alert.openModalAlert('객실 순서가 변경되었습니다.');
+      } else {
+        modal_alert.openModalAlert('오류로 인해 실패되었습니다.');
+      }
+    } else {
+      modal_alert.openModalAlert('오류로 인해 실패되었습니다.');
+    }
+  };
+
   return (
     <>
       <Table contents={infoContents} />
       <ModalUpload onUpload={updateExposureImages} />
+      <Modalorder
+        visible={orderContents.visible}
+        title={orderContents.title}
+        list={orderContents.list}
+        onClose={() => setOrderContents({ visible: false, title: '', list: [] })}
+        onChange={(list: OrderListDataType[]) => completeChangeOrder(list)}
+      />
       <ModalEdit onChange={(value: string | number) => editContents(value)} />
       <ModalAddRoom
         visible={addRoomContents.visible}
@@ -269,6 +348,7 @@ const ManageAccommodationInfo = (props: { list: AccommodationListType; style: { 
         upload_idx={addRoomContents.upload_idx}
         onClose={() => setAddRoomContents({ visible: false, rooms_num: 0, upload_idx: null })}
         onAddRoom={addRoom}
+        onChangeImage={() => setAddRoomContents({ ...addRoomContents, upload_idx: null })}
       />
       <ModalPostcodeForm
         visible={postcodeVisible}

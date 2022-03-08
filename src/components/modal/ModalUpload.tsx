@@ -168,6 +168,7 @@ function ModalUpload(props: ModalUploadProps) {
             </UtilBox>
             <OrderList
               data={orderList}
+              delete={true}
               type='image'
               onClick={(idx: number) => modal_upload.setCurNum(idx)}
               onChange={setImageOrder}

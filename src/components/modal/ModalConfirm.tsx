@@ -10,7 +10,7 @@ import Button from '../button/Button';
 
 const ModalConfirmBox = styled(Box)(({ theme }) => ({
   fontSize: '0.9rem',
-  width: '25rem',
+  width: '27.5rem',
   height: 'auto',
   backgroundColor: theme.palette.white.main,
   display: 'flex',
@@ -23,9 +23,10 @@ const ModalConfirmBox = styled(Box)(({ theme }) => ({
 const ModalConfirmTitleBox = styled(Box)(({ theme }) => ({
   fontSize: '0.9rem',
   width: '100%',
-  height: '5rem',
+  height: '7rem',
   color: theme.palette.black.main,
   display: 'flex',
+  flexDirection: 'column',
   alignItems: 'center',
   justifyContent: 'center',
 }));
@@ -37,6 +38,11 @@ const ModalConfirmButtonBox = styled(Box)(({ theme }) => ({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
+}));
+
+const NoticeTypography = styled(Typography)(({ theme }) => ({
+  fontSize: '0.9rem',
+  color: theme.palette.orange.main,
 }));
 
 function ModalConfirm() {
@@ -53,6 +59,9 @@ function ModalConfirm() {
         <ModalConfirmBox>
           <ModalConfirmTitleBox>
             <Typography>{modal_confirm.data.title}</Typography>
+            {modal_confirm.data.title.indexOf('삭제') ? (
+              <NoticeTypography sx={{ fontSize: '0.9rem' }}>(삭제된 데이터는 복구되지 않습니다.)</NoticeTypography>
+            ) : null}
           </ModalConfirmTitleBox>
           <ModalConfirmButtonBox>
             <Button className='fill' onClick={modal_confirm.checkModalConfirm}>
