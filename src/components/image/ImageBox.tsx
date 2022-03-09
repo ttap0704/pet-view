@@ -60,7 +60,7 @@ const ImageBox = (props: ImageBoxProps) => {
         maxWidth: '42rem',
         height: '21rem',
       });
-    } else if (type == 'room') {
+    } else if (type == 'rooms') {
       setBoxStyle({
         width: '100%',
         maxWidth: '23rem',

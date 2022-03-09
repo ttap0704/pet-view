@@ -88,7 +88,7 @@ function FormAddRoom(props: FormAddRoomProps) {
   ];
 
   const uploadRoomImage = () => {
-    modal_upload.openModalUpload('객실 이미지 업로드', 'room', image_list, room_idx);
+    modal_upload.openModalUpload('객실 이미지 업로드', 'rooms', image_list, room_idx);
   };
 
   return (

@@ -42,6 +42,7 @@ interface ModalEditDataType {
   type: 'input' | 'textarea';
   format?: string;
   read_only?: boolean;
+  end_adornment?: string;
 }
 
 interface ModalControllerType {
@@ -78,6 +79,7 @@ interface ModalControllerType {
       type: 'input' | 'textarea',
       read_only?: boolean,
       format?: string,
+      end_adornment?: string,
     ) => void;
   };
 }
@@ -160,6 +162,7 @@ export const ModalContext = createContext<ModalControllerType>({
       value: '',
       format: '',
       read_only: false,
+      end_adornment: '',
     },
     closeModalEdit: () => {
       return;
@@ -171,6 +174,7 @@ export const ModalContext = createContext<ModalControllerType>({
       type: 'input' | 'textarea',
       read_only?: boolean,
       format?: string,
+      end_adornment?: string,
     ) => {
       return;
     },
@@ -224,6 +228,7 @@ function ModalProvider(props: { children: React.ReactNode }) {
     type: 'input',
     format: '',
     read_only: false,
+    end_adornment: '',
   });
 
   // 모달 컨트롤러
@@ -352,6 +357,7 @@ function ModalProvider(props: { children: React.ReactNode }) {
           value: '',
           type: 'input',
           format: '',
+          end_adornment: '',
         });
       },
       openModalEdit: (
@@ -361,6 +367,7 @@ function ModalProvider(props: { children: React.ReactNode }) {
         type: 'input' | 'textarea',
         read_only?: boolean,
         format?: string,
+        end_adornment?: string,
       ) => {
         setModalEditData(state => {
           return {
@@ -371,6 +378,7 @@ function ModalProvider(props: { children: React.ReactNode }) {
             type: type,
             read_only: read_only ? read_only : false,
             format: format ? format : '',
+            end_adornment: end_adornment ? end_adornment : '',
           };
         });
       },

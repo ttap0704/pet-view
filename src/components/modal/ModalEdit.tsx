@@ -33,7 +33,7 @@ const ModalEditContentsBox = styled(Box)(({ theme }) => ({
 function ModalEdit(props: ModalEditProps) {
   const onChange = props.onChange;
 
-  const { modal_edit, modal_confirm } = useContext(ModalContext);
+  const { modal_edit, modal_confirm, modal_alert } = useContext(ModalContext);
   const [newValue, setNewValue] = useState<string | number>('');
 
   useEffect(() => {
@@ -43,6 +43,18 @@ function ModalEdit(props: ModalEditProps) {
   const completeEdit = () => {
     modal_edit.closeModalEdit();
     onChange(newValue);
+  };
+
+  const handleInput = (value: string | number) => {
+    if (modal_edit.data.target == 'price') {
+      const tmp_value = Number(`${value}`.replace(/\,/g, '')).toLocaleString();
+      if (tmp_value == 'NaN') {
+        modal_alert.openModalAlert('숫자만 입력해주세요.');
+        return;
+      }
+      value = tmp_value;
+    }
+    setNewValue(`${value}`);
   };
 
   return (
@@ -55,7 +67,8 @@ function ModalEdit(props: ModalEditProps) {
               <InputOutlined
                 readOnly={modal_edit.data.read_only}
                 value={newValue}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNewValue(e.target.value)}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleInput(e.target.value)}
+                endAdornment={modal_edit.data.end_adornment ? modal_edit.data.end_adornment : null}
               />
             ) : (
               <Textarea

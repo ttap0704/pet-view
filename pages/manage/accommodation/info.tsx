@@ -134,7 +134,6 @@ const ManageAccommodationInfo = (props: { list: AccommodationListType; style: { 
   const updateExposureImages = async () => {
     const target_idx = modal_upload.data.target_idx;
     const type = modal_upload.data.type;
-    console.log('여기');
 
     if (target_idx != null && target_idx >= 0) {
       if (type == 'accommodation') {

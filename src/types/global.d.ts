@@ -47,8 +47,13 @@ interface AccommodationListType {
   rows: AccommodationResponse[];
 }
 
+interface AccommodationRoomsListType {
+  count: number;
+  rows: AccommodationRoomsResponse[];
+}
+
 interface AccommodationResponse {
-  accommodation_images: AccommodationImagesResponse[];
+  accommodation_images: ImageResponse[];
   accommodation_rooms: AccommodationRoomsResponse[];
   bname: string;
   building_name: string;
@@ -64,7 +69,7 @@ interface AccommodationResponse {
   updatedAt: string;
   zonecode: string;
 }
-interface AccommodationImagesResponse {
+interface ImageResponse {
   accommodation_id: number;
   category: number;
   exposure_menu_id: null;
@@ -76,7 +81,8 @@ interface AccommodationImagesResponse {
 }
 
 interface AccommodationRoomsResponse {
-  accommodation_id: 1;
+  accommodation_id: number;
+  accommodation_label: string;
   additional_info: null | string;
   amenities: null | string;
   createdAt: string;
@@ -88,6 +94,7 @@ interface AccommodationRoomsResponse {
   seq: number;
   standard_num: number;
   updatedAt: string;
+  rooms_images: ImageResponse[];
 }
 
 interface CreateAccommodationResponse {

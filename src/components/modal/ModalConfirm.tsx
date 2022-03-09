@@ -59,7 +59,7 @@ function ModalConfirm() {
         <ModalConfirmBox>
           <ModalConfirmTitleBox>
             <Typography>{modal_confirm.data.title}</Typography>
-            {modal_confirm.data.title.indexOf('삭제') ? (
+            {modal_confirm.data.title.indexOf('삭제') >= 0 ? (
               <NoticeTypography sx={{ fontSize: '0.9rem' }}>(삭제된 데이터는 복구되지 않습니다.)</NoticeTypography>
             ) : null}
           </ModalConfirmTitleBox>

@@ -96,7 +96,7 @@ function OrderList(props: OrderListProps) {
             <ListItem
               key={`order_list_item_${idx}`}
               onClick={() => onClick(idx)}
-              sx={{ cursor: type == 'image' ? 'pounter' : 'initial' }}
+              sx={{ cursor: type == 'image' ? 'pointer' : 'initial' }}
             >
               {icon != null ? (
                 <ListIconBox>

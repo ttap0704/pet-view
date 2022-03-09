@@ -129,16 +129,21 @@ function TableProvider(props: { children: React.ReactNode }) {
       });
     },
     setTableContents: (contents: ChildrenDataType) => {
-      const max = Math.ceil(contents.rows_length / 5);
+      const per_page = tableData.per_page;
+      const max = Math.ceil(tableData.rows_length / 5);
+
       let left = false;
       let right = false;
 
-      if (max == 1) {
-        left = true;
-        right = true;
-      } else {
+      if (per_page == 1) {
         left = true;
         right = false;
+      } else if (per_page > 1 && per_page < max) {
+        left = false;
+        right = false;
+      } else if (per_page == max) {
+        left = false;
+        right = true;
       }
 
       setTableData({
@@ -174,35 +179,23 @@ function TableProvider(props: { children: React.ReactNode }) {
       const max = Math.ceil(tableData.rows_length / 5);
 
       let page = 0;
-      let left = false;
-      let right = true;
       if (dir == 'left') {
         if (per_page == 2) {
           page = 1;
-          left = true;
-          right = false;
         } else if (per_page > 2) {
           page = per_page - 1;
-          right = false;
-          left = false;
         }
       } else if (dir == 'right') {
         if (per_page == max - 1) {
           page = max;
-          left = false;
-          right = true;
         } else if (per_page < max) {
           page = per_page + 1;
-          right = false;
-          left = false;
         }
       }
 
       setTableData({
         ...tableData,
         per_page: page,
-        left,
-        right,
       });
     },
     setChecked: (idx: number, event_type: string, e?: React.ChangeEvent<HTMLInputElement>) => {
