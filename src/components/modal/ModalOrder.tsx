@@ -8,7 +8,7 @@ import ContainerModalContents from '../container/ContainerModalContents';
 import ModalDefault from './ModalDefault';
 import LabelModal from '../label/LabelModal';
 import { ModalContext } from '../../provider/ModalProvider';
-import OrderList from '../common/OrderList';
+import OrderList from '../list/ListOrder';
 import UtilBox from '../common/UtilBox';
 import Button from '../button/Button';
 

@@ -54,7 +54,7 @@ const ImageBox = (props: ImageBoxProps) => {
   });
 
   useEffect(() => {
-    if (type == 'accommodation') {
+    if (['accommodation', 'restaurant'].includes(type)) {
       setBoxStyle({
         width: '100%',
         maxWidth: '42rem',
@@ -64,6 +64,12 @@ const ImageBox = (props: ImageBoxProps) => {
       setBoxStyle({
         width: '100%',
         maxWidth: '23rem',
+        height: '15rem',
+      });
+    } else if (type == 'exposure_menu') {
+      setBoxStyle({
+        width: '100%',
+        maxWidth: '15rem',
         height: '15rem',
       });
     }

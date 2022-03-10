@@ -80,6 +80,32 @@ const ManageSideMenu = () => {
       ],
       path: null,
     },
+    restaurant: {
+      label: '매장 관리',
+      children: [
+        {
+          label: '음식점 등록',
+          path: '/manage/restaurant/registration',
+        },
+        {
+          label: '음식점 관리',
+          path: '/manage/restaurant/info',
+        },
+        {
+          label: '카테고리 관리',
+          path: '/manage/restaurant/room',
+        },
+        {
+          label: '대표메뉴 관리',
+          path: '/manage/restaurant/room',
+        },
+        {
+          label: '전체메뉴 관리',
+          path: '/manage/restaurant/room',
+        },
+      ],
+      path: null,
+    },
   };
 
   const setTreeItems = () => {

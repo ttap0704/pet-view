@@ -2,15 +2,22 @@ interface ImageListType {
   new: boolean;
   src: string;
   origin: number;
-  file: File | null
+  file: File | null;
 }
 
 interface AddRoomContentsType {
-  label: string
-  price: string
-  standard_num: string
-  maximum_num: string
-  image_list: ImageListType[],
+  label: string;
+  price: string;
+  standard_num: string;
+  maximum_num: string;
+  image_list: ImageListType[];
+}
+
+interface AddExposureMenuContentsType {
+  label: string;
+  price: string;
+  comment: string;
+  image_list: ImageListType[];
 }
 
 interface ResponsePostcodeDataType {

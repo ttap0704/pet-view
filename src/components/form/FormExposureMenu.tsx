@@ -6,14 +6,16 @@ import { styled } from '@mui/material/styles';
 
 import InputOutlined from '../input/InputOutlined';
 import UtilBox from '../common/UtilBox';
-import ButtonUpload from '../button/ButtonUpload';
+import ButtonFileInput from '../button/ButtonFileInput';
 import ImageBox from '../image/ImageBox';
 import { ModalContext } from '../../provider/ModalProvider';
+import { setFileToImage } from '../../../src/utils/tools';
 
-interface FormAddRoomProps {
-  onChange: (e: React.ChangeEvent<HTMLInputElement>, type: string) => void;
+interface FormExposureMenuProps {
   imageList: ImageListType[];
-  room_idx: number;
+  onInputClick: () => void;
+  onChangeImage: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>, type: string) => void;
 }
 
 const FormContainer = styled(Box)(({ theme }) => ({
@@ -31,7 +33,7 @@ const FormContainer = styled(Box)(({ theme }) => ({
 }));
 
 const RoomImageContainer = styled(Box)(({ theme }) => ({
-  width: '23rem',
+  width: '15rem',
   height: '15rem',
   display: 'flex',
   alignItems: 'center',
@@ -39,7 +41,7 @@ const RoomImageContainer = styled(Box)(({ theme }) => ({
 }));
 
 const FormItemContainer = styled(Box)(({ theme }) => ({
-  width: 'calc(100% - 25rem)',
+  width: 'calc(100% - 17rem)',
   height: 'auto',
   display: 'flex',
   flexDirection: 'column',
@@ -57,16 +59,17 @@ const FormItem = styled(Box)(({ theme }) => ({
   gap: '2rem',
 }));
 
-function FormAddRoom(props: FormAddRoomProps) {
-  const { modal_upload } = useContext(ModalContext);
+function FormExposureMenu(props: FormExposureMenuProps) {
+  // const { modal_upload } = useContext(ModalContext);
 
-  const onChange = props.onChange;
   const image_list = props.imageList;
-  const room_idx = props.room_idx;
+  const onChange = props.onChange;
+  const onChangeImage = props.onChangeImage;
+  const onInputClick = props.onInputClick;
 
-  const add_room_contents = [
+  const exposure_menu_contents = [
     {
-      title: '객실명',
+      title: '이름',
       key: 'label',
       format: '',
     },
@@ -76,30 +79,21 @@ function FormAddRoom(props: FormAddRoomProps) {
       format: '원',
     },
     {
-      title: '기준인원',
-      key: 'standard_num',
-      format: '명',
-    },
-    {
-      title: '최대인원',
-      key: 'maximum_num',
-      format: '명',
+      title: '한 줄 설명',
+      key: 'comment',
+      format: '',
     },
   ];
-
-  const uploadRoomImage = () => {
-    modal_upload.openModalUpload('객실 이미지 업로드', 'rooms', image_list, room_idx);
-  };
 
   return (
     <FormContainer>
       <RoomImageContainer>
-        <ImageBox type='rooms' imageList={image_list} slide={true} />
+        <ImageBox type='exposure_menu' imageList={image_list} slide={false} />
       </RoomImageContainer>
       <FormItemContainer>
-        {add_room_contents.map((item, idx) => {
+        {exposure_menu_contents.map((item, idx) => {
           return (
-            <FormItem key={`form_add_room_item_${idx}`}>
+            <FormItem key={`form_exposure_menu_${idx}`}>
               <Typography sx={{ fontWeight: 'bold' }}>{item.title}</Typography>
               <InputOutlined
                 align='right'
@@ -112,10 +106,15 @@ function FormAddRoom(props: FormAddRoomProps) {
         })}
       </FormItemContainer>
       <UtilBox justifyContent='flex-start'>
-        <ButtonUpload title='객실 이미지 등록' onClick={uploadRoomImage} />
+        <ButtonFileInput
+          title='대표메뉴 이미지 등록'
+          onClick={() => onInputClick()}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => onChangeImage(e)}
+          multiple={false}
+        />
       </UtilBox>
     </FormContainer>
   );
 }
 
-export default FormAddRoom;
+export default FormExposureMenu;

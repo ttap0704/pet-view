@@ -8,7 +8,7 @@ import ModalDefault from './ModalDefault';
 import LabelModal from '../label/LabelModal';
 import { ModalContext } from '../../provider/ModalProvider';
 import ImageBox from '../image/ImageBox';
-import OrderList from '../common/OrderList';
+import OrderList from '../list/ListOrder';
 import ButtonFileInput from '../button/ButtonFileInput';
 
 import { setFileToImage } from '../../utils/tools';
