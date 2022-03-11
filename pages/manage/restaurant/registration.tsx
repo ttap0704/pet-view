@@ -49,8 +49,8 @@ const ManageRestaurantRegistration = () => {
 
   const [entireMenu, setEntireMenu] = useState([
     {
-      category: '21321321',
-      menu: [{ label: '123', price: '', comment: '' }],
+      category: '',
+      menu: [{ label: '', price: '' }],
     },
   ]);
 
@@ -87,6 +87,91 @@ const ManageRestaurantRegistration = () => {
         image_list: [],
       },
     ]);
+  };
+
+  const addCategory = () => {
+    setEntireMenu([
+      ...entireMenu,
+      {
+        category: '',
+        menu: [{ label: '', price: '' }],
+      },
+    ]);
+  };
+
+  const addMenu = (idx: number) => {
+    console.log(idx);
+    setEntireMenu(state => {
+      return [
+        ...state.map((item, item_idx) => {
+          if (idx == item_idx) {
+            return {
+              ...item,
+              menu: [
+                ...item.menu,
+                {
+                  label: '',
+                  price: '',
+                },
+              ],
+            };
+          } else {
+            return item;
+          }
+        }),
+      ];
+    });
+  };
+
+  const deleteMenu = (idx: number, children_idx: number | undefined) => {
+    const tmp_entire_menu = [...entireMenu];
+    if (children_idx == undefined) {
+      tmp_entire_menu.splice(idx, 1);
+    } else if (children_idx != undefined) {
+      tmp_entire_menu[idx].menu.splice(children_idx, 1);
+    }
+    setEntireMenu([...tmp_entire_menu]);
+  };
+
+  const handleEntireMenuInput = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    type: string,
+    idx: number,
+    children: string | undefined,
+    children_idx: number | undefined,
+  ) => {
+    const value = e.target.value;
+    const tmp_entire_menu = [
+      ...entireMenu.map((item, item_idx) => {
+        if (idx == item_idx) {
+          if (!children && !children_idx) {
+            return {
+              ...item,
+              category: value,
+            };
+          } else {
+            return {
+              ...item,
+              menu: [
+                ...item.menu.map((menu, menu_idx) => {
+                  if (children_idx == menu_idx) {
+                    return {
+                      ...menu,
+                      [`${children}`]: value,
+                    };
+                  } else {
+                    return menu;
+                  }
+                }),
+              ],
+            };
+          }
+        } else {
+          return item;
+        }
+      }),
+    ];
+    setEntireMenu(tmp_entire_menu);
   };
 
   const setExposureMenuImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -215,7 +300,23 @@ const ManageRestaurantRegistration = () => {
         </UtilBox>
       </ContainerRegistrationItem>
       <ContainerRegistrationItem title='전체메뉴 등록'>
-        <ListEntireMenu entireMenu={entireMenu} />
+        <ListEntireMenu
+          entireMenu={entireMenu}
+          onChange={(
+            e: React.ChangeEvent<HTMLInputElement>,
+            type: string,
+            idx: number,
+            children_type?: string,
+            children_idx?: number,
+          ) => handleEntireMenuInput(e, type, idx, children_type, children_idx)}
+          onAddMenu={addMenu}
+          onDeleteMenu={deleteMenu}
+        />
+        <UtilBox justifyContent='flex-end' sx={{ marginTop: '1rem' }}>
+          <Button color='blue' onClick={addCategory}>
+            카테고리 추가
+          </Button>
+        </UtilBox>
       </ContainerRegistrationItem>
 
       <ModalUpload onUpload={setPrevieImages} />

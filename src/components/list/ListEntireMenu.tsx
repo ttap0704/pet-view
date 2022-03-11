@@ -1,14 +1,12 @@
 import Link from 'next/link';
 import * as React from 'react';
 import { styled } from '@mui/material/styles';
-import Box from '@mui/material/Box';
-import TreeView from '@mui/lab/TreeView';
-import TreeItem, { TreeItemProps, treeItemClasses } from '@mui/lab/TreeItem';
-import Typography from '@mui/material/Typography';
+import { Box, IconButton } from '@mui/material';
 
 import { FaChevronDown, FaChevronRight } from 'react-icons/fa';
 import { SvgIconProps } from '@mui/material/SvgIcon';
-import { Divider } from '@mui/material';
+import { RiCloseCircleFill } from 'react-icons/ri';
+import { HiOutlinePlusCircle } from 'react-icons/hi';
 
 import InputOutlined from '../input/InputOutlined';
 
@@ -18,16 +16,17 @@ interface ListEntireMenuProps {
     menu: {
       label: string;
       price: string;
-      comment: string;
     }[];
   }[];
-}
-
-declare module 'react' {
-  interface CSSProperties {
-    '--tree-view-color'?: string;
-    '--tree-view-bg-color'?: string;
-  }
+  onChange: (
+    e: React.ChangeEvent<HTMLInputElement>,
+    type: string,
+    idx: number,
+    children_type?: string,
+    children_idx?: number,
+  ) => void;
+  onAddMenu: (idx: number) => void;
+  onDeleteMenu: (idx: number, children?: number) => void;
 }
 
 const MenuBox = styled(Box)(({ theme }) => ({
@@ -35,53 +34,117 @@ const MenuBox = styled(Box)(({ theme }) => ({
   height: 'auto',
   display: 'flex',
   flexDirection: 'column',
-  gap: '2rem',
-  borderColor: theme.palette.gray_2.main,
-}));
+  borderRadius: 6,
+  overflow: 'hidden',
 
-const CustomTreeItem = styled(TreeItem)(({ theme }) => ({
-  '.MuiTreeItem-content': {
-    height: '3rem',
-    '.MuiTreeItem-iconContainer': {
-      svg: {
-        width: '0.75rem',
-        height: '0.75rem',
-      },
-    },
-    '.MuiTreeItem-label': {
-      fontSize: '1rem',
-    },
+  '& > div:not(:last-of-type)': {
+    borderBottom: 0,
   },
 }));
 
-const ListEntireMenu = (prosp: ListEntireMenuProps) => {
-  const entire_menu = prosp.entireMenu;
+const ListParentBox = styled(Box)(({ theme }) => ({
+  width: '100%',
+  minHeight: '3rem',
+  backgroundColor: theme.palette.gray_6.main,
+  border: '1px solid',
+  borderColor: theme.palette.gray_5.main,
+  display: 'flex',
+  flexDirection: 'column',
+  justifyContent: 'space-between',
+  alignItems: 'center',
+}));
 
-  console.log(entire_menu);
+const ListChildrenBox = styled(Box)(({ theme }) => ({
+  width: '100%',
+  minHeight: '3rem',
+  backgroundColor: theme.palette.white.main,
+  display: 'flex',
+  justifyContent: 'space-between',
+  alignItems: 'center',
+  padding: '0 0 0 1.5rem',
+}));
+
+const ContentsBox = styled(Box)(({ theme }) => ({
+  width: '100%',
+  height: '3rem',
+  display: 'flex',
+  justifyContent: 'space-between',
+  alignItems: 'center',
+}));
+
+const CustomIconButton = styled(IconButton)(({ theme }) => ({
+  width: '2.125rem',
+  height: '2.125rem',
+  svg: {
+    width: '100%',
+    height: '100%',
+  },
+}));
+
+const ListEntireMenu = (props: ListEntireMenuProps) => {
+  const entire_menu = props.entireMenu;
+  const onChange = props.onChange;
+  const onAddMenu = props.onAddMenu;
+  const onDeleteMenu = props.onDeleteMenu;
 
   return (
     <MenuBox>
-      <TreeView defaultCollapseIcon={<FaChevronDown />} defaultExpandIcon={<FaChevronRight />}>
-        {entire_menu.map((category, category_idx) => {
-          return (
-            <CustomTreeItem
-              key={`tree_items_${category_idx}`}
-              nodeId={`tree_items_${category_idx}`}
-              label={category.category}
-            >
-              {category.menu.map((menu, menu_idx) => {
-                return (
-                  <CustomTreeItem
-                    key={`tree_items_${category_idx}_menu_${menu_idx}`}
-                    nodeId={`tree_items_${category_idx}_menu_${menu_idx}`}
-                    label={menu.label}
-                  ></CustomTreeItem>
-                );
-              })}
-            </CustomTreeItem>
-          );
-        })}
-      </TreeView>
+      {entire_menu.map((category, category_idx) => {
+        return (
+          <ListParentBox>
+            <ContentsBox>
+              <InputOutlined
+                value={category.category}
+                className='none'
+                height='2rem'
+                placeholder='카테고리를 입력해주세요.'
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => onChange(e, 'category', category_idx)}
+              />
+              <CustomIconButton>
+                <HiOutlinePlusCircle onClick={() => onAddMenu(category_idx)} />
+              </CustomIconButton>
+              <CustomIconButton onClick={() => onDeleteMenu(category_idx)}>
+                <RiCloseCircleFill />
+              </CustomIconButton>
+            </ContentsBox>
+            {category.menu.map((menu, menu_idx) => {
+              return (
+                <ListChildrenBox>
+                  <ContentsBox>
+                    <InputOutlined
+                      value={menu.label}
+                      className='none'
+                      width='40%'
+                      height='2rem'
+                      placeholder='메뉴를 입력해주세요.'
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                        onChange(e, 'menu', category_idx, 'label', menu_idx)
+                      }
+                    />
+                    <ContentsBox sx={{ width: '40%', justifyContent: 'flex-end' }}>
+                      <InputOutlined
+                        value={menu.price}
+                        className='none'
+                        width='70%'
+                        endAdornment='원'
+                        height='2rem'
+                        placeholder='가격을 입력해주세요.'
+                        align='right'
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                          onChange(e, 'menu', category_idx, 'price', menu_idx)
+                        }
+                      />
+                      <CustomIconButton onClick={() => onDeleteMenu(category_idx, menu_idx)}>
+                        <RiCloseCircleFill />
+                      </CustomIconButton>
+                    </ContentsBox>
+                  </ContentsBox>
+                </ListChildrenBox>
+              );
+            })}
+          </ListParentBox>
+        );
+      })}
     </MenuBox>
   );
 };

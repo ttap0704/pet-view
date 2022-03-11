@@ -15,7 +15,7 @@ const LayoutManageBox = styled(Box)(({ theme }) => ({
 const LayoutChildrenBox = styled(Box)(({ theme }) => ({
   width: '80vw',
   height: '100vh',
-  padding: '2rem 2rem 0',
+  padding: '2rem 2rem 5rem',
   overflowY: 'auto',
 }));
 

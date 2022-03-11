@@ -1,13 +1,14 @@
 import * as React from 'react';
 import { useContext, useEffect } from 'react';
 
-import { Box, Typography } from '@mui/material';
+import { Box, Typography, IconButton } from '@mui/material';
 import { styled } from '@mui/material/styles';
 
 import InputOutlined from '../input/InputOutlined';
 import UtilBox from '../common/UtilBox';
 import ButtonFileInput from '../button/ButtonFileInput';
 import ImageBox from '../image/ImageBox';
+import { RiCloseCircleFill } from 'react-icons/ri';
 import { ModalContext } from '../../provider/ModalProvider';
 import { setFileToImage } from '../../../src/utils/tools';
 
@@ -100,11 +101,16 @@ function FormExposureMenu(props: FormExposureMenuProps) {
                 width='70%'
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => onChange(e, item.key)}
                 endAdornment={item.format}
+                className='bottom'
+                height='2.5rem'
               />
             </FormItem>
           );
         })}
       </FormItemContainer>
+      {/* <IconButton>
+        <RiCloseCircleFill />
+      </IconButton> */}
       <UtilBox justifyContent='flex-start'>
         <ButtonFileInput
           title='대표메뉴 이미지 등록'
