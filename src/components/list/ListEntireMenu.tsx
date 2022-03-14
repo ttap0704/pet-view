@@ -91,7 +91,7 @@ const ListEntireMenu = (props: ListEntireMenuProps) => {
     <MenuBox>
       {entire_menu.map((category, category_idx) => {
         return (
-          <ListParentBox>
+          <ListParentBox key={`category_${category_idx}`}>
             <ContentsBox>
               <InputOutlined
                 value={category.category}
@@ -100,8 +100,8 @@ const ListEntireMenu = (props: ListEntireMenuProps) => {
                 placeholder='카테고리를 입력해주세요.'
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => onChange(e, 'category', category_idx)}
               />
-              <CustomIconButton>
-                <HiOutlinePlusCircle onClick={() => onAddMenu(category_idx)} />
+              <CustomIconButton onClick={() => onAddMenu(category_idx)}>
+                <HiOutlinePlusCircle />
               </CustomIconButton>
               <CustomIconButton onClick={() => onDeleteMenu(category_idx)}>
                 <RiCloseCircleFill />
@@ -109,7 +109,7 @@ const ListEntireMenu = (props: ListEntireMenuProps) => {
             </ContentsBox>
             {category.menu.map((menu, menu_idx) => {
               return (
-                <ListChildrenBox>
+                <ListChildrenBox key={`category_${category_idx}_menu_${menu_idx}`}>
                   <ContentsBox>
                     <InputOutlined
                       value={menu.label}

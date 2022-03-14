@@ -17,11 +17,13 @@ interface FormExposureMenuProps {
   onInputClick: () => void;
   onChangeImage: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onChange: (e: React.ChangeEvent<HTMLInputElement>, type: string) => void;
+  onDelete: () => void;
+  menuIdx: number;
 }
 
 const FormContainer = styled(Box)(({ theme }) => ({
   width: '100%',
-  height: '21rem',
+  height: '17rem',
   display: 'flex',
   flexWrap: 'wrap',
   justifyContent: 'space-between',
@@ -30,6 +32,7 @@ const FormContainer = styled(Box)(({ theme }) => ({
   border: '1px solid',
   borderColor: theme.palette.gray_4.main,
   borderRadius: 6,
+  position: 'relative',
   marginBottom: '1rem',
 }));
 
@@ -43,12 +46,12 @@ const RoomImageContainer = styled(Box)(({ theme }) => ({
 
 const FormItemContainer = styled(Box)(({ theme }) => ({
   width: 'calc(100% - 17rem)',
-  height: 'auto',
+  height: '100%',
   display: 'flex',
   flexDirection: 'column',
-  alignItems: 'center',
+  alignItems: 'flex-end',
   justifyContent: 'space-between',
-  gap: '1rem',
+  padding: '0 4rem 0 0',
 }));
 
 const FormItem = styled(Box)(({ theme }) => ({
@@ -60,29 +63,36 @@ const FormItem = styled(Box)(({ theme }) => ({
   gap: '2rem',
 }));
 
-function FormExposureMenu(props: FormExposureMenuProps) {
-  // const { modal_upload } = useContext(ModalContext);
+const CustomIconButton = styled(IconButton)(({ theme }) => ({
+  position: 'absolute',
+  top: '50%',
+  right: '2rem',
+  transform: 'translate(50%, -50%)',
+}));
 
+function FormExposureMenu(props: FormExposureMenuProps) {
   const image_list = props.imageList;
   const onChange = props.onChange;
   const onChangeImage = props.onChangeImage;
   const onInputClick = props.onInputClick;
+  const onDelete = props.onDelete;
+  const menu_idx = props.menuIdx;
 
   const exposure_menu_contents = [
     {
-      title: '이름',
       key: 'label',
       format: '',
+      placeholder: '메뉴명을 입력해주세요.',
     },
     {
-      title: '가격',
-      key: 'price',
-      format: '원',
-    },
-    {
-      title: '한 줄 설명',
       key: 'comment',
       format: '',
+      placeholder: '한 줄 설명을 입력해주세요.',
+    },
+    {
+      key: 'price',
+      format: '원',
+      placeholder: '숫자만 입력해주세요.',
     },
   ];
 
@@ -95,30 +105,28 @@ function FormExposureMenu(props: FormExposureMenuProps) {
         {exposure_menu_contents.map((item, idx) => {
           return (
             <FormItem key={`form_exposure_menu_${idx}`}>
-              <Typography sx={{ fontWeight: 'bold' }}>{item.title}</Typography>
               <InputOutlined
                 align='right'
-                width='70%'
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => onChange(e, item.key)}
                 endAdornment={item.format}
-                className='bottom'
+                className='none'
                 height='2.5rem'
+                placeholder={item.placeholder}
               />
             </FormItem>
           );
         })}
-      </FormItemContainer>
-      {/* <IconButton>
-        <RiCloseCircleFill />
-      </IconButton> */}
-      <UtilBox justifyContent='flex-start'>
         <ButtonFileInput
           title='대표메뉴 이미지 등록'
           onClick={() => onInputClick()}
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => onChangeImage(e)}
           multiple={false}
+          id={`exposure_menu_${menu_idx}`}
         />
-      </UtilBox>
+      </FormItemContainer>
+      <CustomIconButton onClick={() => onDelete()}>
+        <RiCloseCircleFill />
+      </CustomIconButton>
     </FormContainer>
   );
 }

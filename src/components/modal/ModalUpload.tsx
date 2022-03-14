@@ -164,7 +164,7 @@ function ModalUpload(props: ModalUploadProps) {
               slide={false}
             />
             <UtilBox justifyContent='flex-end'>
-              <ButtonFileInput title='업로드' multiple={true} onChange={uploadImages} />
+              <ButtonFileInput title='업로드' multiple={true} onChange={uploadImages} id={'upload_modal'} />
             </UtilBox>
             <OrderList
               data={orderList}

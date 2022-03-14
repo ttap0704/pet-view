@@ -49,6 +49,62 @@ export const accommodation_info = {
   table_items: [],
 }
 
+export const restaurant_info = {
+  header: [
+    {
+      label: 'check',
+      center: true,
+      key: 'check',
+      type: 'checkbox',
+    },
+    {
+      label: '이름',
+      center: false,
+      key: 'label',
+    },
+    {
+      label: '주소',
+      center: false,
+      key: 'address',
+    },
+    {
+      label: '대표메뉴 개수',
+      center: true,
+      key: 'exposure_menu_num',
+    },
+    {
+      label: '카테고리 개수',
+      center: true,
+      key: 'category_num',
+    },
+    {
+      label: '소개',
+      center: true,
+      key: 'introduction',
+      type: 'button',
+    },
+    {
+      label: '등록일',
+      center: false,
+      key: 'created_at',
+    },
+  ],
+  edit_items: [
+    "대표메뉴 추가",
+    "카테고리 추가",
+    "업소명 수정",
+    "주소 수정",
+    "소개 수정",
+    "대표이미지 수정",
+    "음식점 삭제",
+  ],
+  type: 'accommodation',
+  title: '음식점 관리',
+  rows_length: 0,
+  footer_colspan: 7,
+  table_items: [],
+}
+
 export const accommodation_rooms = {
   header: [
     {

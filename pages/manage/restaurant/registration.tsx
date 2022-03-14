@@ -99,8 +99,7 @@ const ManageRestaurantRegistration = () => {
     ]);
   };
 
-  const addMenu = (idx: number) => {
-    console.log(idx);
+  const addEntireMenu = (idx: number) => {
     setEntireMenu(state => {
       return [
         ...state.map((item, item_idx) => {
@@ -123,7 +122,7 @@ const ManageRestaurantRegistration = () => {
     });
   };
 
-  const deleteMenu = (idx: number, children_idx: number | undefined) => {
+  const deleteEntireMenu = (idx: number, children_idx: number | undefined) => {
     const tmp_entire_menu = [...entireMenu];
     if (children_idx == undefined) {
       tmp_entire_menu.splice(idx, 1);
@@ -131,6 +130,12 @@ const ManageRestaurantRegistration = () => {
       tmp_entire_menu[idx].menu.splice(children_idx, 1);
     }
     setEntireMenu([...tmp_entire_menu]);
+  };
+
+  const deleteExposureMemu = (idx: number) => {
+    const tmp_exposure_menu = [...exposureMenu];
+    tmp_exposure_menu.splice(idx, 1);
+    setExposureMenu([...tmp_exposure_menu]);
   };
 
   const handleEntireMenuInput = (
@@ -194,54 +199,77 @@ const ManageRestaurantRegistration = () => {
     });
   };
 
-  const createAccommodation = async () => {
-    // const rooms_data = [
-    //   ...rooms.map((room, room_idx) => {
-    //     return {
-    //       label: room.label,
-    //       price: room.price,
-    //       standard_num: room.standard_num,
-    //       maximum_num: room.maximum_num,
-    //       seq: room_idx,
-    //     };
-    //   }),
-    // ];
+  const createRestaurant = async () => {
+    const tmp_exposure_menu = exposureMenu.map((menu, menu_idx) => {
+      return {
+        label: menu.label,
+        price: Number(menu.price),
+        comment: menu.comment,
+        seq: menu_idx,
+      };
+    });
 
-    const accom_data = {
+    const tmp_entire_menu = entireMenu.map((category, category_idx) => {
+      return {
+        category: category.category,
+        seq: category_idx,
+        menu: [
+          ...category.menu.map((menu, menu_idx) => {
+            return {
+              label: menu.label,
+              price: Number(menu.price),
+              seq: menu_idx,
+            };
+          }),
+        ],
+      };
+    });
+
+    const restaurant_data = {
       ...address,
       label: restaurantLabel,
       introduction,
       manager: 1,
-      // rooms: [...rooms_data],
+      exposureMenu: tmp_exposure_menu,
+      entireMenu: tmp_entire_menu,
     };
-    const accommodation: CreateAccommodationResponse = await fetchPostApi(`/manager/1/accommodation`, accom_data);
-    const accommodation_id = accommodation.accommodation_id;
+    console.log(restaurant_data);
+    console.log(exposureMenu);
+    const restaurant: CreateRestaurantResponse = await fetchPostApi(`/manager/1/restaurant`, restaurant_data);
+    console.log(restaurant);
+    const restaurant_id = restaurant.restaurant_id;
 
     let exposure_images = [];
     for (const item of exposureImages) {
       if (item.file) exposure_images.push(item.file);
     }
 
-    // let rooms_payload = [];
-    // for (const room of rooms) {
-    //   const res_room = accommodation.rooms.find(room_item => room_item.label == room.label);
-    //   let room_images = [];
-    //   for (const room_item of room.image_list) {
-    //     if (room_item.file) room_images.push(room_item.file);
-    //   }
-    //   if (res_room) {
-    //     rooms_payload.push({ target_id: res_room.id, files: room_images });
-    //   }
-    // }
+    const exposure_menu_images_payload = [];
+    for (const menu of exposureMenu) {
+      const res_menu = restaurant.exposure_menu.find(item => item.label == menu.label);
+      let menu_images = [];
+      if (menu.image_list && menu.image_list.length > 0 && menu.image_list[0].file)
+        menu_images.push(menu.image_list[0].file);
+
+      if (res_menu) {
+        exposure_menu_images_payload.push({ target_id: res_menu.id, files: menu_images });
+      }
+    }
 
     const exposure_image_data = await setImageFormData(
-      [{ target_id: accommodation_id, files: exposure_images }],
-      'accommodation',
+      [{ target_id: restaurant_id, files: exposure_images }],
+      'restaurant',
     );
-    // const rooms_image_data = await setImageFormData(rooms_payload, 'rooms', accommodation_id);
+    const exposure_menu_image_data = await setImageFormData(
+      exposure_menu_images_payload,
+      'exposure_menu',
+      restaurant_id,
+    );
 
-    // const upload_exposure_response = await fetchFileApi('/upload/image', exposure_image_data);
-    // const upload_rooms_response = await fetchFileApi('/upload/image', rooms_image_data);
+    const upload_exposure_response = await fetchFileApi('/upload/image', exposure_image_data);
+    const upload_exposure_menu_response = await fetchFileApi('/upload/image', exposure_menu_image_data);
+
+    console.log(upload_exposure_response, upload_exposure_menu_response);
   };
 
   return (
@@ -290,6 +318,8 @@ const ManageRestaurantRegistration = () => {
               }
               key={`add_menu_form_${menu_idx}`}
               imageList={menu.image_list}
+              onDelete={() => deleteExposureMemu(menu_idx)}
+              menuIdx={menu_idx}
             />
           );
         })}
@@ -309,15 +339,24 @@ const ManageRestaurantRegistration = () => {
             children_type?: string,
             children_idx?: number,
           ) => handleEntireMenuInput(e, type, idx, children_type, children_idx)}
-          onAddMenu={addMenu}
-          onDeleteMenu={deleteMenu}
+          onAddMenu={addEntireMenu}
+          onDeleteMenu={deleteEntireMenu}
         />
         <UtilBox justifyContent='flex-end' sx={{ marginTop: '1rem' }}>
-          <Button color='blue' onClick={addCategory}>
+          <Button color='blue' variant='contained' onClick={addCategory}>
             카테고리 추가
           </Button>
         </UtilBox>
       </ContainerRegistrationItem>
+      <UtilBox>
+        <Button
+          color='orange'
+          variant='contained'
+          onClick={() => modal_confirm.openModalConfirm(`음식점을 등록하시겠습니까?`, createRestaurant)}
+        >
+          음식점 등록
+        </Button>
+      </UtilBox>
 
       <ModalUpload onUpload={setPrevieImages} />
     </>
