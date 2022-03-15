@@ -235,7 +235,7 @@ const ManageRestaurantRegistration = () => {
     };
     console.log(restaurant_data);
     console.log(exposureMenu);
-    const restaurant: CreateRestaurantResponse = await fetchPostApi(`/manager/1/restaurant`, restaurant_data);
+    const restaurant: RestaurantType = await fetchPostApi(`/manager/1/restaurant`, restaurant_data);
     console.log(restaurant);
     const restaurant_id = restaurant.restaurant_id;
 

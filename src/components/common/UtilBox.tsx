@@ -12,6 +12,7 @@ const StyledBox = styled(Box)(({ theme }) => ({
   height: '4rem',
   display: 'flex',
   alignItems: 'center',
+  backgroundColor: theme.palette.white.main,
 }));
 
 const UtilBox = (props: UtilBoxProps) => {

@@ -44,6 +44,10 @@ const StyledMenu = styled((props: MenuProps) => (
         backgroundColor: alpha(theme.palette.primary.main, theme.palette.action.selectedOpacity),
       },
     },
+
+    '.MuiList-root': {
+      maxHeight: '13rem',
+    },
   },
 }));
 

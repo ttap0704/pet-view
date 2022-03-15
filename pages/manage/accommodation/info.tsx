@@ -96,7 +96,7 @@ const ManageAccommodationInfo = (props: { list: AccommodationListType; style: { 
   const setOrderModalContents = () => {
     const target = data.table_items.find(item => item.checked);
     if (target) {
-      const tmp_list: OrderListDataType[] = target.rooms.map((room: AccommodationRoomsResponse, room_idx: number) => {
+      const tmp_list: OrderListDataType[] = target.rooms.map((room: RoomType, room_idx: number) => {
         return {
           label: room.label,
           origin: room_idx,
@@ -229,10 +229,7 @@ const ManageAccommodationInfo = (props: { list: AccommodationListType; style: { 
       });
 
       let rooms_payload = [];
-      const res_rooms: CreateRoomsResponse[] = await fetchPostApi(
-        `/manager/1/accommodation/${target.id}/rooms`,
-        add_room_data,
-      );
+      const res_rooms: RoomType[] = await fetchPostApi(`/manager/1/accommodation/${target.id}/rooms`, add_room_data);
       for (const room of rooms) {
         const target_room = res_rooms.find(room_item => room_item.label == room.label);
         let room_images = [];
@@ -307,7 +304,7 @@ const ManageAccommodationInfo = (props: { list: AccommodationListType; style: { 
       const rooms = target.rooms;
       const change_data = [];
       for (const data of list) {
-        const cur_room = rooms.find((item: AccommodationRoomsResponse) => item.label == data.label);
+        const cur_room = rooms.find((item: RoomType) => item.label == data.label);
         if (cur_room) {
           change_data.push({
             id: cur_room.id,

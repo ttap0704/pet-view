@@ -20,6 +20,11 @@ interface AddExposureMenuContentsType {
   image_list: ImageListType[];
 }
 
+interface AddEntireMenuContentsType {
+  category: string;
+  menu: { label: string, price: string }[],
+}
+
 interface ResponsePostcodeDataType {
   zonecode: string;
   sido: string;
@@ -56,7 +61,7 @@ interface AccommodationListType {
 
 interface AccommodationRoomsListType {
   count: number;
-  rows: AccommodationRoomsResponse[];
+  rows: RoomType[];
 }
 
 interface RestaurantListType {
@@ -65,8 +70,8 @@ interface RestaurantListType {
 }
 
 interface AccommodationResponse {
-  accommodation_images: ImageResponse[];
-  accommodation_rooms: AccommodationRoomsResponse[];
+  accommodation_images: ImageType[];
+  accommodation_rooms: RoomType[];
   bname: string;
   building_name: string;
   createdAt: string;
@@ -83,10 +88,10 @@ interface AccommodationResponse {
 }
 
 interface RestaurantResponse {
-  restaurant_images: ImageResponse[];
-  exposure_menu: CreateExposureMenuResponse[];
-  entire_menu: CreateEntireMenuResponse[];
-  entire_menu_category: EntireMenuCategoryList[]
+  restaurant_images: ImageType[];
+  exposure_menu: ExposureMenuType[];
+  entire_menu: EntireMenuType[];
+  entire_menu_category: EntireMenuCategoryType[]
   bname: string;
   building_name: string;
   createdAt: string;
@@ -102,7 +107,14 @@ interface RestaurantResponse {
   zonecode: string;
 }
 
-interface ImageResponse {
+interface RestaurantType {
+  restaurant_id: number;
+  exposure_menu: ExposureMenuType[];
+  entrie_menu: EntireMenuType[];
+}
+
+
+interface ImageType {
   accommodation_id: number;
   category: number;
   exposure_menu_id: null;
@@ -113,7 +125,13 @@ interface ImageResponse {
   seq: number;
 }
 
-interface AccommodationRoomsResponse {
+
+interface CreateAccommodationResponse {
+  accommodation_id: number;
+  rooms: RoomType[];
+}
+
+interface RoomType {
   accommodation_id: number;
   accommodation_label: string;
   additional_info: null | string;
@@ -127,33 +145,11 @@ interface AccommodationRoomsResponse {
   seq: number;
   standard_num: number;
   updatedAt: string;
-  rooms_images: ImageResponse[];
+  rooms_images: ImageType[];
 }
 
-interface CreateAccommodationResponse {
-  accommodation_id: number;
-  rooms: CreateRoomsResponse[];
-}
 
-interface CreateRoomsResponse {
-  accommodation_id: number;
-  createdAt: string;
-  id: number;
-  label: string;
-  maximum_num: string;
-  price: string;
-  seq: number;
-  standard_num: string;
-  updatedAt: string;
-}
-
-interface CreateRestaurantResponse {
-  restaurant_id: number;
-  exposure_menu: CreateExposureMenuResponse[];
-  entrie_menu: CreateEntireMenuResponse[];
-}
-
-interface EntireMenuCategoryList {
+interface EntireMenuCategoryType {
   category: string
   createdAt: string
   deletedAt: null | string
@@ -163,7 +159,7 @@ interface EntireMenuCategoryList {
   updatedAt: string
 }
 
-interface CreateExposureMenuResponse {
+interface ExposureMenuType {
   restaurant_id: number;
   createdAt: string;
   id: number;
@@ -173,7 +169,7 @@ interface CreateExposureMenuResponse {
   updatedAt: string;
 }
 
-interface CreateEntireMenuResponse {
+interface EntireMenuType {
   category_id: number;
   createdAt: string;
   id: number;
