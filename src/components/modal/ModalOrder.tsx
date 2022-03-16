@@ -88,30 +88,30 @@ function ModalOrder(props: ModalOrderProps) {
       <ModalDefault bottom={false} white={false} visible={visible} onClose={onClose}>
         <ContainerModalContents>
           <LabelModal title={title} onClose={onClose} />
+          <ModalOrderContentsBox>
+            <OrderList
+              data={tmpList}
+              delete={false}
+              onClick={() => false}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>, idx: number) => handleListInput(e.target.value, idx)}
+              onComplete={origin_idx => completeChangeOrder(origin_idx)}
+              onDeleteList={() => false}
+            />
+            <UtilBox>
+              <Button
+                variant='contained'
+                color='orange'
+                onClick={() =>
+                  modal_confirm.openModalConfirm(`등록하신 순서대로 객실을 수정하시겠습니까?`, () => {
+                    onChange(tmpList);
+                  })
+                }
+              >
+                수정
+              </Button>
+            </UtilBox>
+          </ModalOrderContentsBox>
         </ContainerModalContents>
-        <ModalOrderContentsBox>
-          <OrderList
-            data={tmpList}
-            delete={false}
-            onClick={() => false}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>, idx: number) => handleListInput(e.target.value, idx)}
-            onComplete={origin_idx => completeChangeOrder(origin_idx)}
-            onDeleteList={() => false}
-          />
-          <UtilBox>
-            <Button
-              variant='contained'
-              color='orange'
-              onClick={() =>
-                modal_confirm.openModalConfirm(`등록하신 순서대로 객실을 수정하시겠습니까?`, () => {
-                  onChange(tmpList);
-                })
-              }
-            >
-              수정
-            </Button>
-          </UtilBox>
-        </ModalOrderContentsBox>
       </ModalDefault>
     </>
   );

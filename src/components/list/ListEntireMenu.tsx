@@ -34,8 +34,6 @@ const MenuBox = styled(Box)(({ theme }) => ({
   height: 'auto',
   display: 'flex',
   flexDirection: 'column',
-  borderRadius: 6,
-  overflow: 'hidden',
 
   '& > div:not(:last-of-type)': {
     borderBottom: 0,
@@ -44,7 +42,7 @@ const MenuBox = styled(Box)(({ theme }) => ({
 
 const ListParentBox = styled(Box)(({ theme }) => ({
   width: '100%',
-  minHeight: '3rem',
+  height: 'auto',
   backgroundColor: theme.palette.gray_6.main,
   border: '1px solid',
   borderColor: theme.palette.gray_5.main,

@@ -23,7 +23,7 @@ interface ModalAddEntireMenuProps {
 const ModalAddEntireMenuContentsBox = styled(Box)(({ theme }) => ({
   fontSize: '0.9rem',
   width: '60rem',
-  height: 'auto',
+  maxHeight: '30rem',
   overflowY: 'auto',
   display: 'flex',
   flexDirection: 'column',
@@ -64,12 +64,12 @@ function ModalAddEntireMenu(props: ModalAddEntireMenuProps) {
     } else {
       if (type == 'category') {
         setConetents({
-          title: `카테고리 추가`,
+          title: `카테고리`,
           visible: true,
         });
       } else {
         setConetents({
-          title: `전체메뉴 추가`,
+          title: `전체메뉴`,
           visible: false,
         });
       }
@@ -164,40 +164,40 @@ function ModalAddEntireMenu(props: ModalAddEntireMenuProps) {
     <>
       <ModalDefault bottom={false} white={false} visible={visible} onClose={onClose}>
         <ContainerModalContents>
-          <LabelModal title={contents.title} onClose={onClose} />
-        </ContainerModalContents>
-        <ModalAddEntireMenuContentsBox>
-          <UtilBox justifyContent='flex-end' sx={{ marginBottom: '1rem' }}>
-            <Button color='blue' variant='contained' onClick={addCategory}>
-              카테고리 추가
+          <LabelModal title={contents.title + ' 추가'} onClose={onClose} />
+          <ModalAddEntireMenuContentsBox>
+            <UtilBox justifyContent='flex-end' sx={{ marginBottom: '1rem' }}>
+              <Button color='blue' variant='contained' onClick={addCategory}>
+                카테고리 추가
+              </Button>
+            </UtilBox>
+            <ListEntireMenu
+              entireMenu={entireMenu}
+              onChange={(
+                e: React.ChangeEvent<HTMLInputElement>,
+                type: string,
+                idx: number,
+                children_type?: string,
+                children_idx?: number,
+              ) => handleEntireMenuInput(e, type, idx, children_type, children_idx)}
+              onAddMenu={addEntireMenu}
+              onDeleteMenu={deleteEntireMenu}
+            />
+          </ModalAddEntireMenuContentsBox>
+          <UtilBox>
+            <Button
+              variant='contained'
+              color='orange'
+              onClick={() =>
+                modal_confirm.openModalConfirm(`${contents.title}를 등록하시겠습니까?`, () => {
+                  onComplete(entireMenu);
+                })
+              }
+            >
+              등록
             </Button>
           </UtilBox>
-          <ListEntireMenu
-            entireMenu={entireMenu}
-            onChange={(
-              e: React.ChangeEvent<HTMLInputElement>,
-              type: string,
-              idx: number,
-              children_type?: string,
-              children_idx?: number,
-            ) => handleEntireMenuInput(e, type, idx, children_type, children_idx)}
-            onAddMenu={addEntireMenu}
-            onDeleteMenu={deleteEntireMenu}
-          />
-        </ModalAddEntireMenuContentsBox>
-        <UtilBox>
-          <Button
-            variant='contained'
-            color='orange'
-            onClick={() =>
-              modal_confirm.openModalConfirm(`대표메뉴를 등록하시겠습니까?`, () => {
-                onComplete(entireMenu);
-              })
-            }
-          >
-            등록
-          </Button>
-        </UtilBox>
+        </ContainerModalContents>
       </ModalDefault>
     </>
   );

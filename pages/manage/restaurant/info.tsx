@@ -32,6 +32,7 @@ const ManageAccommodationInfo = (props: { list: RestaurantListType; style: { [ke
   const { data } = useContext(TableContext);
   const { modal_confirm, modal_edit, modal_alert, modal_upload } = useContext(ModalContext);
 
+  const [curOrderModalType, setCurOrderModalType] = useState('');
   const [postcodeVisible, setPostcodeVisible] = useState<boolean>(false);
   const [exposureMenuContents, setExposureMenuContents] = useState({
     visible: false,
@@ -49,7 +50,6 @@ const ManageAccommodationInfo = (props: { list: RestaurantListType; style: { [ke
   });
 
   useEffect(() => {
-    console.log(props.list);
     getTableItems(props.list);
   }, []);
 
@@ -59,15 +59,17 @@ const ManageAccommodationInfo = (props: { list: RestaurantListType; style: { [ke
     if (target && target_idx != null && target_idx >= 0) {
       if (target_idx == 0) {
         setExposureMenuModal();
-      } else if (target_idx == 1) {
+      } else if ([1, 3].includes(target_idx)) {
+        setOrderModalContents(target_idx);
+      } else if (target_idx == 2) {
         setEntireMenuContents({ visible: true, type: 'category' });
-      } else if ([2, 4].includes(target_idx)) {
+      } else if ([4, 6].includes(target_idx)) {
         setModalEdit();
-      } else if (target_idx == 3) {
-        setPostcodeVisible(true);
       } else if (target_idx == 5) {
+        setPostcodeVisible(true);
+      } else if (target_idx == 7) {
         setUploadModal();
-      } else if (target_idx == 6) {
+      } else if (target_idx == 8) {
         modal_confirm.openModalConfirm(`정말 [${target.label}] 업소를 삭제하시겠습니까?`, () =>
           deleteRestaurant(target.id),
         );
@@ -163,20 +165,52 @@ const ManageAccommodationInfo = (props: { list: RestaurantListType; style: { [ke
     }
   };
 
-  const createCategory = (data: AddEntireMenuContentsType[]) => {
-    console.log(data);
+  const createCategory = async (category: AddEntireMenuContentsType[]) => {
+    const target = data.table_items.find(item => item.checked);
+
+    if (target) {
+      const res = await fetchPostApi(`/manager/1/restaurant/${target.id}/category`, category);
+
+      if (res) {
+        modal_alert.openModalAlert('카테고리 등록이 완료되었습니다.');
+      } else {
+        modal_alert.openModalAlert('오류로 인해 등록이 실패되었습니다.');
+      }
+
+      getTableItems();
+      setEntireMenuContents({ visible: false, type: '' });
+    }
   };
 
-  const setOrderModalContents = () => {
+  const setOrderModalContents = (idx: number) => {
     const target = data.table_items.find(item => item.checked);
     if (target) {
-      const tmp_list: OrderListDataType[] = target.rooms.map((room: RoomType, room_idx: number) => {
-        return {
-          label: room.label,
-          origin: room_idx,
-          number: room_idx + 1,
-        };
-      });
+      let tmp_list = [];
+      let title = '';
+      switch (idx) {
+        case 1:
+          setCurOrderModalType('exposure_menu');
+          title = '대표메뉴 순서 변경';
+          tmp_list = target.exposure_menu.map((menu: ExposureMenuType, menu_idx: number) => {
+            return {
+              label: menu.label,
+              origin: menu_idx,
+              number: menu_idx + 1,
+            };
+          });
+          break;
+        case 3:
+          setCurOrderModalType('category');
+          title = '카테고리 순서 변경';
+          tmp_list = target.entire_menu_category.map((category: EntireMenuCategoryType, category_idx: number) => {
+            return {
+              label: category.category,
+              origin: category_idx,
+              number: category_idx + 1,
+            };
+          });
+          break;
+      }
       setOrderContents({ visible: true, list: tmp_list, title: '객실 순서 변경' });
     }
   };
@@ -215,8 +249,6 @@ const ManageAccommodationInfo = (props: { list: RestaurantListType; style: { [ke
 
         const upload_res = await fetchFileApi('/upload/image', exposure_image_data);
 
-        console.log(delete_res);
-        console.log(upload_res);
         if (delete_res == 200 && upload_res.length > 0) {
           modal_alert.openModalAlert('대표 이미지 수정이 완료되었습니다.');
         } else {
@@ -241,12 +273,12 @@ const ManageAccommodationInfo = (props: { list: RestaurantListType; style: { [ke
 
     if (target) {
       switch (index) {
-        case 2:
+        case 4:
           value = target.label;
           title = '업소명 수정';
           target_string = 'label';
           break;
-        case 4:
+        case 6:
           value = target.introduction;
           title = '소개 수정';
           target_string = 'introduction';
@@ -304,7 +336,9 @@ const ManageAccommodationInfo = (props: { list: RestaurantListType; style: { [ke
         zonecode: x.zonecode,
         created_at: getDate(x.createdAt),
         images: x.restaurant_images,
+        exposure_menu: x.exposure_menu,
         exposure_menu_num: x.exposure_menu.length + '개',
+        entire_menu_category: x.entire_menu_category,
         category_num: x.entire_menu_category.length + '개',
         checked: false,
       });
@@ -320,23 +354,36 @@ const ManageAccommodationInfo = (props: { list: RestaurantListType; style: { [ke
   const completeChangeOrder = async (list: OrderListDataType[]) => {
     const target = data.table_items.find(item => item.checked);
     if (target) {
-      const rooms = target.rooms;
-      const change_data = [];
-      for (const data of list) {
-        const cur_room = rooms.find((item: RoomType) => item.label == data.label);
-        if (cur_room) {
-          change_data.push({
-            id: cur_room.id,
-            seq: Number(data.number) - 1,
-          });
+      let change_data = [];
+      if (curOrderModalType == 'exposure_menu') {
+        for (const data of list) {
+          const cur_menu = target.exposure_menu.find((item: ExposureMenuType) => item.label == data.label);
+          if (cur_menu) {
+            change_data.push({
+              id: cur_menu.id,
+              seq: Number(data.number) - 1,
+            });
+          }
+        }
+      } else if (curOrderModalType == 'category') {
+        for (const data of list) {
+          const cur_category = target.entire_menu_category.find(
+            (item: EntireMenuCategoryType) => item.category == data.label,
+          );
+          if (cur_category) {
+            change_data.push({
+              id: cur_category.id,
+              seq: Number(data.number) - 1,
+            });
+          }
         }
       }
 
-      const response = await fetchPostApi(`/manager/1/restaurant/${target.id}/rooms/order`, change_data);
+      const response = await fetchPostApi(`/manager/1/restaurant/${target.id}/${curOrderModalType}/order`, change_data);
       if (response) {
+        modal_alert.openModalAlert(`${orderContents.title}이 완료되었습니다.`);
         getTableItems();
         setOrderContents({ visible: false, title: '', list: [] });
-        modal_alert.openModalAlert('객실 순서가 변경되었습니다.');
       } else {
         modal_alert.openModalAlert('오류로 인해 실패되었습니다.');
       }

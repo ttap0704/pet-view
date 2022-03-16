@@ -113,6 +113,8 @@ function ModalAddExposureEenu(props: ModalAddExposureEenuProps) {
   };
 
   const addExposureMenu = () => {
+    console.log(cur_num + exposureMenu.length >= 5);
+    console.log(cur_num + exposureMenu.length);
     if (Number(cur_num) + exposureMenu.length >= 5) {
       modal_alert.openModalAlert('대표메뉴는 총 5개까지 등록이 가능합니다.');
       return;
@@ -133,42 +135,42 @@ function ModalAddExposureEenu(props: ModalAddExposureEenuProps) {
       <ModalDefault bottom={false} white={false} visible={visible} onClose={onClose}>
         <ContainerModalContents>
           <LabelModal title='대표메뉴 추가' onClose={onClose} />
-        </ContainerModalContents>
-        <ModalAddExposureEenuContentsBox>
-          <UtilBox justifyContent='flex-end' sx={{ paddingY: '1rem' }}>
-            <Button variant='contained' color='blue' onClick={() => addExposureMenu()}>
-              메뉴 추가
+          <ModalAddExposureEenuContentsBox>
+            <UtilBox justifyContent='flex-end' sx={{ paddingY: '1rem' }}>
+              <Button variant='contained' color='blue' onClick={() => addExposureMenu()}>
+                메뉴 추가
+              </Button>
+            </UtilBox>
+            {exposureMenu.map((menu, menu_idx) => {
+              return (
+                <FormExposureMenu
+                  onInputClick={() => setExposureMenuClickIdx(menu_idx)}
+                  onChangeImage={(e: React.ChangeEvent<HTMLInputElement>) => setExposureMenuImage(e)}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>, type: string) =>
+                    handleExposureMenuInput(e, type, menu_idx)
+                  }
+                  key={`add_menu_form_${menu_idx}`}
+                  imageList={menu.image_list}
+                  onDelete={() => deleteExposureMemu(menu_idx)}
+                  menuIdx={menu_idx}
+                />
+              );
+            })}
+          </ModalAddExposureEenuContentsBox>
+          <UtilBox>
+            <Button
+              variant='contained'
+              color='orange'
+              onClick={() =>
+                modal_confirm.openModalConfirm(`대표메뉴를 등록하시겠습니까?`, () => {
+                  onComplete(exposureMenu);
+                })
+              }
+            >
+              등록
             </Button>
           </UtilBox>
-          {exposureMenu.map((menu, menu_idx) => {
-            return (
-              <FormExposureMenu
-                onInputClick={() => setExposureMenuClickIdx(menu_idx)}
-                onChangeImage={(e: React.ChangeEvent<HTMLInputElement>) => setExposureMenuImage(e)}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>, type: string) =>
-                  handleExposureMenuInput(e, type, menu_idx)
-                }
-                key={`add_menu_form_${menu_idx}`}
-                imageList={menu.image_list}
-                onDelete={() => deleteExposureMemu(menu_idx)}
-                menuIdx={menu_idx}
-              />
-            );
-          })}
-        </ModalAddExposureEenuContentsBox>
-        <UtilBox>
-          <Button
-            variant='contained'
-            color='orange'
-            onClick={() =>
-              modal_confirm.openModalConfirm(`대표메뉴를 등록하시겠습니까?`, () => {
-                onComplete(exposureMenu);
-              })
-            }
-          >
-            등록
-          </Button>
-        </UtilBox>
+        </ContainerModalContents>
       </ModalDefault>
     </>
   );

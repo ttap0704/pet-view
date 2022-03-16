@@ -149,6 +149,7 @@ function TableProvider(props: { children: React.ReactNode }) {
       setTableData({
         ...tableData,
         ...contents,
+        button_disabled: true,
         max,
         left,
         right,
