@@ -16,19 +16,7 @@ import Table from '../../../src/components/table/Table';
 import { TableContext } from '../../../src/provider/TableProvider';
 import { ModalContext } from '../../../src/provider/ModalProvider';
 
-interface AddRoomContents {
-  visible: boolean;
-  rooms_num: number;
-  upload_idx: number | null;
-}
-
-interface orderContents {
-  visible: boolean;
-  list: OrderListDataType[];
-  title: string;
-}
-
-const ManageAccommodationInfo = (props: { list: RestaurantListType; style: { [key: string]: string } }) => {
+const ManageRestaurantInfo = (props: { list: RestaurantListType; style: { [key: string]: string } }) => {
   const { data } = useContext(TableContext);
   const { modal_confirm, modal_edit, modal_alert, modal_upload } = useContext(ModalContext);
 
@@ -413,6 +401,7 @@ const ManageAccommodationInfo = (props: { list: RestaurantListType; style: { [ke
       <ModalAddEntireMenu
         visible={entireMenuContents.visible}
         type={entireMenuContents.type}
+        mode='add'
         onClose={() => setEntireMenuContents({ visible: false, type: '' })}
         onComplete={createCategory}
       />
@@ -435,4 +424,4 @@ export const getServerSideProps: GetServerSideProps = async () => {
   };
 };
 
-export default ManageAccommodationInfo;
+export default ManageRestaurantInfo;

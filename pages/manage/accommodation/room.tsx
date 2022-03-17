@@ -7,24 +7,9 @@ import { accommodation_rooms } from '../../../src/utils/manage_items';
 
 import ModalEdit from '../../../src/components/modal/ModalEdit';
 import ModalUpload from '../../../src/components/modal/ModalUpload';
-import ModalAddRoom from '../../../src/components/modal/ModalAddRoom';
-import ModalOrder from '../../../src/components/modal/ModalOrder';
-import ModalPostcodeForm from '../../../src/components/modal/ModalPostcodeForm';
 import Table from '../../../src/components/table/Table';
 import { TableContext } from '../../../src/provider/TableProvider';
 import { ModalContext } from '../../../src/provider/ModalProvider';
-
-interface AddRoomContents {
-  visible: boolean;
-  rooms_num: number;
-  upload_idx: number | null;
-}
-
-interface OrderContents {
-  visible: boolean;
-  list: OrderListDataType[];
-  title: string;
-}
 
 const ManageAccommodationRooms = (props: { list: AccommodationRoomsListType; style: { [key: string]: string } }) => {
   const { data } = useContext(TableContext);

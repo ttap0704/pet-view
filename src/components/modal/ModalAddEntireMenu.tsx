@@ -16,8 +16,10 @@ import { setFileToImage } from '../../utils/tools';
 interface ModalAddEntireMenuProps {
   visible: boolean;
   type: string;
+  mode: string;
   onClose: () => void;
   onComplete: (data: AddEntireMenuContentsType[]) => void;
+  category?: AddEntireMenuContentsType[];
 }
 
 const ModalAddEntireMenuContentsBox = styled(Box)(({ theme }) => ({
@@ -39,6 +41,8 @@ function ModalAddEntireMenu(props: ModalAddEntireMenuProps) {
   const { modal_alert, modal_confirm } = useContext(ModalContext);
   const visible = props.visible;
   const type = props.type;
+  const mode = props.mode;
+  const props_category = props.category;
   const onClose = props.onClose;
   const onComplete = props.onComplete;
 
@@ -72,6 +76,10 @@ function ModalAddEntireMenu(props: ModalAddEntireMenuProps) {
           title: `전체메뉴`,
           visible: false,
         });
+      }
+
+      if (mode == 'read' && props_category != undefined) {
+        setEntireMenu([...props_category]);
       }
     }
   }, [visible]);
@@ -164,13 +172,15 @@ function ModalAddEntireMenu(props: ModalAddEntireMenuProps) {
     <>
       <ModalDefault bottom={false} white={false} visible={visible} onClose={onClose}>
         <ContainerModalContents>
-          <LabelModal title={contents.title + ' 추가'} onClose={onClose} />
+          <LabelModal title={contents.title + (mode == 'add' ? '추가' : '')} onClose={onClose} />
           <ModalAddEntireMenuContentsBox>
-            <UtilBox justifyContent='flex-end' sx={{ marginBottom: '1rem' }}>
-              <Button color='blue' variant='contained' onClick={addCategory}>
-                카테고리 추가
-              </Button>
-            </UtilBox>
+            {mode == 'add' ? (
+              <UtilBox justifyContent='flex-end' sx={{ marginBottom: '1rem' }}>
+                <Button color='blue' variant='contained' onClick={addCategory}>
+                  카테고리 추가
+                </Button>
+              </UtilBox>
+            ) : null}
             <ListEntireMenu
               entireMenu={entireMenu}
               onChange={(
@@ -182,21 +192,24 @@ function ModalAddEntireMenu(props: ModalAddEntireMenuProps) {
               ) => handleEntireMenuInput(e, type, idx, children_type, children_idx)}
               onAddMenu={addEntireMenu}
               onDeleteMenu={deleteEntireMenu}
+              mode={mode}
             />
           </ModalAddEntireMenuContentsBox>
-          <UtilBox>
-            <Button
-              variant='contained'
-              color='orange'
-              onClick={() =>
-                modal_confirm.openModalConfirm(`${contents.title}를 등록하시겠습니까?`, () => {
-                  onComplete(entireMenu);
-                })
-              }
-            >
-              등록
-            </Button>
-          </UtilBox>
+          {mode == 'add' ? (
+            <UtilBox>
+              <Button
+                variant='contained'
+                color='orange'
+                onClick={() =>
+                  modal_confirm.openModalConfirm(`${contents.title}를 등록하시겠습니까?`, () => {
+                    onComplete(entireMenu);
+                  })
+                }
+              >
+                등록
+              </Button>
+            </UtilBox>
+          ) : null}
         </ContainerModalContents>
       </ModalDefault>
     </>

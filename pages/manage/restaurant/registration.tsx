@@ -341,6 +341,7 @@ const ManageRestaurantRegistration = () => {
           ) => handleEntireMenuInput(e, type, idx, children_type, children_idx)}
           onAddMenu={addEntireMenu}
           onDeleteMenu={deleteEntireMenu}
+          mode='add'
         />
         <UtilBox justifyContent='flex-end' sx={{ marginTop: '1rem' }}>
           <Button color='blue' variant='contained' onClick={addCategory}>

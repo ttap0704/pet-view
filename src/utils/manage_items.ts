@@ -49,6 +49,54 @@ export const accommodation_info = {
   table_items: [],
 }
 
+
+export const accommodation_rooms = {
+  header: [
+    {
+      label: 'check',
+      center: true,
+      key: 'check',
+      type: 'checkbox',
+    },
+    {
+      label: '숙박 업소명',
+      center: false,
+      key: 'accommodation_label',
+    },
+    {
+      label: '객실명',
+      center: false,
+      key: 'label',
+    },
+    {
+      label: '기준 인원',
+      center: false,
+      key: 'standard_num',
+    },
+    {
+      label: '최대 인원',
+      center: false,
+      key: 'maximum_num',
+    },
+    {
+      label: '가격',
+      center: false,
+      key: 'price',
+    },
+    {
+      label: '등록일',
+      center: false,
+      key: 'created_at',
+    },
+  ],
+  edit_items: ["객실명 수정", "기준 인원 수정", "최대 인원 수정", "가격 수정", "대표이미지 수정", "객실 삭제"],
+  type: 'rooms',
+  title: '객실 관리',
+  rows_length: 0,
+  footer_colspan: 7,
+  table_items: [],
+}
+
 export const restaurant_info = {
   header: [
     {
@@ -107,7 +155,7 @@ export const restaurant_info = {
   table_items: [],
 }
 
-export const accommodation_rooms = {
+export const restaurant_category = {
   header: [
     {
       label: 'check',
@@ -116,39 +164,68 @@ export const accommodation_rooms = {
       type: 'checkbox',
     },
     {
-      label: '숙박 업소명',
+      label: "음식점",
+      key: 'restaurant_label',
       center: false,
-      key: 'accommodation_label',
     },
     {
-      label: '객실명',
+      label: "카테고리",
+      key: 'category',
       center: false,
-      key: 'label',
     },
     {
-      label: '기준 인원',
+      label: "메뉴수",
+      key: 'menu_num',
       center: false,
-      key: 'standard_num',
     },
     {
-      label: '최대 인원',
-      center: false,
-      key: 'maximum_num',
-    },
-    {
-      label: '가격',
-      center: false,
-      key: 'price',
-    },
-    {
-      label: '등록일',
-      center: false,
-      key: 'created_at',
+      label: '메뉴',
+      center: true,
+      key: 'menu',
+      type: 'button',
     },
   ],
-  edit_items: ["객실명 수정", "기준 인원 수정", "최대 인원 수정", "가격 수정", "대표이미지 수정", "객실 삭제"],
-  type: 'rooms',
-  title: '객실 관리',
+  edit_items: ["카테고리명 수정", "메뉴 순서 변경", "카테고리 삭제"],
+  type: 'category',
+  title: '카테고리 관리',
+  rows_length: 0,
+  footer_colspan: 7,
+  table_items: [],
+}
+
+export const restaurant_exposure_menu = {
+  header: [
+    {
+      label: 'check',
+      center: true,
+      key: 'check',
+      type: 'checkbox',
+    },
+    {
+      label: "음식점",
+      key: 'restaurant_label',
+      center: false,
+    },
+    {
+      label: "메뉴명",
+      key: 'label',
+      center: false,
+    },
+    {
+      label: "가격",
+      key: 'price',
+      center: false,
+    },
+    {
+      label: '한 줄 설명',
+      center: true,
+      key: 'comment',
+      type: 'button',
+    },
+  ],
+  edit_items: ["메뉴명 수정", "가격 수정", "대표이미지 수정", "설명 수정", "메뉴 삭제"],
+  type: 'category',
+  title: '카테고리 관리',
   rows_length: 0,
   footer_colspan: 7,
   table_items: [],

@@ -11,13 +11,7 @@ import { HiOutlinePlusCircle } from 'react-icons/hi';
 import InputOutlined from '../input/InputOutlined';
 
 interface ListEntireMenuProps {
-  entireMenu: {
-    category: string;
-    menu: {
-      label: string;
-      price: string;
-    }[];
-  }[];
+  entireMenu: AddEntireMenuContentsType[];
   onChange: (
     e: React.ChangeEvent<HTMLInputElement>,
     type: string,
@@ -27,6 +21,7 @@ interface ListEntireMenuProps {
   ) => void;
   onAddMenu: (idx: number) => void;
   onDeleteMenu: (idx: number, children?: number) => void;
+  mode: string;
 }
 
 const MenuBox = styled(Box)(({ theme }) => ({
@@ -84,6 +79,7 @@ const ListEntireMenu = (props: ListEntireMenuProps) => {
   const onChange = props.onChange;
   const onAddMenu = props.onAddMenu;
   const onDeleteMenu = props.onDeleteMenu;
+  const mode = props.mode;
 
   return (
     <MenuBox>
@@ -92,24 +88,30 @@ const ListEntireMenu = (props: ListEntireMenuProps) => {
           <ListParentBox key={`category_${category_idx}`}>
             <ContentsBox>
               <InputOutlined
+                readOnly={mode == 'read' ? true : false}
                 value={category.category}
                 className='none'
                 height='2rem'
                 placeholder='카테고리를 입력해주세요.'
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => onChange(e, 'category', category_idx)}
               />
-              <CustomIconButton onClick={() => onAddMenu(category_idx)}>
-                <HiOutlinePlusCircle />
-              </CustomIconButton>
-              <CustomIconButton onClick={() => onDeleteMenu(category_idx)}>
-                <RiCloseCircleFill />
-              </CustomIconButton>
+              {mode == 'add' ? (
+                <>
+                  <CustomIconButton onClick={() => onAddMenu(category_idx)}>
+                    <HiOutlinePlusCircle />
+                  </CustomIconButton>
+                  <CustomIconButton onClick={() => onDeleteMenu(category_idx)}>
+                    <RiCloseCircleFill />
+                  </CustomIconButton>
+                </>
+              ) : null}
             </ContentsBox>
             {category.menu.map((menu, menu_idx) => {
               return (
                 <ListChildrenBox key={`category_${category_idx}_menu_${menu_idx}`}>
                   <ContentsBox>
                     <InputOutlined
+                      readOnly={mode == 'read' ? true : false}
                       value={menu.label}
                       className='none'
                       width='40%'
@@ -121,6 +123,7 @@ const ListEntireMenu = (props: ListEntireMenuProps) => {
                     />
                     <ContentsBox sx={{ width: '40%', justifyContent: 'flex-end' }}>
                       <InputOutlined
+                        readOnly={mode == 'read' ? true : false}
                         value={menu.price}
                         className='none'
                         width='70%'
@@ -132,9 +135,13 @@ const ListEntireMenu = (props: ListEntireMenuProps) => {
                           onChange(e, 'menu', category_idx, 'price', menu_idx)
                         }
                       />
-                      <CustomIconButton onClick={() => onDeleteMenu(category_idx, menu_idx)}>
-                        <RiCloseCircleFill />
-                      </CustomIconButton>
+                      {mode == 'add' ? (
+                        <>
+                          <CustomIconButton onClick={() => onDeleteMenu(category_idx, menu_idx)}>
+                            <RiCloseCircleFill />
+                          </CustomIconButton>
+                        </>
+                      ) : null}
                     </ContentsBox>
                   </ContentsBox>
                 </ListChildrenBox>

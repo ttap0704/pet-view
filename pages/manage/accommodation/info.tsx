@@ -20,12 +20,6 @@ interface AddRoomContents {
   upload_idx: number | null;
 }
 
-interface orderContents {
-  visible: boolean;
-  list: OrderListDataType[];
-  title: string;
-}
-
 const ManageAccommodationInfo = (props: { list: AccommodationListType; style: { [key: string]: string } }) => {
   const { data } = useContext(TableContext);
   const { modal_confirm, modal_edit, modal_alert, modal_upload } = useContext(ModalContext);

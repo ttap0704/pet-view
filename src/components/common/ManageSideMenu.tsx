@@ -92,16 +92,16 @@ const ManageSideMenu = () => {
           path: '/manage/restaurant/info',
         },
         {
-          label: '카테고리 관리',
-          path: '/manage/restaurant/room',
+          label: '대표메뉴 관리',
+          path: '/manage/restaurant/exposure-menu',
         },
         {
-          label: '대표메뉴 관리',
-          path: '/manage/restaurant/room',
+          label: '카테고리 관리',
+          path: '/manage/restaurant/category',
         },
         {
           label: '전체메뉴 관리',
-          path: '/manage/restaurant/room',
+          path: '/manage/restaurant/entire-menu',
         },
       ],
       path: null,
