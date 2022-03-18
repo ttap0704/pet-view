@@ -3,6 +3,7 @@ import { useState, createContext, useContext } from 'react';
 import ModalConfirm from '../components/modal/ModalConfirm';
 import ModalAlert from '../components/modal/ModalAlert';
 import ModalNotice from '../components/modal/ModalNotice';
+import ModalImageDetail from '../components/modal/ModalImageDetail';
 
 // ========================================================================================
 // Type 설정
@@ -45,6 +46,12 @@ interface ModalEditDataType {
   end_adornment?: string;
 }
 
+interface ModalImageDetailDataType {
+  visible: boolean;
+  type: string;
+  image_list: ImageListType[];
+}
+
 interface ModalControllerType {
   modal_confirm: {
     data: ModalConfirmDataType;
@@ -81,6 +88,11 @@ interface ModalControllerType {
       format?: string,
       end_adornment?: string,
     ) => void;
+  };
+  modal_image_detail: {
+    data: ModalImageDetailDataType;
+    closeModalImageDetail: () => void;
+    openModalImageDetail: (type: string, image_list: ImageListType[]) => void;
   };
 }
 
@@ -179,6 +191,15 @@ export const ModalContext = createContext<ModalControllerType>({
       return;
     },
   },
+  modal_image_detail: {
+    data: { visible: false, type: '', image_list: [] },
+    closeModalImageDetail: () => {
+      return;
+    },
+    openModalImageDetail: (type: string, image_list: ImageListType[]) => {
+      return;
+    },
+  },
 });
 
 // ========================================================================================
@@ -229,6 +250,12 @@ function ModalProvider(props: { children: React.ReactNode }) {
     format: '',
     read_only: false,
     end_adornment: '',
+  });
+
+  const [modalImageDetailData, setModalImageDetailData] = useState<ModalImageDetailDataType>({
+    visible: false,
+    type: '',
+    image_list: [],
   });
 
   // 모달 컨트롤러
@@ -383,6 +410,23 @@ function ModalProvider(props: { children: React.ReactNode }) {
         });
       },
     },
+    modal_image_detail: {
+      data: modalImageDetailData,
+      closeModalImageDetail: () => {
+        setModalImageDetailData({ visible: false, type: '', image_list: [] });
+      },
+      openModalImageDetail: (type: string, image_list: ImageListType[]) => {
+        setModalImageDetailData(state => {
+          return {
+            ...state,
+            visible: true,
+            type: type,
+            image_list: image_list,
+          };
+        });
+        return;
+      },
+    },
   };
 
   return (
@@ -392,6 +436,7 @@ function ModalProvider(props: { children: React.ReactNode }) {
         <ModalConfirm />
         <ModalNotice />
         <ModalAlert />
+        <ModalImageDetail />
       </ModalContext.Provider>
     </>
   );

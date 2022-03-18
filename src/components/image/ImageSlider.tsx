@@ -4,9 +4,11 @@ import Box from '@mui/material/Box';
 import { IconButton } from '@mui/material';
 
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
+import { useEffect, useState } from 'react';
 
 interface ImageSliderProps {
   onSlide: (dir: string) => void;
+  fill?: boolean;
 }
 
 const SliderWrap = styled(Box)(({ theme }) => ({
@@ -40,24 +42,37 @@ const IconBox = styled(Box)(({ theme }) => ({
     '&:hover': {
       backgroundColor: 'rgba(255, 255, 255, 0.40)',
     },
-
     svg: {
       color: theme.palette.white.main,
+    },
+  },
+
+  '&.fill': {
+    width: '10rem',
+    height: '50rem',
+    '.MuiIconButton-root': {
+      width: '10rem',
+      height: '50rem',
+      svg: {
+        width: '3rem',
+        height: '3rem',
+      },
     },
   },
 }));
 
 const ImageSlider = (props: ImageSliderProps) => {
   const onSlide = props.onSlide;
+  const fill = props.fill;
 
   return (
     <SliderWrap className='image-slider'>
-      <IconBox sx={{ left: 0 }}>
+      <IconBox sx={{ left: 0 }} className={fill ? 'fill' : ''}>
         <IconButton onClick={() => onSlide('left')}>
           <FaChevronLeft />
         </IconButton>
       </IconBox>
-      <IconBox sx={{ right: 0 }}>
+      <IconBox sx={{ right: 0 }} className={fill ? 'fill' : ''}>
         <IconButton onClick={() => onSlide('right')}>
           <FaChevronRight />
         </IconButton>

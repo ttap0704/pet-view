@@ -7,60 +7,38 @@ import { restaurant_exposure_menu } from '../../../src/utils/manage_items';
 
 import ModalEdit from '../../../src/components/modal/ModalEdit';
 import ModalUpload from '../../../src/components/modal/ModalUpload';
-import ModalAddRoom from '../../../src/components/modal/ModalAddRoom';
-import ModalAddExposureMenu from '../../../src/components/modal/ModalAddExposureMenu';
-import ModalAddEntireMenu from '../../../src/components/modal/ModalAddEntireMenu';
-import Modalorder from '../../../src/components/modal/ModalOrder';
-import ModalPostcodeForm from '../../../src/components/modal/ModalPostcodeForm';
 import Table from '../../../src/components/table/Table';
 import { TableContext } from '../../../src/provider/TableProvider';
 import { ModalContext } from '../../../src/provider/ModalProvider';
 
 const ManageRestaurantExposureMenu = (props: { list: ExposureMenuListType; style: { [key: string]: string } }) => {
   const { data } = useContext(TableContext);
-  const { modal_confirm, modal_edit, modal_alert, modal_upload } = useContext(ModalContext);
+  const { modal_confirm, modal_edit, modal_alert, modal_upload, modal_image_detail } = useContext(ModalContext);
 
-  const [curOrderModalType, setCurOrderModalType] = useState('');
-  const [postcodeVisible, setPostcodeVisible] = useState<boolean>(false);
-  const [exposureMenuContents, setExposureMenuContents] = useState({
-    visible: false,
-    cur_num: 0,
-  });
-  const [entireMenuContents, setEntireMenuContents] = useState({
-    visible: false,
-    type: '',
-  });
+  const [firstUpdate, setFirstUpdate] = useState(false);
   const [infoContents, setInfoContents] = useState<ChildrenDataType>(restaurant_exposure_menu);
-  const [orderContents, setOrderContents] = useState<orderContents>({
-    visible: false,
-    list: [],
-    title: '',
-  });
 
   useEffect(() => {
-    console.log(props.list);
     getTableItems(props.list);
   }, []);
+
+  useEffect(() => {
+    if (firstUpdate) {
+      getTableItems();
+    }
+  }, [data.per_page]);
 
   useEffect(() => {
     const target_idx = data.clicked_dropdown_idx;
     const target = data.table_items.find(item => item.checked);
     if (target && target_idx != null && target_idx >= 0) {
-      if (target_idx == 0) {
-        setExposureMenuModal();
-      } else if ([1, 3].includes(target_idx)) {
-        setOrderModalContents(target_idx);
-      } else if (target_idx == 2) {
-        setEntireMenuContents({ visible: true, type: 'category' });
-      } else if ([4, 6].includes(target_idx)) {
+      if ([0, 1, 3].includes(target_idx)) {
         setModalEdit();
-      } else if (target_idx == 5) {
-        setPostcodeVisible(true);
-      } else if (target_idx == 7) {
+      } else if (target_idx == 2) {
         setUploadModal();
-      } else if (target_idx == 8) {
-        modal_confirm.openModalConfirm(`정말 [${target.label}] 업소를 삭제하시겠습니까?`, () =>
-          deleteRestaurant(target.id),
+      } else if (target_idx == 4) {
+        modal_confirm.openModalConfirm(`정말 [${target.label}] 메뉴를 삭제하시겠습니까?`, () =>
+          deleteExposureMenu(target.restaurant_id, target.id),
         );
       }
     }
@@ -68,140 +46,37 @@ const ManageRestaurantExposureMenu = (props: { list: ExposureMenuListType; style
 
   useEffect(() => {
     if (data.clicked_row_button_idx != null && data.clicked_row_button_idx >= 0 && data.clicked_row_button_key) {
-      modal_edit.openModalEdit(
-        '소개',
-        data.table_items[data.clicked_row_button_idx][data.clicked_row_button_key],
-        '',
-        'textarea',
-        true,
-      );
+      if (data.clicked_row_button_key == 'comment') {
+        modal_edit.openModalEdit(
+          '설명',
+          data.table_items[data.clicked_row_button_idx][data.clicked_row_button_key],
+          '',
+          'input',
+          true,
+        );
+      } else if (data.clicked_row_button_key == 'image') {
+        setImageDetail(data.clicked_row_button_idx);
+      }
     }
   }, [data.clicked_row_button_idx, data.clicked_row_button_key]);
 
-  const setExposureMenuModal = () => {
-    const target = data.table_items.find(item => item.checked);
-
-    if (target) {
-      const cur_num = Number(target.exposure_menu_num.replace('개', ''));
-
-      if (Number(cur_num) >= 5) {
-        modal_alert.openModalAlert('대표메뉴는 총 5개까지 등록이 가능합니다.');
-        return;
-      }
-
-      setExposureMenuContents({ visible: true, cur_num: cur_num });
+  const setImageDetail = async (idx: number) => {
+    if (!data.table_items[idx].image) {
+      modal_alert.openModalAlert('등록된 이미지가 없습니다.');
+      return;
     }
+    const image_list = await setImageArray([{ file_name: data.table_items[idx].image.file_name }]);
+    modal_image_detail.openModalImageDetail('exposure_menu', image_list);
   };
 
-  const deleteRestaurant = async (id: number) => {
-    const response = await fetchDeleteApi(`/manager/1/restaurant/${id}`);
+  const deleteExposureMenu = async (restaurant_id: number, id: number) => {
+    const response = await fetchDeleteApi(`/manager/1/restaurant/${restaurant_id}/exposure_menu/${id}`);
     if (response == 200) {
       modal_alert.openModalAlert('삭제가 완료되었습니다.');
     } else {
       modal_alert.openModalAlert('오류로 인해 삭제가 실패되었습니다.');
     }
     getTableItems();
-  };
-
-  const createExposureMenu = async (exposure_menu: AddExposureMenuContentsType[]) => {
-    const target = data.table_items.find(item => item.checked);
-
-    const payload = exposure_menu.map(item => {
-      return {
-        label: item.label,
-        price: Number(item.price),
-        comment: item.comment,
-      };
-    });
-    // /:manager/restaurant/:id/:menu
-    if (target) {
-      const restaurant_id = target.id;
-
-      const res_exposure_menu: ExposureMenuType[] = await fetchPostApi(
-        `/manager/1/restaurant/${restaurant_id}/exposure_menu`,
-        payload,
-      );
-
-      const exposure_menu_images_payload = [];
-      for (const menu of exposure_menu) {
-        const res_menu = res_exposure_menu.find(item => item.label == menu.label);
-        let menu_images = [];
-        if (menu.image_list && menu.image_list.length > 0 && menu.image_list[0].file) {
-          menu_images.push(menu.image_list[0].file);
-        }
-
-        if (res_menu) {
-          exposure_menu_images_payload.push({ target_id: res_menu.id, files: menu_images });
-        }
-      }
-
-      const exposure_menu_image_data = await setImageFormData(
-        exposure_menu_images_payload,
-        'exposure_menu',
-        restaurant_id,
-      );
-
-      const upload_exposure_menu_response = await fetchFileApi('/upload/image', exposure_menu_image_data);
-
-      if (upload_exposure_menu_response.length > 0) {
-        modal_alert.openModalAlert('대표메뉴 등록이 완료되었습니다.');
-      } else {
-        modal_alert.openModalAlert('오류로 인해 등록이 실패되었습니다.');
-      }
-
-      getTableItems();
-      setExposureMenuContents({ visible: false, cur_num: 0 });
-    }
-  };
-
-  const createCategory = async (category: AddEntireMenuContentsType[]) => {
-    const target = data.table_items.find(item => item.checked);
-
-    if (target) {
-      const res = await fetchPostApi(`/manager/1/restaurant/${target.id}/category`, category);
-
-      if (res) {
-        modal_alert.openModalAlert('카테고리 등록이 완료되었습니다.');
-      } else {
-        modal_alert.openModalAlert('오류로 인해 등록이 실패되었습니다.');
-      }
-
-      getTableItems();
-      setEntireMenuContents({ visible: false, type: '' });
-    }
-  };
-
-  const setOrderModalContents = (idx: number) => {
-    const target = data.table_items.find(item => item.checked);
-    if (target) {
-      let tmp_list = [];
-      let title = '';
-      switch (idx) {
-        case 1:
-          setCurOrderModalType('exposure_menu');
-          title = '대표메뉴 순서 변경';
-          tmp_list = target.exposure_menu.map((menu: ExposureMenuType, menu_idx: number) => {
-            return {
-              label: menu.label,
-              origin: menu_idx,
-              number: menu_idx + 1,
-            };
-          });
-          break;
-        case 3:
-          setCurOrderModalType('category');
-          title = '카테고리 순서 변경';
-          tmp_list = target.entire_menu_category.map((category: EntireMenuCategoryType, category_idx: number) => {
-            return {
-              label: category.category,
-              origin: category_idx,
-              number: category_idx + 1,
-            };
-          });
-          break;
-      }
-      setOrderContents({ visible: true, list: tmp_list, title: '객실 순서 변경' });
-    }
   };
 
   const setUploadModal = async () => {
@@ -258,20 +133,23 @@ const ManageRestaurantExposureMenu = (props: { list: ExposureMenuListType; style
     let title = '';
     let target_string = '';
     let type: 'input' | 'textarea' = 'input';
-    let format = '';
 
     if (target) {
       switch (index) {
-        case 4:
+        case 0:
           value = target.label;
-          title = '업소명 수정';
+          title = '메뉴명 수정';
           target_string = 'label';
           break;
-        case 6:
-          value = target.introduction;
-          title = '소개 수정';
-          target_string = 'introduction';
-          type = 'textarea';
+        case 1:
+          value = target.price.replace(' 원', '');
+          title = '가격 수정';
+          target_string = 'price';
+          break;
+        case 3:
+          value = target.comment;
+          title = '설명 수정';
+          target_string = 'comment';
           break;
       }
 
@@ -284,7 +162,7 @@ const ManageRestaurantExposureMenu = (props: { list: ExposureMenuListType; style
     const target_string = modal_edit.data.target;
 
     if (target) {
-      let url = `/manager/1/restaurant/${target.id}`;
+      let url = `/manager/1/restaurant/${target.restaurant_id}/exposure_menu/${target.id}`;
 
       const status = await fetchPatchApi(url, { target: target_string, value });
 
@@ -303,8 +181,11 @@ const ManageRestaurantExposureMenu = (props: { list: ExposureMenuListType; style
     if (list) {
       count = list.count;
       rows = list.rows;
+      setFirstUpdate(true);
     } else {
-      const accommodation: ExposureMenuListType = await fetchGetApi(`/manager/1/restaurant?page=${data.per_page}`);
+      const accommodation: ExposureMenuListType = await fetchGetApi(
+        `/manager/1/restaurant/exposure_menu?page=${data.per_page}`,
+      );
 
       count = accommodation.count;
       rows = accommodation.rows;
@@ -331,77 +212,11 @@ const ManageRestaurantExposureMenu = (props: { list: ExposureMenuListType; style
     });
   };
 
-  const completeChangeOrder = async (list: OrderListDataType[]) => {
-    const target = data.table_items.find(item => item.checked);
-    if (target) {
-      let change_data = [];
-      if (curOrderModalType == 'exposure_menu') {
-        for (const data of list) {
-          const cur_menu = target.exposure_menu.find((item: ExposureMenuType) => item.label == data.label);
-          if (cur_menu) {
-            change_data.push({
-              id: cur_menu.id,
-              seq: Number(data.number) - 1,
-            });
-          }
-        }
-      } else if (curOrderModalType == 'category') {
-        for (const data of list) {
-          const cur_category = target.entire_menu_category.find(
-            (item: EntireMenuCategoryType) => item.category == data.label,
-          );
-          if (cur_category) {
-            change_data.push({
-              id: cur_category.id,
-              seq: Number(data.number) - 1,
-            });
-          }
-        }
-      }
-
-      const response = await fetchPostApi(`/manager/1/restaurant/${target.id}/${curOrderModalType}/order`, change_data);
-      if (response) {
-        modal_alert.openModalAlert(`${orderContents.title}이 완료되었습니다.`);
-        getTableItems();
-        setOrderContents({ visible: false, title: '', list: [] });
-      } else {
-        modal_alert.openModalAlert('오류로 인해 실패되었습니다.');
-      }
-    } else {
-      modal_alert.openModalAlert('오류로 인해 실패되었습니다.');
-    }
-  };
-
   return (
     <>
       <Table contents={infoContents} />
       <ModalUpload onUpload={updateExposureImages} />
-      <Modalorder
-        visible={orderContents.visible}
-        title={orderContents.title}
-        list={orderContents.list}
-        onClose={() => setOrderContents({ visible: false, title: '', list: [] })}
-        onChange={(list: OrderListDataType[]) => completeChangeOrder(list)}
-      />
       <ModalEdit onChange={(value: string | number) => editContents(value)} />
-      <ModalAddExposureMenu
-        visible={exposureMenuContents.visible}
-        curNumber={exposureMenuContents.cur_num}
-        onClose={() => setExposureMenuContents({ visible: false, cur_num: 0 })}
-        onComplete={createExposureMenu}
-      />
-      <ModalAddEntireMenu
-        visible={entireMenuContents.visible}
-        type={entireMenuContents.type}
-        mode='add'
-        onClose={() => setEntireMenuContents({ visible: false, type: '' })}
-        onComplete={createCategory}
-      />
-      <ModalPostcodeForm
-        visible={postcodeVisible}
-        onClose={() => setPostcodeVisible(false)}
-        onChangeAddress={(address: ResponsePostcodeDataType) => console.log(address)}
-      />
     </>
   );
 };

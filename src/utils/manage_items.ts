@@ -126,6 +126,12 @@ export const restaurant_info = {
       key: 'category_num',
     },
     {
+      label: '이미지',
+      center: true,
+      key: 'image',
+      type: 'button',
+    },
+    {
       label: '소개',
       center: true,
       key: 'introduction',
@@ -215,6 +221,12 @@ export const restaurant_exposure_menu = {
       label: "가격",
       key: 'price',
       center: false,
+    },
+    {
+      label: '이미지',
+      center: true,
+      key: 'image',
+      type: 'button',
     },
     {
       label: '한 줄 설명',
