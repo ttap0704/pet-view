@@ -7,9 +7,15 @@ import { restaurant_exposure_menu } from '../../../src/utils/manage_items';
 
 import ModalEdit from '../../../src/components/modal/ModalEdit';
 import ModalUpload from '../../../src/components/modal/ModalUpload';
+import ModalUpdateExposureMenu from '../../../src/components/modal/ModalUpdateExposureMenuImage';
 import Table from '../../../src/components/table/Table';
 import { TableContext } from '../../../src/provider/TableProvider';
 import { ModalContext } from '../../../src/provider/ModalProvider';
+
+interface UpdateExposureMenuImageContentsType {
+  visible: boolean;
+  origin_image_list: ImageListType[];
+}
 
 const ManageRestaurantExposureMenu = (props: { list: ExposureMenuListType; style: { [key: string]: string } }) => {
   const { data } = useContext(TableContext);
@@ -17,6 +23,8 @@ const ManageRestaurantExposureMenu = (props: { list: ExposureMenuListType; style
 
   const [firstUpdate, setFirstUpdate] = useState(false);
   const [infoContents, setInfoContents] = useState<ChildrenDataType>(restaurant_exposure_menu);
+  const [updateExposureMenuImageContents, setUpdateExposureMenuImageContents] =
+    useState<UpdateExposureMenuImageContentsType>({ visible: false, origin_image_list: [] });
 
   useEffect(() => {
     getTableItems(props.list);
@@ -82,13 +90,11 @@ const ManageRestaurantExposureMenu = (props: { list: ExposureMenuListType; style
   const setUploadModal = async () => {
     const target = data.table_items.find(item => item.checked);
     if (target) {
-      const images = target.images.map((item: { file_name: string }) => {
-        return {
-          file_name: item.file_name,
-        };
-      });
-      const new_images = await setImageArray(images, true, 'restaurant');
-      modal_upload.openModalUpload('대표 이미지 수정', 'restaurant', new_images, target.id);
+      let image_list: ImageListType[] = [];
+      if (target.image) {
+        image_list = await setImageArray([{ file_name: target.image.file_name }]);
+      }
+      setUpdateExposureMenuImageContents({ visible: true, origin_image_list: image_list });
     }
   };
 
@@ -217,6 +223,13 @@ const ManageRestaurantExposureMenu = (props: { list: ExposureMenuListType; style
       <Table contents={infoContents} />
       <ModalUpload onUpload={updateExposureImages} />
       <ModalEdit onChange={(value: string | number) => editContents(value)} />
+      <ModalUpdateExposureMenu
+        visible={updateExposureMenuImageContents.visible}
+        origin={updateExposureMenuImageContents.origin_image_list}
+        onClose={() => {
+          setUpdateExposureMenuImageContents({ visible: false, origin_image_list: [] });
+        }}
+      />
     </>
   );
 };

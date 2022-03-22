@@ -94,7 +94,7 @@ function FormAddRoom(props: FormAddRoomProps) {
   return (
     <FormContainer>
       <RoomImageContainer>
-        <ImageBox type='rooms' imageList={image_list} slide={true} />
+        <ImageBox type='rooms' imageList={image_list} slide={true} count={true} />
       </RoomImageContainer>
       <FormItemContainer>
         {add_room_contents.map((item, idx) => {

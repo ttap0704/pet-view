@@ -54,7 +54,7 @@ const ManageRestaurantRegistration = () => {
     },
   ]);
 
-  const setPrevieImages = () => {
+  const setPreviewImages = () => {
     setExposureImages([...modal_upload.data.image_list]);
     modal_upload.closeModalUpload();
   };
@@ -275,7 +275,7 @@ const ManageRestaurantRegistration = () => {
   return (
     <>
       <ContainerRegistrationItem title='대표이미지 등록'>
-        <ImageBox slide={true} type='restaurant' imageList={exposureImages} />
+        <ImageBox slide={true} type='restaurant' imageList={exposureImages} count={true} />
         <UtilBox justifyContent='flex-start' sx={{ marginTop: '1rem' }}>
           <ButtonUpload
             title='대표이미지 등록'
@@ -359,7 +359,7 @@ const ManageRestaurantRegistration = () => {
         </Button>
       </UtilBox>
 
-      <ModalUpload onUpload={setPrevieImages} />
+      <ModalUpload onUpload={setPreviewImages} />
     </>
   );
 };

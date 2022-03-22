@@ -47,7 +47,7 @@ const ManageAccommodationRegistration = () => {
   ]);
 
   const setPrevieImages = () => {
-    if (modal_upload.data.type == 'room') {
+    if (modal_upload.data.type == 'rooms') {
       setRooms(state => {
         return [
           ...state.map((room, idx) => {
@@ -156,7 +156,7 @@ const ManageAccommodationRegistration = () => {
   return (
     <>
       <ContainerRegistrationItem title='대표이미지 등록'>
-        <ImageBox slide={true} type='accommodation' imageList={exposureImages} />
+        <ImageBox slide={true} type='accommodation' imageList={exposureImages} count={true} />
         <UtilBox justifyContent='flex-start' sx={{ marginTop: '1rem' }}>
           <ButtonUpload
             title='대표이미지 등록'

@@ -13,7 +13,7 @@ import { ModalContext } from '../../../src/provider/ModalProvider';
 
 const ManageAccommodationRooms = (props: { list: AccommodationRoomsListType; style: { [key: string]: string } }) => {
   const { data } = useContext(TableContext);
-  const { modal_confirm, modal_edit, modal_alert, modal_upload } = useContext(ModalContext);
+  const { modal_confirm, modal_edit, modal_alert, modal_upload, modal_image_detail } = useContext(ModalContext);
 
   const [roomContents, setRoomContents] = useState<ChildrenDataType>(accommodation_rooms);
   const [first, setFirst] = useState(false);
@@ -48,16 +48,27 @@ const ManageAccommodationRooms = (props: { list: AccommodationRoomsListType; sty
 
   useEffect(() => {
     if (data.clicked_row_button_idx != null && data.clicked_row_button_idx >= 0 && data.clicked_row_button_key) {
-      modal_edit.openModalEdit(
-        '소개',
-        data.table_items[data.clicked_row_button_idx][data.clicked_row_button_key],
-        '',
-        'textarea',
-        true,
-      );
-      console.log(data.clicked_row_button_idx, data.clicked_row_button_key);
+      if (data.clicked_row_button_key == 'images') {
+        setExposureImageDetail(data.clicked_row_button_idx);
+      }
     }
   }, [data.clicked_row_button_idx, data.clicked_row_button_key]);
+
+  const setExposureImageDetail = async (idx: number) => {
+    console.log(data.table_items[idx].images.length);
+    if (data.table_items[idx].images.length == 0) {
+      modal_alert.openModalAlert('등록된 이미지가 없습니다.');
+      return;
+    }
+
+    const tmp_image_list = data.table_items[idx].images.map((item: ImageType) => {
+      return {
+        file_name: item.file_name,
+      };
+    });
+    const image_list = await setImageArray(tmp_image_list);
+    modal_image_detail.openModalImageDetail('rooms', image_list);
+  };
 
   const deleteRoom = async (accommodation_id: number, id: number) => {
     const response = await fetchDeleteApi(`/manager/1/accommodation/${accommodation_id}/rooms/${id}`);

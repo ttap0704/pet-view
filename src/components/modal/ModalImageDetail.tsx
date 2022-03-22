@@ -1,7 +1,7 @@
 import { useEffect, useState, useContext } from 'react';
 import ModalDefault from './ModalDefault';
 import { styled } from '@mui/material/styles';
-import { Box, IconButton } from '@mui/material';
+import { Box, IconButton, Typography } from '@mui/material';
 import { ModalContext } from '../../provider/ModalProvider';
 import ImageSlider from '../image/ImageSlider';
 import { RiCloseCircleFill } from 'react-icons/ri';
@@ -22,11 +22,22 @@ const DetailWrap = styled(Box)(({ theme }) => ({
 const ImageWrap = styled(Box)(({ theme }) => ({
   backgroundColor: theme.palette.black.main,
   position: 'relative',
-  overflow: 'hidden',
-  '&.exposure_menu': {
-    width: '40rem',
-    height: '40rem',
-  },
+  width: '40rem',
+  height: '40rem',
+  // '&.exposure_menu': {
+  //   width: '40rem',
+  //   height: '40rem',
+  // },
+
+  // '&.restaurant': {
+  //   width: '40rem',
+  //   height: '40rem',
+  // },
+
+  // '&.accommodation': {
+  //   width: '40rem',
+  //   height: '40rem',
+  // },
 
   img: {
     top: '50%',
@@ -51,11 +62,53 @@ const CustomIconButton = styled(IconButton)(({ theme }) => ({
   },
 }));
 
+const CountTypography = styled(Typography)(({ theme }) => ({
+  position: 'absolute',
+  zIndex: 3,
+  right: '0.75rem',
+  top: '-2.5rem',
+  color: theme.palette.gray_2.main,
+  backgroundColor: theme.palette.white.main,
+  width: '3rem',
+  height: '2rem',
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
+  borderRadius: 6,
+}));
+
 const ModalImageDetail = () => {
   const { modal_image_detail } = useContext(ModalContext);
   const [curNum, setCurNum] = useState(0);
 
+  useEffect(() => {
+    if (!modal_image_detail.data.visible) {
+      setCurNum(0);
+    }
+  }, [modal_image_detail.data.visible]);
+
   const handleSlider = (dir: string) => {
+    if (modal_image_detail.data.image_list) {
+      let cur_num = curNum;
+
+      if (dir == 'left') {
+        if (cur_num == 0) {
+          cur_num = modal_image_detail.data.image_list.length - 1;
+        } else {
+          cur_num--;
+        }
+      } else if (dir == 'right') {
+        if (cur_num == modal_image_detail.data.image_list.length - 1) {
+          cur_num = 0;
+        } else {
+          cur_num++;
+        }
+      }
+
+      setCurNum(cur_num);
+    } else {
+      return false;
+    }
     console.log(dir);
   };
 
@@ -81,12 +134,14 @@ const ModalImageDetail = () => {
       >
         <DetailWrap>
           <ImageWrap className={modal_image_detail.data.type}>
+            <CountTypography>{`${curNum + 1} / ${modal_image_detail.data.image_list.length}`}</CountTypography>
             {modal_image_detail.data.image_list.map((list, list_idx) => {
               return (
                 <img
+                  key={`image_modal_img_${list_idx}`}
                   src={setImageSrc(list)}
                   alt={modal_image_detail.data.type}
-                  style={curNum != list_idx ? { display: 'none' } : {}}
+                  style={curNum != list_idx ? { display: 'none' } : { zIndex: 1 }}
                 />
               );
             })}

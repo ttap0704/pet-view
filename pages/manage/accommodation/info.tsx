@@ -22,7 +22,7 @@ interface AddRoomContents {
 
 const ManageAccommodationInfo = (props: { list: AccommodationListType; style: { [key: string]: string } }) => {
   const { data } = useContext(TableContext);
-  const { modal_confirm, modal_edit, modal_alert, modal_upload } = useContext(ModalContext);
+  const { modal_confirm, modal_edit, modal_alert, modal_upload, modal_image_detail } = useContext(ModalContext);
 
   const [postcodeVisible, setPostcodeVisible] = useState<boolean>(false);
   const [addRoomContents, setAddRoomContents] = useState<AddRoomContents>({
@@ -46,7 +46,6 @@ const ManageAccommodationInfo = (props: { list: AccommodationListType; style: { 
     const target = data.table_items.find(item => item.checked);
     if (target && target_idx != null && target_idx >= 0) {
       if (target_idx == 0) {
-        console.log(target_idx, '2');
         setAddRoomModalContents();
       } else if ([1, 3].includes(target_idx)) {
         setModalEdit();
@@ -66,16 +65,32 @@ const ManageAccommodationInfo = (props: { list: AccommodationListType; style: { 
 
   useEffect(() => {
     if (data.clicked_row_button_idx != null && data.clicked_row_button_idx >= 0 && data.clicked_row_button_key) {
-      modal_edit.openModalEdit(
-        '소개',
-        data.table_items[data.clicked_row_button_idx][data.clicked_row_button_key],
-        '',
-        'textarea',
-        true,
-      );
-      console.log(data.clicked_row_button_idx, data.clicked_row_button_key);
+      if (data.clicked_row_button_idx != null && data.clicked_row_button_idx >= 0 && data.clicked_row_button_key) {
+        const target = data.table_items[data.clicked_row_button_idx];
+        if (data.clicked_row_button_key == 'introduction') {
+          modal_edit.openModalEdit('소개', target[data.clicked_row_button_key], '', 'textarea', true);
+        } else if (data.clicked_row_button_key == 'image') {
+          setExposureImageDetail(data.clicked_row_button_idx);
+        }
+      }
     }
   }, [data.clicked_row_button_idx, data.clicked_row_button_key]);
+
+  const setExposureImageDetail = async (idx: number) => {
+    console.log(data.table_items[idx].images.length);
+    if (data.table_items[idx].images.length == 0) {
+      modal_alert.openModalAlert('등록된 이미지가 없습니다.');
+      return;
+    }
+
+    const tmp_image_list = data.table_items[idx].images.map((item: ImageType) => {
+      return {
+        file_name: item.file_name,
+      };
+    });
+    const image_list = await setImageArray(tmp_image_list);
+    modal_image_detail.openModalImageDetail('accommodation', image_list);
+  };
 
   const deleteAccommodation = async (id: number) => {
     const response = await fetchDeleteApi(`/manager/1/accommodation/${id}`);

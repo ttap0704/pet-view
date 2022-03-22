@@ -18,7 +18,7 @@ import { ModalContext } from '../../../src/provider/ModalProvider';
 
 const ManageRestaurantInfo = (props: { list: RestaurantListType; style: { [key: string]: string } }) => {
   const { data } = useContext(TableContext);
-  const { modal_confirm, modal_edit, modal_alert, modal_upload } = useContext(ModalContext);
+  const { modal_confirm, modal_edit, modal_alert, modal_upload, modal_image_detail } = useContext(ModalContext);
 
   const [curOrderModalType, setCurOrderModalType] = useState('');
   const [postcodeVisible, setPostcodeVisible] = useState<boolean>(false);
@@ -67,15 +67,30 @@ const ManageRestaurantInfo = (props: { list: RestaurantListType; style: { [key: 
 
   useEffect(() => {
     if (data.clicked_row_button_idx != null && data.clicked_row_button_idx >= 0 && data.clicked_row_button_key) {
-      modal_edit.openModalEdit(
-        '소개',
-        data.table_items[data.clicked_row_button_idx][data.clicked_row_button_key],
-        '',
-        'textarea',
-        true,
-      );
+      const target = data.table_items[data.clicked_row_button_idx];
+      if (data.clicked_row_button_key == 'introduction') {
+        modal_edit.openModalEdit('소개', target[data.clicked_row_button_key], '', 'textarea', true);
+      } else if (data.clicked_row_button_key == 'image') {
+        setExposureImageDetail(data.clicked_row_button_idx);
+      }
     }
   }, [data.clicked_row_button_idx, data.clicked_row_button_key]);
+
+  const setExposureImageDetail = async (idx: number) => {
+    console.log(data.table_items[idx].images.length);
+    if (data.table_items[idx].images.length == 0) {
+      modal_alert.openModalAlert('등록된 이미지가 없습니다.');
+      return;
+    }
+
+    const tmp_image_list = data.table_items[idx].images.map((item: ImageType) => {
+      return {
+        file_name: item.file_name,
+      };
+    });
+    const image_list = await setImageArray(tmp_image_list);
+    modal_image_detail.openModalImageDetail('restaurant', image_list);
+  };
 
   const setExposureMenuModal = () => {
     const target = data.table_items.find(item => item.checked);
@@ -221,10 +236,10 @@ const ManageRestaurantInfo = (props: { list: RestaurantListType; style: { [key: 
     const type = modal_upload.data.type;
 
     if (target_idx != null && target_idx >= 0) {
-      if (type == 'accommodation') {
+      if (type == 'restaurant') {
         let exposure_images = [];
 
-        const delete_res = await fetchDeleteApi(`/image/accommodation/${target_idx}`);
+        const delete_res = await fetchDeleteApi(`/image/restaurant/${target_idx}`);
 
         for (const item of modal_upload.data.image_list) {
           if (item.file) exposure_images.push(item.file);
@@ -232,7 +247,7 @@ const ManageRestaurantInfo = (props: { list: RestaurantListType; style: { [key: 
 
         const exposure_image_data = await setImageFormData(
           [{ target_id: target_idx, files: exposure_images }],
-          'accommodation',
+          'restaurant',
         );
 
         const upload_res = await fetchFileApi('/upload/image', exposure_image_data);
@@ -303,10 +318,10 @@ const ManageRestaurantInfo = (props: { list: RestaurantListType; style: { [key: 
       count = list.count;
       rows = list.rows;
     } else {
-      const accommodation: RestaurantListType = await fetchGetApi(`/manager/1/restaurant?page=${data.per_page}`);
+      const restaurant: RestaurantListType = await fetchGetApi(`/manager/1/restaurant?page=${data.per_page}`);
 
-      count = accommodation.count;
-      rows = accommodation.rows;
+      count = restaurant.count;
+      rows = restaurant.rows;
     }
 
     let tmp_table_items = [];

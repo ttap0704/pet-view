@@ -10,6 +10,7 @@ interface ImageBoxProps extends BoxProps {
   imageList?: ImageListType[];
   type: string;
   slide: boolean;
+  count?: boolean;
 }
 
 const CustomBox = styled(Box)(({ theme }) => ({
@@ -41,10 +42,18 @@ const ImageWrap = styled(Box)(({ theme }) => ({
   },
 }));
 
+const CountTypography = styled(Typography)(({ theme }) => ({
+  position: 'absolute',
+  zIndex: 3,
+  right: '0.75rem',
+  top: '0.5rem',
+}));
+
 const ImageBox = (props: ImageBoxProps) => {
   const image_list = props.imageList;
   const type = props.type;
   const slide = props.slide;
+  const count = props.count;
   const [curNum, setCurNum] = useState(0);
   const [isSlide, setIsSlide] = useState(false);
   const [boxStyle, setBoxStyle] = useState({
@@ -107,14 +116,14 @@ const ImageBox = (props: ImageBoxProps) => {
     }
   };
 
-  const setImageSrc = () => {
+  const setImageSrc = (idx: number) => {
     let src = '';
 
     if (image_list && image_list.length > 0) {
-      if (image_list[curNum].new == true) {
-        src = image_list[curNum].src;
+      if (image_list[idx].new == true) {
+        src = image_list[idx].src;
       } else {
-        src = `http://localhost:3080/image/${type}/${image_list[curNum].src}`;
+        src = `http://localhost:3080/image/${type}/${image_list[idx].src}`;
       }
     }
 
@@ -126,7 +135,19 @@ const ImageBox = (props: ImageBoxProps) => {
       <CustomBox sx={{ ...boxStyle }}>
         {image_list && image_list.length > 0 ? (
           <ImageWrap>
-            <img src={setImageSrc()} alt='미리보기 이미지' />
+            <>
+              {count ? <CountTypography>{`${curNum + 1} / ${image_list.length}`}</CountTypography> : null}
+              {image_list.map((image, image_idx) => {
+                return (
+                  <img
+                    key={`image_box_img_${image_idx}`}
+                    src={setImageSrc(image_idx)}
+                    alt='미리보기 이미지'
+                    style={curNum != image_idx ? { display: 'none' } : {}}
+                  />
+                );
+              })}
+            </>
           </ImageWrap>
         ) : (
           <ContainerFullAbsolute>
