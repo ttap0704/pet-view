@@ -254,3 +254,40 @@ export const restaurant_exposure_menu = {
   footer_colspan: 7,
   table_items: [],
 }
+
+export const restaurant_entire_menu = {
+  header: [
+    {
+      label: 'check',
+      center: true,
+      key: 'check',
+      type: 'checkbox',
+    },
+    {
+      label: "음식점",
+      key: 'restaurant_label',
+      center: false,
+    },
+    {
+      label: "카테고리",
+      key: 'category',
+      center: false,
+    },
+    {
+      label: "메뉴명",
+      key: 'label',
+      center: false,
+    },
+    {
+      label: "가격",
+      key: 'price',
+      center: false,
+    },
+  ],
+  edit_items: ["메뉴명 수정", "가격 수정", "카테고리 수정", "메뉴 삭제"],
+  type: 'entire_menu',
+  title: '전체메뉴 관리',
+  rows_length: 0,
+  footer_colspan: 7,
+  table_items: [],
+}

@@ -130,20 +130,25 @@ function TableProvider(props: { children: React.ReactNode }) {
     },
     setTableContents: (contents: ChildrenDataType) => {
       const per_page = tableData.per_page;
-      const max = Math.ceil(tableData.rows_length / 5);
+      const max = Math.ceil(contents.rows_length / 5);
 
       let left = false;
       let right = false;
 
-      if (per_page == 1) {
+      if (max == 1) {
         left = true;
-        right = false;
-      } else if (per_page > 1 && per_page < max) {
-        left = false;
-        right = false;
-      } else if (per_page == max) {
-        left = false;
         right = true;
+      } else {
+        if (per_page == 1) {
+          left = true;
+          right = false;
+        } else if (per_page > 1 && per_page < max) {
+          left = false;
+          right = false;
+        } else if (per_page == max) {
+          left = false;
+          right = true;
+        }
       }
 
       setTableData({

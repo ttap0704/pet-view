@@ -11,6 +11,7 @@ interface ImageBoxProps extends BoxProps {
   type: string;
   slide: boolean;
   count?: boolean;
+  emptyText?: string;
 }
 
 const CustomBox = styled(Box)(({ theme }) => ({
@@ -54,6 +55,8 @@ const ImageBox = (props: ImageBoxProps) => {
   const type = props.type;
   const slide = props.slide;
   const count = props.count;
+  const empty_text = props.emptyText;
+
   const [curNum, setCurNum] = useState(0);
   const [isSlide, setIsSlide] = useState(false);
   const [boxStyle, setBoxStyle] = useState({
@@ -151,7 +154,7 @@ const ImageBox = (props: ImageBoxProps) => {
           </ImageWrap>
         ) : (
           <ContainerFullAbsolute>
-            <Typography component='h5'>이미지를 등록해주세요.</Typography>
+            <Typography component='h5'>{empty_text ? empty_text : '이미지를 등록해주세요.'}</Typography>
           </ContainerFullAbsolute>
         )}
         {isSlide ? <ImageSlider onSlide={handleSlider} /> : null}

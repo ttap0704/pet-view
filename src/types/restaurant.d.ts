@@ -14,6 +14,11 @@ interface EntireMenuCategoryListType {
   rows: EntireMenuCategoryResponse[];
 }
 
+interface EntireMenuListType {
+  count: number;
+  rows: EntireMenyResponse[];
+}
+
 interface RestaurantResponse {
   restaurant_images: ImageType[];
   exposure_menu: ExposureMenuType[];
@@ -87,6 +92,11 @@ interface EntireMenuType {
   restaurant_id: number;
   seq: number;
   updatedAt: string;
+}
+
+interface EntireMenyResponse extends EntireMenuType {
+  category: string;
+  restaurant_label: string;
 }
 
 interface AddExposureMenuContentsType {

@@ -68,6 +68,34 @@ const ManageRestaurantExposureMenu = (props: { list: ExposureMenuListType; style
     }
   }, [data.clicked_row_button_idx, data.clicked_row_button_key]);
 
+  const updateExposureMenuImage = async (list: ImageListType[]) => {
+    const target = data.table_items.find(item => item.checked);
+    if (target && list[0].file) {
+      const update_data = [
+        {
+          target_id: Number(target.id),
+          files: [list[0].file],
+        },
+      ];
+
+      const exposure_menu_image_data = await setImageFormData(update_data, 'exposure_menu', target.restaurant_id);
+      const delete_res = await fetchDeleteApi(`/image/exposure_menu/${target.id}`);
+
+      const update_res = await fetchFileApi('/upload/image', exposure_menu_image_data);
+      if ((delete_res == 200 || delete_res == 204) && update_res.length > 0) {
+        modal_alert.openModalAlert('메뉴 이미지 수정이 완료되었습니다.');
+      } else {
+        modal_alert.openModalAlert('오류로 인해 수정이 실패되었습니다.');
+      }
+      getTableItems();
+      clearUpdateExposureMenuContenst();
+    }
+  };
+
+  const clearUpdateExposureMenuContenst = () => {
+    setUpdateExposureMenuImageContents({ visible: false, origin_image_list: [] });
+  };
+
   const setImageDetail = async (idx: number) => {
     if (!data.table_items[idx].image) {
       modal_alert.openModalAlert('등록된 이미지가 없습니다.');
@@ -226,9 +254,8 @@ const ManageRestaurantExposureMenu = (props: { list: ExposureMenuListType; style
       <ModalUpdateExposureMenu
         visible={updateExposureMenuImageContents.visible}
         origin={updateExposureMenuImageContents.origin_image_list}
-        onClose={() => {
-          setUpdateExposureMenuImageContents({ visible: false, origin_image_list: [] });
-        }}
+        onCompleteChange={updateExposureMenuImage}
+        onClose={clearUpdateExposureMenuContenst}
       />
     </>
   );

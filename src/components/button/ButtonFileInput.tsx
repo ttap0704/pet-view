@@ -13,6 +13,7 @@ interface ButtonFileInputProps {
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onClick?: () => void;
   id: string;
+  sx?: ButtonProps['sx'];
 }
 
 const UploadInput = (props: ButtonFileInputProps) => {
@@ -21,6 +22,7 @@ const UploadInput = (props: ButtonFileInputProps) => {
   const onChange = props.onChange;
   const onClick = props.onClick;
   const id = props.id;
+  const sx = props.sx;
 
   function onChangeEvent(e: React.ChangeEvent<HTMLInputElement>) {
     e.preventDefault();
@@ -30,7 +32,7 @@ const UploadInput = (props: ButtonFileInputProps) => {
   return (
     <>
       <Button
-        sx={{ padding: 0 }}
+        sx={sx ? { ...sx, padding: 0 } : { padding: 0 }}
         onClick={() => {
           onClick ? onClick() : false;
         }}
