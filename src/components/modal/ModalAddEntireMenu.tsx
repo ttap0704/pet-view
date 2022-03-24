@@ -78,17 +78,26 @@ function ModalAddEntireMenu(props: ModalAddEntireMenuProps) {
         });
       }
 
-      if (mode == 'read' && props_category != undefined) {
-        setEntireMenu([...props_category]);
+      if (props_category != undefined) {
+        if (mode == 'read') {
+          setEntireMenu([...props_category]);
+        } else {
+          console.log(props_category);
+          if (type == 'entire_menu') {
+            setEntireMenu([...props_category]);
+          }
+        }
       }
     }
   }, [visible]);
 
-  const addEntireMenu = (idx: number) => {
+  const addEntireMenu = (idx?: number) => {
+    let index = 0;
+    if (idx != undefined && Number(idx) >= 0) index = idx;
     setEntireMenu(state => {
       return [
         ...state.map((item, item_idx) => {
-          if (idx == item_idx) {
+          if (index == item_idx) {
             return {
               ...item,
               menu: [
@@ -172,12 +181,22 @@ function ModalAddEntireMenu(props: ModalAddEntireMenuProps) {
     <>
       <ModalDefault bottom={false} white={false} visible={visible} onClose={onClose}>
         <ContainerModalContents>
-          <LabelModal title={contents.title + (mode == 'add' ? '추가' : '')} onClose={onClose} />
+          <LabelModal title={contents.title + (mode == 'add' ? ' 추가' : '')} onClose={onClose} />
           <ModalAddEntireMenuContentsBox>
             {mode == 'add' ? (
               <UtilBox justifyContent='flex-end' sx={{ marginBottom: '1rem' }}>
-                <Button color='blue' variant='contained' onClick={addCategory}>
-                  카테고리 추가
+                <Button
+                  color='blue'
+                  variant='contained'
+                  onClick={() => {
+                    if (type == 'category') {
+                      addCategory();
+                    } else {
+                      addEntireMenu();
+                    }
+                  }}
+                >
+                  {contents.title} 추가
                 </Button>
               </UtilBox>
             ) : null}
@@ -193,6 +212,7 @@ function ModalAddEntireMenu(props: ModalAddEntireMenuProps) {
               onAddMenu={addEntireMenu}
               onDeleteMenu={deleteEntireMenu}
               mode={mode}
+              type={type}
             />
           </ModalAddEntireMenuContentsBox>
           {mode == 'add' ? (

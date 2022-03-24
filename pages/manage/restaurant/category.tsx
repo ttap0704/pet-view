@@ -59,8 +59,10 @@ const ManageAccommodationCategory = (props: { list: EntireMenuCategoryListType; 
       if (target_idx == 0) {
         modal_edit.openModalEdit('카테고리명 수정', target.category, 'category', 'input');
       } else if (target_idx == 1) {
-        setOrderModalContents();
+        setAddEntireMenuContents();
       } else if (target_idx == 2) {
+        setOrderModalContents();
+      } else if (target_idx == 3) {
         modal_confirm.openModalConfirm(`정말 [${target.category}] 카테고리를 삭제하시겠습니까?`, () =>
           deleteCategory(target.restaurant_id, target.id),
         );
@@ -83,6 +85,20 @@ const ManageAccommodationCategory = (props: { list: EntireMenuCategoryListType; 
     }
   }, [data.clicked_row_button_idx, data.clicked_row_button_key]);
 
+  const setAddEntireMenuContents = () => {
+    const target = data.table_items.find(item => item.checked);
+    if (target) {
+      const category_data: AddEntireMenuContentsType[] = [
+        {
+          category: target.category,
+          menu: [{ label: '', price: '' }],
+        },
+      ];
+
+      setEntireMenuContents({ visible: true, type: 'entire_menu', mode: 'add', category: category_data });
+    }
+  };
+
   const deleteCategory = async (restaurant_id: number, id: number) => {
     const response = await fetchDeleteApi(`/manager/1/restaurant/${restaurant_id}/category/${id}`);
     if (response == 200) {
@@ -93,14 +109,17 @@ const ManageAccommodationCategory = (props: { list: EntireMenuCategoryListType; 
     getTableItems();
   };
 
-  const createCategory = async (category: AddEntireMenuContentsType[]) => {
+  const addEntireMenu = async (category: AddEntireMenuContentsType[]) => {
     const target = data.table_items.find(item => item.checked);
 
     if (target) {
-      const res = await fetchPostApi(`/manager/1/restaurant/${target.id}/category`, category);
+      const menu = [...category[0].menu];
+      const res = await fetchPostApi(`/manager/1/restaurant/${target.restaurant_id}/category/${target.id}/menu`, {
+        menu,
+      });
 
       if (res) {
-        modal_alert.openModalAlert('카테고리 등록이 완료되었습니다.');
+        modal_alert.openModalAlert('전체메뉴 등록이 완료되었습니다.');
       } else {
         modal_alert.openModalAlert('오류로 인해 등록이 실패되었습니다.');
       }
@@ -230,7 +249,7 @@ const ManageAccommodationCategory = (props: { list: EntireMenuCategoryListType; 
         mode={entireMenuContents.mode}
         category={entireMenuContents.category}
         onClose={() => setEntireMenuContents({ visible: false, type: '', mode: '', category: [] })}
-        onComplete={createCategory}
+        onComplete={addEntireMenu}
       />
     </>
   );

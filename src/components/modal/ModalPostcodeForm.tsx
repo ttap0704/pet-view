@@ -1,7 +1,8 @@
 import * as React from 'react';
-import { useState } from 'react';
+import { useState, useContext, useEffect } from 'react';
 import { Box } from '@mui/material';
 import { styled } from '@mui/material/styles';
+import { ModalContext } from '../../provider/ModalProvider';
 
 import ContainerModalContents from '../container/ContainerModalContents';
 import FormPostcode from '../form/FormPostcode';
@@ -27,10 +28,11 @@ const ModalPostcodeFormContentsBox = styled(Box)(({ theme }) => ({
 }));
 
 function ModalPostcodeForm(props: ModalPostcodeFormProps) {
+  const { modal_confirm } = useContext(ModalContext);
+
   const onChangeAddress = props.onChangeAddress;
   const onClose = props.onClose;
   const visible = props.visible;
-
   const [address, setAddress] = useState<FinalPostcodeDataType>({
     zonecode: '',
     sido: '',
@@ -40,6 +42,26 @@ function ModalPostcodeForm(props: ModalPostcodeFormProps) {
     building_name: '',
     detail_address: '',
   });
+
+  useEffect(() => {
+    if (!visible) {
+      setAddress({
+        zonecode: '',
+        sido: '',
+        sigungu: '',
+        bname: '',
+        road_address: '',
+        building_name: '',
+        detail_address: '',
+      });
+    }
+  }, [visible]);
+
+  const confirmChange = () => {
+    modal_confirm.openModalConfirm('주소를 수정하시겠습니까?', () => {
+      onChangeAddress(address);
+    });
+  };
 
   return (
     <>
@@ -56,8 +78,8 @@ function ModalPostcodeForm(props: ModalPostcodeFormProps) {
             />
           </ModalPostcodeFormContentsBox>
           <UtilBox>
-            <Button variant='contained' color='orange' onClick={() => onChangeAddress(address)}>
-              주소 수정
+            <Button variant='contained' color='orange' onClick={() => confirmChange()}>
+              수정
             </Button>
           </UtilBox>
         </ContainerModalContents>

@@ -395,6 +395,20 @@ const ManageRestaurantInfo = (props: { list: RestaurantListType; style: { [key: 
     }
   };
 
+  const updateAddress = async (address: ResponsePostcodeDataType) => {
+    const target = data.table_items.find(item => item.checked);
+    if (target) {
+      const update_res = await await fetchPostApi(`/manager/1/restaurant/${target.id}/address`, { address });
+      if (update_res) {
+        getTableItems();
+        setPostcodeVisible(false);
+        modal_alert.openModalAlert('주소가 변경되었습니다.');
+      } else {
+        modal_alert.openModalAlert('오류로 인해 실패되었습니다.');
+      }
+    }
+  };
+
   return (
     <>
       <Table contents={infoContents} />
@@ -423,7 +437,7 @@ const ManageRestaurantInfo = (props: { list: RestaurantListType; style: { [key: 
       <ModalPostcodeForm
         visible={postcodeVisible}
         onClose={() => setPostcodeVisible(false)}
-        onChangeAddress={(address: ResponsePostcodeDataType) => console.log(address)}
+        onChangeAddress={(address: ResponsePostcodeDataType) => updateAddress(address)}
       />
     </>
   );

@@ -12,11 +12,18 @@ const LayoutManageBox = styled(Box)(({ theme }) => ({
   display: 'flex',
 }));
 
-const LayoutChildrenBox = styled(Box)(({ theme }) => ({
+const LayoutChildrenWarp = styled(Box)(({ theme }) => ({
   width: '80vw',
   height: '100vh',
   padding: '2rem 2rem 5rem',
   overflowY: 'auto',
+}));
+
+const LayoutChildrenBox = styled(Box)(({ theme }) => ({
+  width: '100%',
+  maxWidth: '70rem',
+  height: '100%',
+  margin: '0 auto',
 }));
 
 const LayoutManage = (props: LayoutManageProps) => {
@@ -24,7 +31,10 @@ const LayoutManage = (props: LayoutManageProps) => {
   return (
     <LayoutManageBox>
       <ManageSideMenu />
-      <LayoutChildrenBox>{children}</LayoutChildrenBox>
+      <LayoutChildrenWarp>
+        <LayoutChildrenBox>{children}</LayoutChildrenBox>
+      </LayoutChildrenWarp>
+      Î
     </LayoutManageBox>
   );
 };

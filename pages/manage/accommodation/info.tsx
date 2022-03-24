@@ -77,7 +77,6 @@ const ManageAccommodationInfo = (props: { list: AccommodationListType; style: { 
   }, [data.clicked_row_button_idx, data.clicked_row_button_key]);
 
   const setExposureImageDetail = async (idx: number) => {
-    console.log(data.table_items[idx].images.length);
     if (data.table_items[idx].images.length == 0) {
       modal_alert.openModalAlert('등록된 이미지가 없습니다.');
       return;
@@ -335,6 +334,20 @@ const ManageAccommodationInfo = (props: { list: AccommodationListType; style: { 
     }
   };
 
+  const updateAddress = async (address: ResponsePostcodeDataType) => {
+    const target = data.table_items.find(item => item.checked);
+    if (target) {
+      const update_res = await await fetchPostApi(`/manager/1/accommodation/${target.id}/address`, { address });
+      if (update_res) {
+        getTableItems();
+        setPostcodeVisible(false);
+        modal_alert.openModalAlert('주소가 변경되었습니다.');
+      } else {
+        modal_alert.openModalAlert('오류로 인해 실패되었습니다.');
+      }
+    }
+  };
+
   return (
     <>
       <Table contents={infoContents} />
@@ -358,7 +371,7 @@ const ManageAccommodationInfo = (props: { list: AccommodationListType; style: { 
       <ModalPostcodeForm
         visible={postcodeVisible}
         onClose={() => setPostcodeVisible(false)}
-        onChangeAddress={(address: ResponsePostcodeDataType) => console.log(address)}
+        onChangeAddress={(address: ResponsePostcodeDataType) => updateAddress(address)}
       />
     </>
   );

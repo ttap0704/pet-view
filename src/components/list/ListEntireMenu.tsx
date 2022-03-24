@@ -22,6 +22,7 @@ interface ListEntireMenuProps {
   onAddMenu: (idx: number) => void;
   onDeleteMenu: (idx: number, children?: number) => void;
   mode: string;
+  type?: string;
 }
 
 const MenuBox = styled(Box)(({ theme }) => ({
@@ -80,6 +81,7 @@ const ListEntireMenu = (props: ListEntireMenuProps) => {
   const onAddMenu = props.onAddMenu;
   const onDeleteMenu = props.onDeleteMenu;
   const mode = props.mode;
+  const type = props.type;
 
   return (
     <MenuBox>
@@ -88,14 +90,14 @@ const ListEntireMenu = (props: ListEntireMenuProps) => {
           <ListParentBox key={`category_${category_idx}`}>
             <ContentsBox>
               <InputOutlined
-                readOnly={mode == 'read' ? true : false}
+                readOnly={mode == 'read' || type == 'entire_menu' ? true : false}
                 value={category.category}
                 className='none'
                 height='2rem'
                 placeholder='카테고리를 입력해주세요.'
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => onChange(e, 'category', category_idx)}
               />
-              {mode == 'add' ? (
+              {mode == 'add' && type == 'category' ? (
                 <>
                   <CustomIconButton onClick={() => onAddMenu(category_idx)}>
                     <HiOutlinePlusCircle />

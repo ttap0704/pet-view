@@ -203,7 +203,7 @@ export const restaurant_category = {
       type: 'button',
     },
   ],
-  edit_items: ["카테고리명 수정", "메뉴 순서 변경", "카테고리 삭제"],
+  edit_items: ["카테고리명 수정", "메뉴 추가", "메뉴 순서 변경", "카테고리 삭제"],
   type: 'category',
   title: '카테고리 관리',
   rows_length: 0,
