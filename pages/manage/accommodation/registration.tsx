@@ -17,6 +17,7 @@ import FormAddRoom from '../../../src/components/form/FormAddRoom';
 import Textarea from '../../../src/components/textarea/Textarea';
 import ChevronDivder from '../../../src/components/common/ChevronDivder';
 import InputOutlined from '../../../src/components/input/InputOutlined';
+import FormPeakSeason from '../../../src/components/form/FormPeakSeason';
 
 import ModalUpload from '../../../src/components/modal/ModalUpload';
 
@@ -24,6 +25,10 @@ const ManageAccommodationRegistration = () => {
   const { modal_upload, modal_confirm } = useContext(ModalContext);
 
   const [exposureImages, setExposureImages] = useState<ImageListType[]>([]);
+  const [peakSeason, setPeakSeason] = useState<string[][]>([
+    ['07-15', '08-24'],
+    ['12-20', '02-20'],
+  ]);
   const [address, setAddress] = useState<FinalPostcodeDataType>({
     zonecode: '',
     sido: '',
@@ -188,6 +193,9 @@ const ManageAccommodationRegistration = () => {
         />
       </ContainerRegistrationItem>
       <ChevronDivder />
+      <ContainerRegistrationItem title='성수기 설정'>
+        <FormPeakSeason data={peakSeason} />
+      </ContainerRegistrationItem>
       <ContainerRegistrationItem title='객실 등록'>
         {rooms.map((room, room_idx) => {
           return (

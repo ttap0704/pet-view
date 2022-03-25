@@ -1,12 +1,24 @@
 import * as React from 'react';
+import { useState, useEffect } from 'react';
 import TextField from '@mui/material/TextField';
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
 import DatePicker from '@mui/lab/DatePicker';
 
+import { Box } from '@mui/material';
 import { styled } from '@mui/material/styles';
 
+type ContentsView = 'year' | 'month' | 'day';
+
+interface DatePickerContentsType {
+  views: ContentsView[];
+  input_format: string;
+  mask: string;
+}
+
 interface DatePickerProps {
+  type?: string;
+  date?: Date;
   onDateChange: (date: Date) => void;
 }
 
@@ -18,23 +30,42 @@ const CustomTextField = styled(TextField)(({ theme }) => ({
     height: '100%',
     borderColor: theme.palette.gray_4.main,
   },
+
+  '&.season': {
+    '.MuiOutlinedInput-root': {
+      fieldset: {
+        border: 'none',
+      },
+    },
+  },
 }));
 
 const CustomDatePicker = (props: DatePickerProps) => {
-  const [value, setValue] = React.useState<Date | null>(new Date());
+  const type = props.type;
+  const date = props.date;
   const onDateChange = props.onDateChange;
+  const [value, setValue] = React.useState<Date | null>(new Date());
+  const class_name = type != 'season' ? '' : 'season';
+
+  useEffect(() => {
+    if (date) {
+      setValue(date);
+    }
+  }, []);
 
   return (
     <LocalizationProvider dateAdapter={AdapterDateFns}>
       <DatePicker
+        PaperProps={{ className: class_name }}
+        views={type != 'season' ? ['year', 'month', 'day'] : ['month', 'day']}
         value={value}
-        inputFormat={'yyyy년 MM월 dd일'}
-        mask={'____년 __월 __일'}
+        inputFormat={type != 'season' ? 'yyyy년 MM월 dd일' : 'MM월 dd일'}
+        mask={type != 'season' ? '____년__월 __일' : '__월 __일'}
         onChange={newValue => {
           setValue(newValue);
           onDateChange(new Date(`${newValue}`));
         }}
-        renderInput={params => <CustomTextField {...params} />}
+        renderInput={params => <CustomTextField className={class_name} {...params} />}
       />
     </LocalizationProvider>
   );

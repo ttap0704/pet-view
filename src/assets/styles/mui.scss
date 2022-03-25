@@ -7,7 +7,6 @@
   margin-top: -12px !important;
 }
 
-
 // table
 .MuiTableCell-root {
   padding: 0;
@@ -15,4 +14,20 @@
 
 .MuiTableRow-root {
   height: 4rem;
+}
+
+.MuiPaper-root {
+  &.season {
+    .MuiCalendarPicker-root {
+      & > div {
+        & > div {
+          .PrivatePickersFadeTransitionGroup-root {
+            &:last-of-type {
+              display: none;
+            }
+          }
+        }
+      }
+    }
+  }
 }
