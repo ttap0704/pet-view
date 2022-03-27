@@ -24,6 +24,7 @@ interface AccommodationRoomsListType {
 interface AccommodationResponse {
   accommodation_images: ImageType[];
   accommodation_rooms: RoomType[];
+  accommodation_peak_season: PeakSeasonType[];
   bname: string;
   building_name: string;
   createdAt: string;
@@ -37,6 +38,12 @@ interface AccommodationResponse {
   sigungu: string;
   updatedAt: string;
   zonecode: string;
+}
+
+interface PeakSeasonType {
+  accommodation_id: number;
+  start: string;
+  end: string;
 }
 
 interface RoomType {

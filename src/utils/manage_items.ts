@@ -28,6 +28,12 @@ export const accommodation_info = {
       type: 'button',
     },
     {
+      label: '성수기 기간',
+      center: true,
+      key: 'peak_season',
+      type: 'button',
+    },
+    {
       label: '소개',
       center: true,
       key: 'introduction',
@@ -46,6 +52,7 @@ export const accommodation_info = {
     '소개 수정',
     '대표이미지 수정',
     '객실 순서 변경',
+    '성수기 기간 변경',
     '업소 삭제',
   ],
   type: 'accommodation',

@@ -106,6 +106,22 @@ const ManageAccommodationRegistration = () => {
     ]);
   };
 
+  const addSeason = () => {
+    setPeakSeason([...peakSeason, []]);
+  };
+
+  const onChangePeakSeason = (parent_idx: number, children_idx: number, date: string) => {
+    const tmp_season = [...peakSeason];
+    tmp_season[parent_idx][children_idx] = date;
+    setPeakSeason([...tmp_season]);
+  };
+
+  const deleteSeason = (parent_idx: number) => {
+    const tmp_season = [...peakSeason];
+    tmp_season.splice(parent_idx, 1);
+    setPeakSeason([...tmp_season]);
+  };
+
   const createAccommodation = async () => {
     const rooms_data = [
       ...rooms.map((room, room_idx) => {
@@ -124,8 +140,11 @@ const ManageAccommodationRegistration = () => {
       label: accommodationLabel,
       introduction,
       manager: 1,
+      peak_season: peakSeason,
       rooms: [...rooms_data],
     };
+
+    console.log(accom_data);
     const accommodation: CreateAccommodationResponse = await fetchPostApi(`/manager/1/accommodation`, accom_data);
     const accommodation_id = accommodation.accommodation_id;
 
@@ -194,7 +213,12 @@ const ManageAccommodationRegistration = () => {
       </ContainerRegistrationItem>
       <ChevronDivder />
       <ContainerRegistrationItem title='성수기 설정'>
-        <FormPeakSeason data={peakSeason} />
+        <FormPeakSeason data={peakSeason} onDateChange={onChangePeakSeason} onDelete={deleteSeason} />
+        <UtilBox justifyContent='flex-end' sx={{ marginTop: '1rem' }}>
+          <Button color='blue' variant='contained' onClick={addSeason}>
+            기간 추가
+          </Button>
+        </UtilBox>
       </ContainerRegistrationItem>
       <ContainerRegistrationItem title='객실 등록'>
         {rooms.map((room, room_idx) => {

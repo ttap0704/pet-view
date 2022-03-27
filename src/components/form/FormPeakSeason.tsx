@@ -2,11 +2,15 @@ import * as React from 'react';
 import { useState, useEffect } from 'react';
 import { styled } from '@mui/material/styles';
 
-import { Box, Typography } from '@mui/material';
+import { Box, Typography, IconButton } from '@mui/material';
 import DatePicker from '../common/DatePicker';
+import { getDate } from '../../utils/tools';
+import { TiDelete } from 'react-icons/ti';
 
 interface FormPeakSeasonProps {
   data: string[][];
+  onDateChange: (parent_idx: number, children_idx: number, date: string) => void;
+  onDelete: (parent_idx: number) => void;
 }
 
 const FormContainer = styled(Box)(({ theme }) => ({
@@ -52,8 +56,15 @@ const ContentsBox = styled(Box)(({ theme }) => ({
 
 function FormPeakSeason(props: FormPeakSeasonProps) {
   const data = props.data;
+  const onDateChange = props.onDateChange;
+  const onDelete = props.onDelete;
 
   const [dateArray, setDateArray] = useState<Date[][]>([]);
+
+  const changeDate = (parent_idx: number, children_idx: number, date: Date) => {
+    const date_string = getDate(`${date}`);
+    onDateChange(parent_idx, children_idx, date_string.slice(5, 10));
+  };
 
   useEffect(() => {
     if (data.length > 0) {
@@ -77,9 +88,12 @@ function FormPeakSeason(props: FormPeakSeasonProps) {
             <FormItems key={`form_peak_season_item_${item_idx}`}>
               <TitleBox>기간 {item_idx + 1}</TitleBox>
               <ContentsBox>
-                <DatePicker type='season' date={item[0]} onDateChange={(date: Date) => console.log(date)} />
+                <DatePicker type='season' date={item[0]} onDateChange={(date: Date) => changeDate(item_idx, 0, date)} />
                 <Typography>~</Typography>
-                <DatePicker type='season' date={item[1]} onDateChange={(date: Date) => console.log(date)} />
+                <DatePicker type='season' date={item[1]} onDateChange={(date: Date) => changeDate(item_idx, 1, date)} />
+                <IconButton onClick={() => onDelete(item_idx)}>
+                  <TiDelete />
+                </IconButton>
               </ContentsBox>
             </FormItems>
           );
