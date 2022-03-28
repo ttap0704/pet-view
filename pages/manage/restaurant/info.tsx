@@ -77,7 +77,6 @@ const ManageRestaurantInfo = (props: { list: RestaurantListType; style: { [key: 
   }, [data.clicked_row_button_idx, data.clicked_row_button_key]);
 
   const setExposureImageDetail = async (idx: number) => {
-    console.log(data.table_items[idx].images.length);
     if (data.table_items[idx].images.length == 0) {
       modal_alert.openModalAlert('등록된 이미지가 없습니다.');
       return;
@@ -266,7 +265,6 @@ const ManageRestaurantInfo = (props: { list: RestaurantListType; style: { [key: 
   const setModalEdit = () => {
     const index = data.clicked_dropdown_idx;
     const target = data.table_items.find(item => item.checked);
-    console.log(target);
 
     let value = '';
     let title = '';

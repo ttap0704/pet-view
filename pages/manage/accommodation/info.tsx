@@ -10,6 +10,7 @@ import ModalUpload from '../../../src/components/modal/ModalUpload';
 import ModalAddRoom from '../../../src/components/modal/ModalAddRoom';
 import Modalorder from '../../../src/components/modal/ModalOrder';
 import ModalPostcodeForm from '../../../src/components/modal/ModalPostcodeForm';
+import ModalPeakSeason from '../../../src/components/modal/ModalPeakSeason';
 import Table from '../../../src/components/table/Table';
 import { TableContext } from '../../../src/provider/TableProvider';
 import { ModalContext } from '../../../src/provider/ModalProvider';
@@ -18,6 +19,12 @@ interface AddRoomContents {
   visible: boolean;
   rooms_num: number;
   upload_idx: number | null;
+}
+
+interface PeakSeasonModalContentsType {
+  visible: boolean;
+  data: string[][];
+  mode: string;
 }
 
 const ManageAccommodationInfo = (props: { list: AccommodationListType; style: { [key: string]: string } }) => {
@@ -31,6 +38,11 @@ const ManageAccommodationInfo = (props: { list: AccommodationListType; style: { 
     upload_idx: null,
   });
   const [infoContents, setInfoContents] = useState<ChildrenDataType>(accommodation_info);
+  const [peakSeasonModalContents, setPeakSeasonModalContents] = useState<PeakSeasonModalContentsType>({
+    visible: false,
+    data: [],
+    mode: '',
+  });
   const [orderContents, setOrderContents] = useState<orderContents>({
     visible: false,
     list: [],
@@ -56,6 +68,8 @@ const ManageAccommodationInfo = (props: { list: AccommodationListType; style: { 
       } else if (target_idx == 5) {
         setOrderModalContents();
       } else if (target_idx == 6) {
+        setPeakSeasonModal(target.peak_season, 'edit');
+      } else if (target_idx == 7) {
         modal_confirm.openModalConfirm(`정말 [${target.label}] 업소를 삭제하시겠습니까?`, () =>
           deleteAccommodation(target.id),
         );
@@ -64,14 +78,15 @@ const ManageAccommodationInfo = (props: { list: AccommodationListType; style: { 
   }, [data.clicked_dropdown_idx]);
 
   useEffect(() => {
+    console.log(data.clicked_row_button_idx, data.clicked_row_button_key);
     if (data.clicked_row_button_idx != null && data.clicked_row_button_idx >= 0 && data.clicked_row_button_key) {
-      if (data.clicked_row_button_idx != null && data.clicked_row_button_idx >= 0 && data.clicked_row_button_key) {
-        const target = data.table_items[data.clicked_row_button_idx];
-        if (data.clicked_row_button_key == 'introduction') {
-          modal_edit.openModalEdit('소개', target[data.clicked_row_button_key], '', 'textarea', true);
-        } else if (data.clicked_row_button_key == 'image') {
-          setExposureImageDetail(data.clicked_row_button_idx);
-        }
+      const target = data.table_items[data.clicked_row_button_idx];
+      if (data.clicked_row_button_key == 'introduction') {
+        modal_edit.openModalEdit('소개', target[data.clicked_row_button_key], '', 'textarea', true);
+      } else if (data.clicked_row_button_key == 'image') {
+        setExposureImageDetail(data.clicked_row_button_idx);
+      } else if (data.clicked_row_button_key == 'peak_season') {
+        setPeakSeasonModal(target.peak_season, 'read');
       }
     }
   }, [data.clicked_row_button_idx, data.clicked_row_button_key]);
@@ -99,6 +114,44 @@ const ManageAccommodationInfo = (props: { list: AccommodationListType; style: { 
       modal_alert.openModalAlert('오류로 인해 삭제가 실패되었습니다.');
     }
     getTableItems();
+  };
+
+  const setPeakSeasonModal = (data: PeakSeasonType[], mode: string) => {
+    const tmp_season_data: string[][] = [];
+    for (const x of data) {
+      tmp_season_data.push([x.start, x.end]);
+    }
+
+    setPeakSeasonModalContents({
+      visible: true,
+      data: tmp_season_data,
+      mode,
+    });
+  };
+
+  const updatePeakSeason = async (season_data: { start: string; end: string }[]) => {
+    const target = data.table_items.find(item => item.checked);
+    if (target) {
+      const update_res = await fetchPostApi(`/manager/1/accommodation/${target.id}/season`, {
+        season: season_data,
+      });
+      if (update_res) {
+        getTableItems();
+        setPostcodeVisible(false);
+        modal_alert.openModalAlert('성수기 기간이 변경되었습니다.');
+      } else {
+        modal_alert.openModalAlert('오류로 인해 실패되었습니다.');
+      }
+    }
+    console.log(data);
+  };
+
+  const clearPeakSeasonModal = () => {
+    setPeakSeasonModalContents({
+      visible: false,
+      data: [],
+      mode: '',
+    });
   };
 
   const setOrderModalContents = () => {
@@ -183,7 +236,6 @@ const ManageAccommodationInfo = (props: { list: AccommodationListType; style: { 
     let title = '';
     let target_string = '';
     let type: 'input' | 'textarea' = 'input';
-    let format = '';
 
     if (target) {
       switch (index) {
@@ -291,6 +343,7 @@ const ManageAccommodationInfo = (props: { list: AccommodationListType; style: { 
         sido: x.sido,
         sigungu: x.sigungu,
         zonecode: x.zonecode,
+        peak_season: x.accommodation_peak_season,
         rooms: x.accommodation_rooms,
         rooms_num: x.accommodation_rooms.length,
         created_at: getDate(x.createdAt),
@@ -372,6 +425,13 @@ const ManageAccommodationInfo = (props: { list: AccommodationListType; style: { 
         visible={postcodeVisible}
         onClose={() => setPostcodeVisible(false)}
         onChangeAddress={(address: ResponsePostcodeDataType) => updateAddress(address)}
+      />
+      <ModalPeakSeason
+        visible={peakSeasonModalContents.visible}
+        data={peakSeasonModalContents.data}
+        mode={peakSeasonModalContents.mode}
+        onUpdateSeason={updatePeakSeason}
+        onClose={clearPeakSeasonModal}
       />
     </>
   );

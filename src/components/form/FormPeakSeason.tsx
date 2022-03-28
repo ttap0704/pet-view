@@ -9,6 +9,7 @@ import { TiDelete } from 'react-icons/ti';
 
 interface FormPeakSeasonProps {
   data: string[][];
+  mode?: string;
   onDateChange: (parent_idx: number, children_idx: number, date: string) => void;
   onDelete: (parent_idx: number) => void;
 }
@@ -56,6 +57,7 @@ const ContentsBox = styled(Box)(({ theme }) => ({
 
 function FormPeakSeason(props: FormPeakSeasonProps) {
   const data = props.data;
+  const mode = props.mode;
   const onDateChange = props.onDateChange;
   const onDelete = props.onDelete;
 
@@ -88,12 +90,24 @@ function FormPeakSeason(props: FormPeakSeasonProps) {
             <FormItems key={`form_peak_season_item_${item_idx}`}>
               <TitleBox>기간 {item_idx + 1}</TitleBox>
               <ContentsBox>
-                <DatePicker type='season' date={item[0]} onDateChange={(date: Date) => changeDate(item_idx, 0, date)} />
+                <DatePicker
+                  type='season'
+                  date={item[0]}
+                  onDateChange={(date: Date) => changeDate(item_idx, 0, date)}
+                  mode={mode}
+                />
                 <Typography>~</Typography>
-                <DatePicker type='season' date={item[1]} onDateChange={(date: Date) => changeDate(item_idx, 1, date)} />
-                <IconButton onClick={() => onDelete(item_idx)}>
-                  <TiDelete />
-                </IconButton>
+                <DatePicker
+                  type='season'
+                  date={item[1]}
+                  onDateChange={(date: Date) => changeDate(item_idx, 1, date)}
+                  mode={mode}
+                />
+                {mode != 'read' ? (
+                  <IconButton onClick={() => onDelete(item_idx)}>
+                    <TiDelete />
+                  </IconButton>
+                ) : null}
               </ContentsBox>
             </FormItems>
           );

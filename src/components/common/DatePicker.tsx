@@ -19,6 +19,7 @@ interface DatePickerContentsType {
 interface DatePickerProps {
   type?: string;
   date?: Date;
+  mode?: string;
   onDateChange: (date: Date) => void;
 }
 
@@ -38,14 +39,24 @@ const CustomTextField = styled(TextField)(({ theme }) => ({
       },
     },
   },
+
+  '&.read': {
+    '.MuiOutlinedInput-root': {
+      input: {
+        textAlign: 'center',
+      },
+    },
+  },
 }));
 
 const CustomDatePicker = (props: DatePickerProps) => {
   const type = props.type;
   const date = props.date;
+  const mode = props.mode;
   const onDateChange = props.onDateChange;
   const [value, setValue] = React.useState<Date | null>(new Date());
-  const class_name = type != 'season' ? '' : 'season';
+  const type_class_name = type != 'season' ? '' : 'season';
+  const mode_class_name = mode != 'read' ? '' : 'read';
 
   useEffect(() => {
     if (date) {
@@ -56,7 +67,7 @@ const CustomDatePicker = (props: DatePickerProps) => {
   return (
     <LocalizationProvider dateAdapter={AdapterDateFns}>
       <DatePicker
-        PaperProps={{ className: class_name }}
+        PaperProps={{ className: `${type_class_name} ${mode_class_name}` }}
         views={type != 'season' ? ['year', 'month', 'day'] : ['month', 'day']}
         value={value}
         inputFormat={type != 'season' ? 'yyyy년 MM월 dd일' : 'MM월 dd일'}
@@ -65,7 +76,8 @@ const CustomDatePicker = (props: DatePickerProps) => {
           setValue(newValue);
           onDateChange(new Date(`${newValue}`));
         }}
-        renderInput={params => <CustomTextField className={class_name} {...params} />}
+        OpenPickerButtonProps={mode == 'read' ? { sx: { display: 'none' } } : {}}
+        renderInput={params => <CustomTextField className={`${type_class_name} ${mode_class_name}`} {...params} />}
       />
     </LocalizationProvider>
   );
