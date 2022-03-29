@@ -137,13 +137,12 @@ const ManageAccommodationInfo = (props: { list: AccommodationListType; style: { 
       });
       if (update_res) {
         getTableItems();
-        setPostcodeVisible(false);
+        clearPeakSeasonModal();
         modal_alert.openModalAlert('성수기 기간이 변경되었습니다.');
       } else {
         modal_alert.openModalAlert('오류로 인해 실패되었습니다.');
       }
     }
-    console.log(data);
   };
 
   const clearPeakSeasonModal = () => {
@@ -283,7 +282,10 @@ const ManageAccommodationInfo = (props: { list: AccommodationListType; style: { 
           label: room.label,
           standard_num: room.standard_num,
           maximum_num: room.maximum_num,
-          price: Number(room.price),
+          normal_price: Number(room.normal_price),
+          normal_weekend_price: Number(room.normal_weekend_price),
+          peak_price: Number(room.peak_price),
+          peak_weekend_price: Number(room.peak_weekend_price),
           accommodation_id: target.id,
         };
       });

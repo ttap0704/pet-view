@@ -1,19 +1,28 @@
 import * as React from 'react';
-import { useContext, useEffect } from 'react';
+import { useContext, useEffect, useState } from 'react';
 
 import { Box, Typography } from '@mui/material';
 import { styled } from '@mui/material/styles';
 
 import InputOutlined from '../input/InputOutlined';
 import UtilBox from '../common/UtilBox';
+import Button from '../button/Button';
 import ButtonUpload from '../button/ButtonUpload';
 import ImageBox from '../image/ImageBox';
 import { ModalContext } from '../../provider/ModalProvider';
 
+interface AddRoomInputType {
+  title: string;
+  key: string;
+  format: string;
+}
+
 interface FormAddRoomProps {
   onChange: (e: React.ChangeEvent<HTMLInputElement>, type: string) => void;
+  onClickPriceButton?: () => void;
   imageList: ImageListType[];
   room_idx: number;
+  mode?: string;
 }
 
 const FormContainer = styled(Box)(({ theme }) => ({
@@ -61,34 +70,49 @@ function FormAddRoom(props: FormAddRoomProps) {
   const { modal_upload } = useContext(ModalContext);
 
   const onChange = props.onChange;
+  const onClickPriceButton = props.onClickPriceButton;
   const image_list = props.imageList;
   const room_idx = props.room_idx;
+  const mode = props.mode;
 
-  const add_room_contents = [
-    {
-      title: '객실명',
-      key: 'label',
-      format: '',
-    },
-    {
-      title: '가격',
-      key: 'price',
-      format: '원',
-    },
-    {
-      title: '기준인원',
-      key: 'standard_num',
-      format: '명',
-    },
-    {
-      title: '최대인원',
-      key: 'maximum_num',
-      format: '명',
-    },
-  ];
+  const [addRoomContents, setAddRoomContents] = useState<AddRoomInputType[]>([]);
+
+  useEffect(() => {
+    const add_room_contents: AddRoomInputType[] = [
+      {
+        title: '객실명',
+        key: 'label',
+        format: '',
+      },
+      {
+        title: '가격',
+        key: 'price',
+        format: 'price',
+      },
+      {
+        title: '기준인원',
+        key: 'standard_num',
+        format: 'people',
+      },
+      {
+        title: '최대인원',
+        key: 'maximum_num',
+        format: 'people',
+      },
+    ];
+
+    if (mode == 'edit') {
+      add_room_contents.splice(1, 1);
+    }
+    setAddRoomContents([...add_room_contents]);
+  }, []);
 
   const uploadRoomImage = () => {
     modal_upload.openModalUpload('객실 이미지 업로드', 'rooms', image_list, room_idx);
+  };
+
+  const setPrice = () => {
+    if (onClickPriceButton) onClickPriceButton();
   };
 
   return (
@@ -97,19 +121,28 @@ function FormAddRoom(props: FormAddRoomProps) {
         <ImageBox type='rooms' imageList={image_list} slide={true} count={true} />
       </RoomImageContainer>
       <FormItemContainer>
-        {add_room_contents.map((item, idx) => {
-          return (
-            <FormItem key={`form_add_room_item_${idx}`}>
-              <Typography sx={{ fontWeight: 'bold' }}>{item.title}</Typography>
-              <InputOutlined
-                align='right'
-                width='70%'
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => onChange(e, item.key)}
-                endAdornment={item.format}
-              />
+        <>
+          {addRoomContents.map((item, idx) => {
+            return (
+              <FormItem key={`form_add_room_item_${idx}`}>
+                <Typography sx={{ fontWeight: 'bold' }}>{item.title}</Typography>
+                <InputOutlined
+                  align='right'
+                  width='70%'
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => onChange(e, item.key)}
+                  format={item.format}
+                />
+              </FormItem>
+            );
+          })}
+          {mode == 'edit' ? (
+            <FormItem sx={{ justifyContent: 'flex-end' }}>
+              <Button color='blue' variant='contained' onClick={setPrice}>
+                가격 설정
+              </Button>
             </FormItem>
-          );
-        })}
+          ) : null}
+        </>
       </FormItemContainer>
       <UtilBox justifyContent='flex-start'>
         <ButtonUpload title='객실 이미지 등록' onClick={uploadRoomImage} />

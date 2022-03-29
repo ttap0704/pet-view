@@ -1,6 +1,9 @@
 interface AddRoomContentsType {
   label: string;
-  price: string;
+  normal_price: string;
+  normal_weekend_price: string;
+  peak_price: string;
+  peak_weekend_price: string;
   standard_num: string;
   maximum_num: string;
   image_list: ImageListType[];
@@ -44,6 +47,13 @@ interface PeakSeasonType {
   accommodation_id: number;
   start: string;
   end: string;
+}
+
+interface RoomPriceType {
+  normal_price: string;
+  normal_weekend_price: string;
+  peak_price: string;
+  peak_weekend_price: string;
 }
 
 interface RoomType {

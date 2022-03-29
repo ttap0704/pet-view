@@ -20,6 +20,7 @@ import InputOutlined from '../../../src/components/input/InputOutlined';
 import FormPeakSeason from '../../../src/components/form/FormPeakSeason';
 
 import ModalUpload from '../../../src/components/modal/ModalUpload';
+import ModalRoomPrice from '../../../src/components/modal/ModalRoomPrice';
 
 const ManageAccommodationRegistration = () => {
   const { modal_upload, modal_confirm } = useContext(ModalContext);
@@ -41,10 +42,17 @@ const ManageAccommodationRegistration = () => {
 
   const [accommodationLabel, setAccommodationLabel] = useState('');
   const [introduction, setIntroduction] = useState('');
+  const [roomPriceContents, setRoomPriceContents] = useState({
+    visible: false,
+    current_room_idx: 0,
+  });
   const [rooms, setRooms] = useState<AddRoomContentsType[]>([
     {
       label: '',
-      price: '',
+      normal_price: '',
+      normal_weekend_price: '',
+      peak_price: '',
+      peak_weekend_price: '',
       standard_num: '',
       maximum_num: '',
       image_list: [],
@@ -93,12 +101,36 @@ const ManageAccommodationRegistration = () => {
     });
   };
 
+  const setRoomPriceModal = (idx: number) => {
+    setRoomPriceContents({
+      visible: true,
+      current_room_idx: idx,
+    });
+  };
+
+  const clearRoomPriceModal = () => {
+    setRoomPriceContents({
+      visible: false,
+      current_room_idx: 0,
+    });
+  };
+
+  const setRoomPrice = (data: { [key: string]: string }) => {
+    const tmp_rooms = [...rooms];
+    tmp_rooms[roomPriceContents.current_room_idx] = { ...tmp_rooms[roomPriceContents.current_room_idx], ...data };
+
+    setRooms([...tmp_rooms]);
+  };
+
   const addRoom = () => {
     setRooms([
       ...rooms,
       {
         label: '',
-        price: '',
+        normal_price: '',
+        normal_weekend_price: '',
+        peak_price: '',
+        peak_weekend_price: '',
         standard_num: '',
         maximum_num: '',
         image_list: [],
@@ -108,6 +140,13 @@ const ManageAccommodationRegistration = () => {
 
   const addSeason = () => {
     setPeakSeason([...peakSeason, []]);
+  };
+
+  const clearSeason = () => {
+    setPeakSeason([
+      ['07-15', '08-24'],
+      ['12-20', '02-20'],
+    ]);
   };
 
   const onChangePeakSeason = (parent_idx: number, children_idx: number, date: string) => {
@@ -127,7 +166,10 @@ const ManageAccommodationRegistration = () => {
       ...rooms.map((room, room_idx) => {
         return {
           label: room.label,
-          price: room.price,
+          normal_price: room.normal_price,
+          normal_weekend_price: room.normal_weekend_price,
+          peak_price: room.peak_price,
+          peak_weekend_price: room.peak_weekend_price,
           standard_num: room.standard_num,
           maximum_num: room.maximum_num,
           seq: room_idx,
@@ -214,7 +256,10 @@ const ManageAccommodationRegistration = () => {
       <ChevronDivder />
       <ContainerRegistrationItem title='성수기 설정'>
         <FormPeakSeason data={peakSeason} onDateChange={onChangePeakSeason} onDelete={deleteSeason} />
-        <UtilBox justifyContent='flex-end' sx={{ marginTop: '1rem' }}>
+        <UtilBox justifyContent='flex-end' sx={{ marginTop: '1rem', gap: '0.5rem' }}>
+          <Button color='blue' variant='outlined' onClick={clearSeason}>
+            기간 초기화
+          </Button>
           <Button color='blue' variant='contained' onClick={addSeason}>
             기간 추가
           </Button>
@@ -228,6 +273,8 @@ const ManageAccommodationRegistration = () => {
               key={`add_room_form_${room_idx}`}
               room_idx={room_idx}
               imageList={room.image_list}
+              mode='edit'
+              onClickPriceButton={() => setRoomPriceModal(room_idx)}
             />
           );
         })}
@@ -248,6 +295,11 @@ const ManageAccommodationRegistration = () => {
       </ContainerRegistrationItem>
 
       <ModalUpload onUpload={setPrevieImages} />
+      <ModalRoomPrice
+        visible={roomPriceContents.visible}
+        onClose={() => clearRoomPriceModal()}
+        onUpdatePrice={setRoomPrice}
+      />
     </>
   );
 };

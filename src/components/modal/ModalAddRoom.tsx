@@ -47,7 +47,10 @@ function ModalAddRoom(props: ModalAddRoomProps) {
   const [rooms, setRooms] = useState<AddRoomContentsType[]>([
     {
       label: '',
-      price: '',
+      normal_price: '',
+      normal_weekend_price: '',
+      peak_price: '',
+      peak_weekend_price: '',
       standard_num: '',
       maximum_num: '',
       image_list: [],

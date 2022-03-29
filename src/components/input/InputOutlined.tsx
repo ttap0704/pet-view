@@ -10,6 +10,7 @@ interface InputOutlinedProps extends OutlinedInputProps {
   height?: string;
   align?: 'center' | 'right';
   bottom?: boolean;
+  format?: string;
 }
 
 const StyledInput = styled(OutlinedInput)(({ theme }) => ({
@@ -70,10 +71,30 @@ const CustomInput = (props: InputOutlinedProps) => {
   const height = props.height;
   const align = props.align;
   const id = props.id;
+  const format = props.format;
+
+  const [currentValue, setCurrentValue] = useState('');
+  const [currentFormat, setCurrentFormat] = useState('');
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.code == 'Enter') onKeyDownEnter ? onKeyDownEnter() : false;
   };
+
+  useEffect(() => {
+    if (format == 'price') {
+      setCurrentFormat('원');
+    } else if (format == 'preple') {
+      setCurrentFormat('명');
+    }
+  }, []);
+  useEffect(() => {
+    if (format == 'price') {
+      const cur_value = (value as string).replace(/[\,]/gi, '');
+      setCurrentValue(Number(cur_value).toLocaleString());
+    } else {
+      setCurrentValue(value as string);
+    }
+  }, [value]);
 
   const setStyle = () => {
     let style: { [key: string]: string | number } = {
@@ -96,11 +117,11 @@ const CustomInput = (props: InputOutlinedProps) => {
       <StyledInput
         id={id}
         className={class_name}
-        value={value}
+        value={currentValue ?? ''}
         placeholder={placeholder}
         onChange={onChange}
         startAdornment={start_adornment}
-        endAdornment={end_adornment}
+        endAdornment={currentFormat}
         type={type}
         readOnly={read_only}
         onKeyDown={handleKeyDown}

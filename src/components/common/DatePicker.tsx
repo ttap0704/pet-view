@@ -62,7 +62,7 @@ const CustomDatePicker = (props: DatePickerProps) => {
     if (date) {
       setValue(date);
     }
-  }, []);
+  }, [date]);
 
   return (
     <LocalizationProvider dateAdapter={AdapterDateFns}>
