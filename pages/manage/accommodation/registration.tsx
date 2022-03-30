@@ -4,8 +4,9 @@ import { Box } from '@mui/material';
 import { useState, useContext, useEffect } from 'react';
 
 import { ModalContext } from '../../../src/provider/ModalProvider';
-import { setFileArray, setFileToImage, setImageFormData } from '../../../src/utils/tools';
+import { getDate, setFileToImage, setImageFormData } from '../../../src/utils/tools';
 import { fetchFileApi, fetchPostApi } from '../../../src/utils/api';
+import validation from '../../../src/utils/validation';
 
 import ContainerRegistrationItem from '../../../src/components/container/ContainerRegistrationItem';
 import ImageBox from '../../../src/components/image/ImageBox';
@@ -44,6 +45,12 @@ const ManageAccommodationRegistration = () => {
   const [introduction, setIntroduction] = useState('');
   const [roomPriceContents, setRoomPriceContents] = useState({
     visible: false,
+    contents: {
+      normal_price: '',
+      normal_weekend_price: '',
+      peak_price: '',
+      peak_weekend_price: '',
+    },
     current_room_idx: 0,
   });
   const [rooms, setRooms] = useState<AddRoomContentsType[]>([
@@ -102,9 +109,16 @@ const ManageAccommodationRegistration = () => {
   };
 
   const setRoomPriceModal = (idx: number) => {
+    const target = rooms[idx];
     setRoomPriceContents({
       visible: true,
       current_room_idx: idx,
+      contents: {
+        normal_price: target.normal_price,
+        normal_weekend_price: target.normal_weekend_price,
+        peak_price: target.peak_price,
+        peak_weekend_price: target.peak_weekend_price,
+      },
     });
   };
 
@@ -112,14 +126,20 @@ const ManageAccommodationRegistration = () => {
     setRoomPriceContents({
       visible: false,
       current_room_idx: 0,
+      contents: {
+        normal_price: '',
+        normal_weekend_price: '',
+        peak_price: '',
+        peak_weekend_price: '',
+      },
     });
   };
 
   const setRoomPrice = (data: { [key: string]: string }) => {
     const tmp_rooms = [...rooms];
     tmp_rooms[roomPriceContents.current_room_idx] = { ...tmp_rooms[roomPriceContents.current_room_idx], ...data };
-
     setRooms([...tmp_rooms]);
+    clearRoomPriceModal();
   };
 
   const addRoom = () => {
@@ -139,7 +159,8 @@ const ManageAccommodationRegistration = () => {
   };
 
   const addSeason = () => {
-    setPeakSeason([...peakSeason, []]);
+    const today = getDate(`${new Date()}`).slice(5, 10);
+    setPeakSeason([...peakSeason, [today, today]]);
   };
 
   const clearSeason = () => {
@@ -161,7 +182,17 @@ const ManageAccommodationRegistration = () => {
     setPeakSeason([...tmp_season]);
   };
 
+  const validateCreateData = () => {
+    let alert_message = '';
+
+    validation.season(peakSeason);
+    return { pass: alert_message.length == 0, message: alert_message };
+  };
+
   const createAccommodation = async () => {
+    const validate = validateCreateData();
+    if (validate.pass) return;
+
     const rooms_data = [
       ...rooms.map((room, room_idx) => {
         return {
@@ -186,37 +217,34 @@ const ManageAccommodationRegistration = () => {
       rooms: [...rooms_data],
     };
 
-    console.log(accom_data);
-    const accommodation: CreateAccommodationResponse = await fetchPostApi(`/manager/1/accommodation`, accom_data);
-    const accommodation_id = accommodation.accommodation_id;
+    // const accommodation: CreateAccommodationResponse = await fetchPostApi(`/manager/1/accommodation`, accom_data);
+    // const accommodation_id = accommodation.accommodation_id;
 
-    let exposure_images = [];
-    for (const item of exposureImages) {
-      if (item.file) exposure_images.push(item.file);
-    }
+    // let exposure_images = [];
+    // for (const item of exposureImages) {
+    //   if (item.file) exposure_images.push(item.file);
+    // }
 
-    let rooms_payload = [];
-    for (const room of rooms) {
-      const res_room = accommodation.rooms.find(room_item => room_item.label == room.label);
-      let room_images = [];
-      for (const room_item of room.image_list) {
-        if (room_item.file) room_images.push(room_item.file);
-      }
-      if (res_room) {
-        rooms_payload.push({ target_id: res_room.id, files: room_images });
-      }
-    }
+    // let rooms_payload = [];
+    // for (const room of rooms) {
+    //   const res_room = accommodation.rooms.find(room_item => room_item.label == room.label);
+    //   let room_images = [];
+    //   for (const room_item of room.image_list) {
+    //     if (room_item.file) room_images.push(room_item.file);
+    //   }
+    //   if (res_room) {
+    //     rooms_payload.push({ target_id: res_room.id, files: room_images });
+    //   }
+    // }
 
-    const exposure_image_data = await setImageFormData(
-      [{ target_id: accommodation_id, files: exposure_images }],
-      'accommodation',
-    );
-    const rooms_image_data = await setImageFormData(rooms_payload, 'rooms', accommodation_id);
+    // const exposure_image_data = await setImageFormData(
+    //   [{ target_id: accommodation_id, files: exposure_images }],
+    //   'accommodation',
+    // );
+    // const rooms_image_data = await setImageFormData(rooms_payload, 'rooms', accommodation_id);
 
-    const upload_exposure_response = await fetchFileApi('/upload/image', exposure_image_data);
-    const upload_rooms_response = await fetchFileApi('/upload/image', rooms_image_data);
-    console.log(upload_exposure_response);
-    console.log(upload_rooms_response);
+    // const upload_exposure_response = await fetchFileApi('/upload/image', exposure_image_data);
+    // const upload_rooms_response = await fetchFileApi('/upload/image', rooms_image_data);
   };
 
   return (
@@ -275,6 +303,7 @@ const ManageAccommodationRegistration = () => {
               imageList={room.image_list}
               mode='edit'
               onClickPriceButton={() => setRoomPriceModal(room_idx)}
+              contents={room}
             />
           );
         })}
@@ -297,6 +326,7 @@ const ManageAccommodationRegistration = () => {
       <ModalUpload onUpload={setPrevieImages} />
       <ModalRoomPrice
         visible={roomPriceContents.visible}
+        contents={roomPriceContents.contents}
         onClose={() => clearRoomPriceModal()}
         onUpdatePrice={setRoomPrice}
       />

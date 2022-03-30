@@ -15,6 +15,7 @@ interface AddRoomInputType {
   title: string;
   key: string;
   format: string;
+  value: string;
 }
 
 interface FormAddRoomProps {
@@ -23,6 +24,7 @@ interface FormAddRoomProps {
   imageList: ImageListType[];
   room_idx: number;
   mode?: string;
+  contents: AddRoomContentsType;
 }
 
 const FormContainer = styled(Box)(({ theme }) => ({
@@ -74,29 +76,35 @@ function FormAddRoom(props: FormAddRoomProps) {
   const image_list = props.imageList;
   const room_idx = props.room_idx;
   const mode = props.mode;
+  const contents = props.contents;
 
   const [addRoomContents, setAddRoomContents] = useState<AddRoomInputType[]>([]);
 
   useEffect(() => {
+    console.log(contents);
     const add_room_contents: AddRoomInputType[] = [
       {
         title: '객실명',
         key: 'label',
+        value: contents.label,
         format: '',
       },
       {
         title: '가격',
         key: 'price',
+        value: contents.normal_price,
         format: 'price',
       },
       {
         title: '기준인원',
         key: 'standard_num',
+        value: contents.standard_num,
         format: 'people',
       },
       {
         title: '최대인원',
         key: 'maximum_num',
+        value: contents.maximum_num,
         format: 'people',
       },
     ];
@@ -105,7 +113,7 @@ function FormAddRoom(props: FormAddRoomProps) {
       add_room_contents.splice(1, 1);
     }
     setAddRoomContents([...add_room_contents]);
-  }, []);
+  }, [contents]);
 
   const uploadRoomImage = () => {
     modal_upload.openModalUpload('객실 이미지 업로드', 'rooms', image_list, room_idx);
@@ -129,6 +137,7 @@ function FormAddRoom(props: FormAddRoomProps) {
                 <InputOutlined
                   align='right'
                   width='70%'
+                  value={item.value}
                   onChange={(e: React.ChangeEvent<HTMLInputElement>) => onChange(e, item.key)}
                   format={item.format}
                 />

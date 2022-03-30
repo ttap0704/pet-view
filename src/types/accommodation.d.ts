@@ -56,7 +56,7 @@ interface RoomPriceType {
   peak_weekend_price: string;
 }
 
-interface RoomType {
+interface RoomType extends RoomPriceType {
   accommodation_id: number;
   accommodation_label: string;
   additional_info: null | string;
@@ -66,7 +66,6 @@ interface RoomType {
   id: number;
   label: string;
   maximum_num: number;
-  price: number;
   seq: number;
   standard_num: number;
   updatedAt: string;

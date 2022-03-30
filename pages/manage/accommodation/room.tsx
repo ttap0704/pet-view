@@ -7,6 +7,7 @@ import { accommodation_rooms } from '../../../src/utils/manage_items';
 
 import ModalEdit from '../../../src/components/modal/ModalEdit';
 import ModalUpload from '../../../src/components/modal/ModalUpload';
+import ModalRoomPrice from '../../../src/components/modal/ModalRoomPrice';
 import Table from '../../../src/components/table/Table';
 import { TableContext } from '../../../src/provider/TableProvider';
 import { ModalContext } from '../../../src/provider/ModalProvider';
@@ -16,6 +17,17 @@ const ManageAccommodationRooms = (props: { list: AccommodationRoomsListType; sty
   const { modal_confirm, modal_edit, modal_alert, modal_upload, modal_image_detail } = useContext(ModalContext);
 
   const [roomContents, setRoomContents] = useState<ChildrenDataType>(accommodation_rooms);
+  const [roomPriceContents, setRoomPriceContents] = useState({
+    mode: '',
+    visible: false,
+    contents: {
+      normal_price: '',
+      normal_weekend_price: '',
+      peak_price: '',
+      peak_weekend_price: '',
+    },
+    current_room_idx: 0,
+  });
   const [first, setFirst] = useState(false);
 
   useEffect(() => {
@@ -30,14 +42,18 @@ const ManageAccommodationRooms = (props: { list: AccommodationRoomsListType; sty
   }, []);
 
   useEffect(() => {
-    const target_idx = data.clicked_dropdown_idx;
+    const dropdown_idx = data.clicked_dropdown_idx;
     const target = data.table_items.find(item => item.checked);
-    if (target && target_idx != null && target_idx >= 0) {
-      if ([0, 1, 2, 3].includes(target_idx)) {
+    if (target && dropdown_idx != null && dropdown_idx >= 0) {
+      if ([0, 1, 2].includes(dropdown_idx)) {
         setModalEdit();
-      } else if (target_idx == 4) {
+      } else if (dropdown_idx == 3) {
+        const edit_idx = data.table_items.findIndex(item => item == target);
+        console.log(edit_idx);
+        setRoomPriceModal('edit', edit_idx);
+      } else if (dropdown_idx == 4) {
         setUploadModal();
-      } else if (target_idx == 5) {
+      } else if (dropdown_idx == 5) {
         const accommodation_id = target.accommodation_id;
         modal_confirm.openModalConfirm(`정말 [${target.label}] 객실를 삭제하시겠습니까?`, () =>
           deleteRoom(accommodation_id, target.id),
@@ -50,12 +66,13 @@ const ManageAccommodationRooms = (props: { list: AccommodationRoomsListType; sty
     if (data.clicked_row_button_idx != null && data.clicked_row_button_idx >= 0 && data.clicked_row_button_key) {
       if (data.clicked_row_button_key == 'images') {
         setExposureImageDetail(data.clicked_row_button_idx);
+      } else if (data.clicked_row_button_key == 'price') {
+        setRoomPriceModal('read', data.clicked_row_button_idx);
       }
     }
   }, [data.clicked_row_button_idx, data.clicked_row_button_key]);
 
   const setExposureImageDetail = async (idx: number) => {
-    console.log(data.table_items[idx].images.length);
     if (data.table_items[idx].images.length == 0) {
       modal_alert.openModalAlert('등록된 이미지가 없습니다.');
       return;
@@ -68,6 +85,54 @@ const ManageAccommodationRooms = (props: { list: AccommodationRoomsListType; sty
     });
     const image_list = await setImageArray(tmp_image_list);
     modal_image_detail.openModalImageDetail('rooms', image_list);
+  };
+
+  const setRoomPriceModal = (mode: string, idx: number) => {
+    const target = data.table_items[idx];
+    if (target) {
+      setRoomPriceContents({
+        mode: mode,
+        visible: true,
+        current_room_idx: idx,
+        contents: {
+          normal_price: target.normal_price,
+          normal_weekend_price: target.normal_weekend_price,
+          peak_price: target.peak_price,
+          peak_weekend_price: target.peak_weekend_price,
+        },
+      });
+    }
+  };
+
+  const clearRoomPriceModal = () => {
+    setRoomPriceContents({
+      mode: '',
+      visible: false,
+      current_room_idx: 0,
+      contents: {
+        normal_price: '',
+        normal_weekend_price: '',
+        peak_price: '',
+        peak_weekend_price: '',
+      },
+    });
+  };
+
+  const setRoomPrice = async (price: { [key: string]: string }) => {
+    const target = data.table_items.find(item => item.checked);
+    if (target) {
+      const accommodation_id = target.accommodation_id;
+      const id = target.id;
+      const update_res = await fetchPostApi(`/manager/1/accommodation/${accommodation_id}/rooms/${id}/price`, price);
+
+      if (update_res) {
+        modal_alert.openModalAlert('가격 변경이 완료되었습니다.');
+      } else {
+        modal_alert.openModalAlert('오류로 인해 변경이 실패되었습니다.');
+      }
+      getTableItems();
+      clearRoomPriceModal();
+    }
   };
 
   const deleteRoom = async (accommodation_id: number, id: number) => {
@@ -216,7 +281,10 @@ const ManageAccommodationRooms = (props: { list: AccommodationRoomsListType; sty
         label: x.label,
         accommodation_label: x.accommodation_label,
         accommodation_id: x.accommodation_id,
-        price: Number(x.price).toLocaleString(),
+        normal_price: Number(x.normal_price).toLocaleString(),
+        normal_weekend_price: Number(x.normal_weekend_price).toLocaleString(),
+        peak_price: Number(x.peak_price).toLocaleString(),
+        peak_weekend_price: Number(x.peak_weekend_price).toLocaleString(),
         images: x.rooms_images,
         additional_info: x.additional_info,
         amenities: x.amenities,
@@ -237,6 +305,13 @@ const ManageAccommodationRooms = (props: { list: AccommodationRoomsListType; sty
       <Table contents={roomContents} />
       <ModalUpload onUpload={updateExposureImages} />
       <ModalEdit onChange={(value: string | number) => editContents(value)} />
+      <ModalRoomPrice
+        mode={roomPriceContents.mode}
+        visible={roomPriceContents.visible}
+        contents={roomPriceContents.contents}
+        onClose={() => clearRoomPriceModal()}
+        onUpdatePrice={setRoomPrice}
+      />
     </>
   );
 };

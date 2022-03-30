@@ -233,10 +233,7 @@ const ManageRestaurantRegistration = () => {
       exposureMenu: tmp_exposure_menu,
       entireMenu: tmp_entire_menu,
     };
-    console.log(restaurant_data);
-    console.log(exposureMenu);
     const restaurant: RestaurantType = await fetchPostApi(`/manager/1/restaurant`, restaurant_data);
-    console.log(restaurant);
     const restaurant_id = restaurant.restaurant_id;
 
     let exposure_images = [];

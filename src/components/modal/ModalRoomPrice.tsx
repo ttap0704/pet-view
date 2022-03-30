@@ -14,6 +14,12 @@ import FormPeakSeason from '../form/FormPeakSeason';
 
 interface ModalRoomPriceProps {
   visible: boolean;
+  contents: {
+    normal_price: string;
+    normal_weekend_price: string;
+    peak_price: string;
+    peak_weekend_price: string;
+  };
   mode?: string;
   onClose: () => void;
   onUpdatePrice: (data: { [key: string]: string }) => void;
@@ -28,13 +34,17 @@ interface PriceContentsType {
 
 const ModalRoomPriceContentsBox = styled(Box)(({ theme }) => ({
   fontSize: '0.9rem',
-  width: '60rem',
+  width: '40rem',
   height: 'auto',
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',
   padding: '2rem',
   gap: '1rem',
+
+  '&.read': {
+    width: '25rem',
+  },
 }));
 
 const PriceInputBox = styled(Box)(({ theme }) => ({
@@ -51,6 +61,7 @@ function ModalRoomPrice(props: ModalRoomPriceProps) {
 
   const visible = props.visible;
   const mode = props.mode;
+  const contents = props.contents;
   const onClose = props.onClose;
   const onUpdatePrice = props.onUpdatePrice;
 
@@ -61,26 +72,26 @@ function ModalRoomPrice(props: ModalRoomPriceProps) {
       setPriceContents({
         normal_price: {
           title: '기본 평일 가격',
-          price: '',
+          price: contents.normal_price,
         },
         normal_weekend_price: {
           title: '기본 주말 가격',
-          price: '',
+          price: contents.normal_weekend_price,
         },
         peak_price: {
           title: '성수기 평일 가격',
-          price: '',
+          price: contents.peak_price,
         },
         peak_weekend_price: {
           title: '성수기 주말 가격',
-          price: '',
+          price: contents.peak_weekend_price,
         },
       });
     }
   }, [visible]);
 
   const confirmUpdate = () => {
-    modal_confirm.openModalConfirm('객실 가격을 수정하시겠습니까?', () => {
+    modal_confirm.openModalConfirm('객실 가격을 등록하시겠습니까?', () => {
       const price_data: { [key: string]: string } = {};
       for (const [key, val] of Object.entries(priceContents)) {
         price_data[key] = priceContents[key].price.replace(/[\,]/gi, '');
@@ -107,18 +118,22 @@ function ModalRoomPrice(props: ModalRoomPriceProps) {
       <ModalDefault bottom={false} white={false} visible={visible} onClose={onClose}>
         <ContainerModalContents>
           <LabelModal title='가격 설정' onClose={onClose} />
-          <ModalRoomPriceContentsBox>
+          <ModalRoomPriceContentsBox className={mode == 'read' ? 'read' : ''}>
             {Object.keys(priceContents).map((key, item_idx) => {
               return (
                 <PriceInputBox key={`room_price_${item_idx}`}>
                   <Typography sx={{ fontWeight: 'bold' }}>{priceContents[key].title}</Typography>
-                  <InputOutlined
-                    align='right'
-                    width='70%'
-                    value={priceContents[key].price}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => onChangePirce(e.target.value, key)}
-                    format='price'
-                  />
+                  {mode != 'read' ? (
+                    <InputOutlined
+                      align='right'
+                      width='70%'
+                      value={priceContents[key].price}
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => onChangePirce(e.target.value, key)}
+                      format='price'
+                    />
+                  ) : (
+                    <Typography>{priceContents[key].price} 원</Typography>
+                  )}
                 </PriceInputBox>
               );
             })}
@@ -126,7 +141,7 @@ function ModalRoomPrice(props: ModalRoomPriceProps) {
           {mode == 'read' ? null : (
             <UtilBox>
               <Button variant='contained' color='orange' onClick={confirmUpdate}>
-                수정
+                등록
               </Button>
             </UtilBox>
           )}

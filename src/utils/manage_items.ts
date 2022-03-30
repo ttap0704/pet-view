@@ -92,9 +92,10 @@ export const accommodation_rooms = {
       key: 'maximum_num',
     },
     {
-      label: '가격',
-      center: false,
+      label: '가격 확인',
+      center: true,
       key: 'price',
+      type: 'button',
     },
     {
       label: '객실 이미지',

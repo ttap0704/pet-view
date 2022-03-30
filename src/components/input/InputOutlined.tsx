@@ -83,7 +83,7 @@ const CustomInput = (props: InputOutlinedProps) => {
   useEffect(() => {
     if (format == 'price') {
       setCurrentFormat('원');
-    } else if (format == 'preple') {
+    } else if (format == 'people') {
       setCurrentFormat('명');
     }
   }, []);
@@ -91,8 +91,6 @@ const CustomInput = (props: InputOutlinedProps) => {
     if (format == 'price') {
       const cur_value = (value as string).replace(/[\,]/gi, '');
       setCurrentValue(Number(cur_value).toLocaleString());
-    } else {
-      setCurrentValue(value as string);
     }
   }, [value]);
 
@@ -111,13 +109,12 @@ const CustomInput = (props: InputOutlinedProps) => {
 
     return style;
   };
-
   return (
     <>
       <StyledInput
         id={id}
         className={class_name}
-        value={currentValue ?? ''}
+        value={format == 'price' ? currentValue ?? '' : value}
         placeholder={placeholder}
         onChange={onChange}
         startAdornment={start_adornment}
