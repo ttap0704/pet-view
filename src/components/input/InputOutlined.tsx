@@ -81,16 +81,17 @@ const CustomInput = (props: InputOutlinedProps) => {
   };
 
   useEffect(() => {
-    if (format == 'price') {
-      setCurrentFormat('원');
-    } else if (format == 'people') {
-      setCurrentFormat('명');
-    }
-  }, []);
-  useEffect(() => {
-    if (format == 'price') {
-      const cur_value = (value as string).replace(/[\,]/gi, '');
-      setCurrentValue(Number(cur_value).toLocaleString());
+    if (typeof value == 'string') {
+      if (format == 'price') {
+        const cur_value = value.replace(/[\,]/gi, '');
+        setCurrentValue(Number(cur_value).toLocaleString());
+        setCurrentFormat('원');
+      } else {
+        if (format == 'people') {
+          setCurrentFormat('명');
+        }
+        setCurrentValue(value);
+      }
     }
   }, [value]);
 
@@ -109,14 +110,30 @@ const CustomInput = (props: InputOutlinedProps) => {
 
     return style;
   };
+
+  const handleInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const input_value = e.target.value;
+    if (typeof input_value == 'string') {
+      if (format == 'price') {
+        const cur_value = input_value.replace(/[\,]/gi, '');
+        setCurrentValue(Number(cur_value).toLocaleString());
+      } else {
+        setCurrentValue(input_value);
+      }
+    }
+    if (onChange) {
+      onChange(e);
+    }
+  };
+
   return (
     <>
       <StyledInput
         id={id}
         className={class_name}
-        value={format == 'price' ? currentValue ?? '' : value}
+        value={currentValue}
         placeholder={placeholder}
-        onChange={onChange}
+        onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleInput(e)}
         startAdornment={start_adornment}
         endAdornment={currentFormat}
         type={type}

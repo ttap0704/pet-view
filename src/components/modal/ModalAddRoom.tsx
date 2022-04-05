@@ -12,6 +12,7 @@ import LabelModal from '../label/LabelModal';
 import { ModalContext } from '../../provider/ModalProvider';
 import Button from '../button/Button';
 import UtilBox from '../common/UtilBox';
+import ModalRoomPrice from './ModalRoomPrice';
 
 interface ModalAddRoomProps {
   rooms_num: number;
@@ -44,6 +45,16 @@ function ModalAddRoom(props: ModalAddRoomProps) {
   const onAddRoom = props.onAddRoom;
   const onChangeImage = props.onChangeImage;
 
+  const [roomPriceContents, setRoomPriceContents] = useState({
+    visible: false,
+    contents: {
+      normal_price: '',
+      normal_weekend_price: '',
+      peak_price: '',
+      peak_weekend_price: '',
+    },
+    current_room_idx: 0,
+  });
   const [rooms, setRooms] = useState<AddRoomContentsType[]>([
     {
       label: '',
@@ -68,7 +79,10 @@ function ModalAddRoom(props: ModalAddRoomProps) {
       setRooms([
         {
           label: '',
-          price: '',
+          normal_price: '',
+          normal_weekend_price: '',
+          peak_price: '',
+          peak_weekend_price: '',
           standard_num: '',
           maximum_num: '',
           image_list: [],
@@ -99,7 +113,10 @@ function ModalAddRoom(props: ModalAddRoomProps) {
       ...rooms,
       {
         label: '',
-        price: '',
+        normal_price: '',
+        normal_weekend_price: '',
+        peak_price: '',
+        peak_weekend_price: '',
         standard_num: '',
         maximum_num: '',
         image_list: [],
@@ -125,6 +142,40 @@ function ModalAddRoom(props: ModalAddRoomProps) {
     });
   };
 
+  const setRoomPriceModal = (idx: number) => {
+    const target = rooms[idx];
+    setRoomPriceContents({
+      visible: true,
+      current_room_idx: idx,
+      contents: {
+        normal_price: target.normal_price,
+        normal_weekend_price: target.normal_weekend_price,
+        peak_price: target.peak_price,
+        peak_weekend_price: target.peak_weekend_price,
+      },
+    });
+  };
+
+  const setRoomPrice = (data: { [key: string]: string }) => {
+    const tmp_rooms = [...rooms];
+    tmp_rooms[roomPriceContents.current_room_idx] = { ...tmp_rooms[roomPriceContents.current_room_idx], ...data };
+    setRooms([...tmp_rooms]);
+    clearRoomPriceModal();
+  };
+
+  const clearRoomPriceModal = () => {
+    setRoomPriceContents({
+      visible: false,
+      current_room_idx: 0,
+      contents: {
+        normal_price: '',
+        normal_weekend_price: '',
+        peak_price: '',
+        peak_weekend_price: '',
+      },
+    });
+  };
+
   return (
     <>
       <ModalDefault bottom={false} white={false} visible={visible} onClose={onClose}>
@@ -142,9 +193,12 @@ function ModalAddRoom(props: ModalAddRoomProps) {
                   onChange={(e: React.ChangeEvent<HTMLInputElement>, type: string) =>
                     handleRoomInput(e, type, room_idx)
                   }
+                  contents={room}
                   key={`add_room_form_${room_idx}`}
                   room_idx={room_idx}
                   imageList={room.image_list}
+                  mode='edit'
+                  onClickPriceButton={() => setRoomPriceModal(room_idx)}
                 />
               );
             })}
@@ -163,6 +217,12 @@ function ModalAddRoom(props: ModalAddRoomProps) {
             </Button>
           </UtilBox>
         </ContainerModalContents>
+        <ModalRoomPrice
+          visible={roomPriceContents.visible}
+          contents={roomPriceContents.contents}
+          onClose={() => clearRoomPriceModal()}
+          onUpdatePrice={setRoomPrice}
+        />
       </ModalDefault>
     </>
   );

@@ -185,7 +185,25 @@ const ManageAccommodationRegistration = () => {
   const validateCreateData = () => {
     let alert_message = '';
 
-    validation.season(peakSeason);
+    const address_vali = validation.address(address);
+    console.log(address_vali);
+    const season_vali = validation.season(peakSeason);
+    console.log(season_vali);
+    const exposure_image_vali = validation.image_list(exposureImages);
+    console.log(exposure_image_vali);
+    const introduction_vali = validation.introduction(introduction);
+    console.log(introduction_vali);
+    console.log(peakSeason);
+    let rooms_vali = true;
+    for (const room of rooms) {
+      const room_image_vali = validation.image_list(room.image_list);
+      const room_info_vali = validation.room(room);
+
+      if (!room_image_vali || room_info_vali) {
+        rooms_vali = false;
+        break;
+      }
+    }
     return { pass: alert_message.length == 0, message: alert_message };
   };
 
