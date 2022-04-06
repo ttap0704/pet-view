@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useContext, useEffect, useState } from 'react';
 
-import { Box, Typography } from '@mui/material';
+import { Box, Typography, IconButton } from '@mui/material';
 import { styled } from '@mui/material/styles';
 
 import InputOutlined from '../input/InputOutlined';
@@ -10,6 +10,8 @@ import Button from '../button/Button';
 import ButtonUpload from '../button/ButtonUpload';
 import ImageBox from '../image/ImageBox';
 import { ModalContext } from '../../provider/ModalProvider';
+
+import { RiCloseCircleFill } from 'react-icons/ri';
 
 interface AddRoomInputType {
   title: string;
@@ -24,6 +26,8 @@ interface FormAddRoomProps {
   imageList: ImageListType[];
   room_idx: number;
   mode?: string;
+  modal?: boolean;
+  onDelete: (idx: number) => void;
   contents: AddRoomContentsType;
 }
 
@@ -49,7 +53,7 @@ const RoomImageContainer = styled(Box)(({ theme }) => ({
   justifyContent: 'center',
 }));
 
-const FormItemContainer = styled(Box)(({ theme }) => ({
+const FormItemContainer = styled(Box)((props: { mode: string }) => ({
   width: 'calc(100% - 25rem)',
   height: 'auto',
   display: 'flex',
@@ -57,6 +61,8 @@ const FormItemContainer = styled(Box)(({ theme }) => ({
   alignItems: 'center',
   justifyContent: 'space-between',
   gap: '1rem',
+  position: 'relative',
+  padding: props.mode == 'edit' ? '0 3rem 0 0' : '0',
 }));
 
 const FormItem = styled(Box)(({ theme }) => ({
@@ -68,10 +74,18 @@ const FormItem = styled(Box)(({ theme }) => ({
   gap: '2rem',
 }));
 
+const CustomIconButton = styled(IconButton)(({ theme }) => ({
+  position: 'absolute',
+  top: '50%',
+  right: '1rem',
+  transform: 'translate(50%, -50%)',
+}));
+
 function FormAddRoom(props: FormAddRoomProps) {
   const { modal_upload } = useContext(ModalContext);
 
   const onChange = props.onChange;
+  const onDelete = props.onDelete;
   const onClickPriceButton = props.onClickPriceButton;
   const image_list = props.imageList;
   const room_idx = props.room_idx;
@@ -81,7 +95,6 @@ function FormAddRoom(props: FormAddRoomProps) {
   const [addRoomContents, setAddRoomContents] = useState<AddRoomInputType[]>([]);
 
   useEffect(() => {
-    console.log(contents);
     const add_room_contents: AddRoomInputType[] = [
       {
         title: '객실명',
@@ -128,7 +141,7 @@ function FormAddRoom(props: FormAddRoomProps) {
       <RoomImageContainer>
         <ImageBox type='rooms' imageList={image_list} slide={true} count={true} />
       </RoomImageContainer>
-      <FormItemContainer>
+      <FormItemContainer mode={`${mode}`}>
         <>
           {addRoomContents.map((item, idx) => {
             return (
@@ -152,6 +165,11 @@ function FormAddRoom(props: FormAddRoomProps) {
             </FormItem>
           ) : null}
         </>
+        {mode == 'edit' ? (
+          <CustomIconButton onClick={() => onDelete(room_idx)}>
+            <RiCloseCircleFill />
+          </CustomIconButton>
+        ) : null}
       </FormItemContainer>
       <UtilBox justifyContent='flex-start'>
         <ButtonUpload title='객실 이미지 등록' onClick={uploadRoomImage} />

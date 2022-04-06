@@ -2,6 +2,7 @@ import React from 'react';
 
 import { Box } from '@mui/material';
 import { useState, useContext, useEffect } from 'react';
+import { useRouter } from 'next/router';
 
 import { ModalContext } from '../../../src/provider/ModalProvider';
 import { getDate, setFileToImage, setImageFormData } from '../../../src/utils/tools';
@@ -24,7 +25,8 @@ import ModalUpload from '../../../src/components/modal/ModalUpload';
 import ModalRoomPrice from '../../../src/components/modal/ModalRoomPrice';
 
 const ManageAccommodationRegistration = () => {
-  const { modal_upload, modal_confirm } = useContext(ModalContext);
+  const { modal_upload, modal_confirm, modal_alert, modal_notice } = useContext(ModalContext);
+  const router = useRouter();
 
   const [exposureImages, setExposureImages] = useState<ImageListType[]>([]);
   const [peakSeason, setPeakSeason] = useState<string[][]>([
@@ -158,6 +160,12 @@ const ManageAccommodationRegistration = () => {
     ]);
   };
 
+  const deleteRoom = (idx: number) => {
+    const tmp_rooms = [...rooms];
+    tmp_rooms.splice(idx, 1);
+    setRooms([...tmp_rooms]);
+  };
+
   const addSeason = () => {
     const today = getDate(`${new Date()}`).slice(5, 10);
     setPeakSeason([...peakSeason, [today, today]]);
@@ -185,31 +193,49 @@ const ManageAccommodationRegistration = () => {
   const validateCreateData = () => {
     let alert_message = '';
 
-    const address_vali = validation.address(address);
-    console.log(address_vali);
-    const season_vali = validation.season(peakSeason);
-    console.log(season_vali);
-    const exposure_image_vali = validation.image_list(exposureImages);
-    console.log(exposure_image_vali);
-    const introduction_vali = validation.introduction(introduction);
-    console.log(introduction_vali);
-    console.log(peakSeason);
     let rooms_vali = true;
     for (const room of rooms) {
       const room_image_vali = validation.image_list(room.image_list);
       const room_info_vali = validation.room(room);
 
-      if (!room_image_vali || room_info_vali) {
+      console.log(room_image_vali, room_info_vali);
+      if (!room_image_vali || !room_info_vali) {
         rooms_vali = false;
         break;
       }
     }
+    if (!rooms_vali) {
+      alert_message = '객실의 모든 정보를 입력해주세요.';
+    }
+    const season_vali = validation.season(peakSeason);
+    if (!season_vali) {
+      alert_message = '중복되는 기간이 있습니다.\r\n중복되지 않게 수정해주세요.';
+    }
+    const introduction_vali = validation.label(introduction);
+    if (!introduction_vali) {
+      alert_message = '1자 이상의 숙박업소 소개를 입력해주세요.';
+    }
+    const address_vali = validation.address(address);
+    if (!address_vali) {
+      alert_message = '올바른 주소를 등록해주세요.';
+    }
+    const title_vali = validation.label(accommodationLabel);
+    if (!title_vali) {
+      alert_message = '숙박업소명을 입력해주세요.';
+    }
+    const exposure_image_vali = validation.image_list(exposureImages);
+    if (!exposure_image_vali) {
+      alert_message = '1개 이상의 대표이미지를 등록해주세요.';
+    }
+
     return { pass: alert_message.length == 0, message: alert_message };
   };
 
   const createAccommodation = async () => {
     const validate = validateCreateData();
-    if (validate.pass) return;
+    if (!validate.pass) {
+      modal_alert.openModalAlert(validate.message, true);
+    }
 
     const rooms_data = [
       ...rooms.map((room, room_idx) => {
@@ -235,34 +261,40 @@ const ManageAccommodationRegistration = () => {
       rooms: [...rooms_data],
     };
 
-    // const accommodation: CreateAccommodationResponse = await fetchPostApi(`/manager/1/accommodation`, accom_data);
-    // const accommodation_id = accommodation.accommodation_id;
+    const accommodation: CreateAccommodationResponse = await fetchPostApi(`/manager/1/accommodation`, accom_data);
+    const accommodation_id = accommodation.accommodation_id;
 
-    // let exposure_images = [];
-    // for (const item of exposureImages) {
-    //   if (item.file) exposure_images.push(item.file);
-    // }
+    let exposure_images = [];
+    for (const item of exposureImages) {
+      if (item.file) exposure_images.push(item.file);
+    }
 
-    // let rooms_payload = [];
-    // for (const room of rooms) {
-    //   const res_room = accommodation.rooms.find(room_item => room_item.label == room.label);
-    //   let room_images = [];
-    //   for (const room_item of room.image_list) {
-    //     if (room_item.file) room_images.push(room_item.file);
-    //   }
-    //   if (res_room) {
-    //     rooms_payload.push({ target_id: res_room.id, files: room_images });
-    //   }
-    // }
+    let rooms_payload = [];
+    for (const room of rooms) {
+      const res_room = accommodation.rooms.find(room_item => room_item.label == room.label);
+      let room_images = [];
+      for (const room_item of room.image_list) {
+        if (room_item.file) room_images.push(room_item.file);
+      }
+      if (res_room) {
+        rooms_payload.push({ target_id: res_room.id, files: room_images });
+      }
+    }
 
-    // const exposure_image_data = await setImageFormData(
-    //   [{ target_id: accommodation_id, files: exposure_images }],
-    //   'accommodation',
-    // );
-    // const rooms_image_data = await setImageFormData(rooms_payload, 'rooms', accommodation_id);
+    const exposure_image_data = await setImageFormData(
+      [{ target_id: accommodation_id, files: exposure_images }],
+      'accommodation',
+    );
+    const rooms_image_data = await setImageFormData(rooms_payload, 'rooms', accommodation_id);
 
-    // const upload_exposure_response = await fetchFileApi('/upload/image', exposure_image_data);
-    // const upload_rooms_response = await fetchFileApi('/upload/image', rooms_image_data);
+    const upload_exposure_response = await fetchFileApi('/upload/image', exposure_image_data);
+    const upload_rooms_response = await fetchFileApi('/upload/image', rooms_image_data);
+
+    if (upload_exposure_response.length > 0 && upload_rooms_response.length > 0) {
+      modal_notice.openModalNotice('숙박업소가 성공적으로 등록되었습니다.\r\n관리 페이지로 이동합니다.', () => {
+        router.push(`/manage/accommodation/info`);
+      });
+    }
   };
 
   return (
@@ -322,6 +354,7 @@ const ManageAccommodationRegistration = () => {
               mode='edit'
               onClickPriceButton={() => setRoomPriceModal(room_idx)}
               contents={room}
+              onDelete={deleteRoom}
             />
           );
         })}

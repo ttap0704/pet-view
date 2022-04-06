@@ -1,7 +1,7 @@
 export default {
-  introduction: (introduction: string): boolean => {
+  label: (label: string): boolean => {
     let res = true;
-    if (introduction.length == 0) res = false
+    if (label.length == 0) res = false
 
     return res;
   },
@@ -35,8 +35,6 @@ export default {
     for (let i = 0, leng = season.length; i < leng; i++) {
       const cur_season = season[i];
 
-      console.log(cur_season)
-
       for (let j = 0, jleng = 2; j < jleng; j++) {
         let cur_date = cur_season[j];
         if (j == 0 && cur_date > cur_season[1]) {
@@ -57,7 +55,6 @@ export default {
             end = `1001-${end}`
           }
 
-          console.log(cur_date, start, end, cur_date >= start && cur_date <= end)
           if (i != y && cur_date >= start && cur_date <= end) {
             return false;
           }

@@ -17,6 +17,7 @@ interface ModalConfirmDataType {
 interface ModalAlertDataType {
   visible: boolean;
   title: string;
+  center: boolean;
   timeout: ReturnType<typeof setTimeout> | undefined;
 }
 
@@ -62,7 +63,7 @@ interface ModalControllerType {
   modal_alert: {
     data: ModalAlertDataType;
     closeModalAlert: () => void;
-    openModalAlert: (title: string) => void;
+    openModalAlert: (title: string, center?: boolean) => void;
   };
   modal_notice: {
     data: ModalNoticeDataType;
@@ -120,13 +121,14 @@ export const ModalContext = createContext<ModalControllerType>({
   modal_alert: {
     data: {
       visible: false,
+      center: false,
       title: '',
       timeout: undefined,
     },
     closeModalAlert: () => {
       return;
     },
-    openModalAlert: (title: string) => {
+    openModalAlert: (title: string, center?: boolean) => {
       return;
     },
   },
@@ -222,6 +224,7 @@ function ModalProvider(props: { children: React.ReactNode }) {
 
   const [modalAlertData, setModalAlertData] = useState<ModalAlertDataType>({
     visible: false,
+    center: false,
     title: '',
     timeout: undefined,
   });
@@ -299,16 +302,17 @@ function ModalProvider(props: { children: React.ReactNode }) {
     modal_alert: {
       data: modalAlertData,
       closeModalAlert: () => {
-        setModalAlertData({ visible: false, title: '', timeout: undefined });
+        setModalAlertData({ visible: false, center: false, title: '', timeout: undefined });
         if (modalAlertData.timeout != undefined) {
           clearTimeout(modalAlertData.timeout);
         }
       },
-      openModalAlert: (title: string) => {
+      openModalAlert: (title: string, center?: boolean) => {
         setModalAlertData(state => {
           return {
             visible: true,
             title: title,
+            center: center ? center : false,
             timeout: setTimeout(() => {
               modalController.modal_alert.closeModalAlert();
             }, 2000),

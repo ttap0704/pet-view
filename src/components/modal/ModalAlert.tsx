@@ -10,14 +10,15 @@ import { ModalContext } from '../../provider/ModalProvider';
 const ModalAlertBox = styled(Box)(({ theme }) => ({
   fontSize: '0.9rem',
   width: 'auto',
-  height: '4rem',
-  padding: '0 2rem',
+  padding: '2rem 4rem',
   backgroundColor: theme.palette.gray_1.main,
   color: theme.palette.white.main,
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
   borderRadius: '1rem',
+  whiteSpace: 'pre-wrap',
+  textAlign: 'center',
 }));
 
 function ModalAlert() {
@@ -26,7 +27,7 @@ function ModalAlert() {
   return (
     <>
       <ModalDefault
-        bottom={true}
+        bottom={modal_alert.data.center ? false : true}
         white={true}
         visible={modal_alert.data.visible}
         onClose={() => modal_alert.closeModalAlert()}

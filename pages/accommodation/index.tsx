@@ -1,7 +1,8 @@
-import { GetStaticProps } from 'next';
+import { GetStaticPaths, GetStaticProps } from 'next';
 
 import { Box } from '@mui/material';
 import { useEffect, useState, Fragment } from 'react';
+import { useRouter } from 'next/router';
 import { styled } from '@mui/material/styles';
 import { fetchGetApi } from '../../src/utils/api';
 import { setImageArray } from '../../src/utils/tools';
@@ -29,10 +30,13 @@ const AccommodationContainer = styled(Box)(({ theme }) => ({
 const ListBox = styled(Box)(({ theme }) => ({
   width: '42rem',
   height: 'auto',
+  cursor: 'pointer',
 }));
 
 const AccommodationIndex = (props: { list: AccommodationList[]; style: { [key: string]: string } }) => {
   const [list, setList] = useState<AccommodationList[]>([]);
+  const router = useRouter();
+
   useEffect(() => {
     setList(props.list);
   }, []);
@@ -41,12 +45,16 @@ const AccommodationIndex = (props: { list: AccommodationList[]; style: { [key: s
     console.log(date, type);
   };
 
+  const moveDetailPage = (item: AccommodationList) => {
+    router.push(`/accommodation/${item.id}`);
+  };
+
   return (
     <AccommodationContainer>
       <ContainerList>
         {list.map((item, index) => {
           return (
-            <ListBox key={`accommodation_list_${index}`}>
+            <ListBox key={`accommodation_list_${index}`} onClick={() => moveDetailPage(item)}>
               <ImageBox imageList={item.image_list} type='accommodation' slide={false} />
               <LabelList title={item.label} subtitle={item.bname} />
             </ListBox>

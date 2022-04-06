@@ -9,8 +9,7 @@ import { ModalContext } from '../../provider/ModalProvider';
 
 const ModalNoticeBox = styled(Box)(({ theme }) => ({
   fontSize: '0.9rem',
-  width: '15rem',
-  height: '6rem',
+  padding: '2rem 4rem',
   border: '4px solid',
   borderColor: theme.palette.orange.main,
   backgroundColor: theme.palette.white.main,
@@ -19,6 +18,8 @@ const ModalNoticeBox = styled(Box)(({ theme }) => ({
   alignItems: 'center',
   justifyContent: 'center',
   borderRadius: '1rem',
+  whiteSpace: 'pre-wrap',
+  textAlign: 'center',
 }));
 
 function ModalNotice() {

@@ -124,6 +124,12 @@ function ModalAddRoom(props: ModalAddRoomProps) {
     ]);
   };
 
+  const deleteRoom = (idx: number) => {
+    const tmp_rooms = [...rooms];
+    tmp_rooms.splice(idx, 1);
+    setRooms([...tmp_rooms]);
+  };
+
   const handleRoomInput = (e: React.ChangeEvent<HTMLInputElement>, type: string, idx: number) => {
     const value = e.target.value;
     setRooms(state => {
@@ -199,6 +205,7 @@ function ModalAddRoom(props: ModalAddRoomProps) {
                   imageList={room.image_list}
                   mode='edit'
                   onClickPriceButton={() => setRoomPriceModal(room_idx)}
+                  onDelete={deleteRoom}
                 />
               );
             })}
