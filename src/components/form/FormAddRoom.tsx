@@ -21,19 +21,18 @@ interface AddRoomInputType {
 }
 
 interface FormAddRoomProps {
-  onChange: (e: React.ChangeEvent<HTMLInputElement>, type: string) => void;
+  onChange?: (e: React.ChangeEvent<HTMLInputElement>, type: string) => void;
   onClickPriceButton?: () => void;
   imageList: ImageListType[];
   room_idx: number;
   mode?: string;
   modal?: boolean;
-  onDelete: (idx: number) => void;
+  onDelete?: (idx: number) => void;
   contents: AddRoomContentsType;
 }
 
 const FormContainer = styled(Box)(({ theme }) => ({
   width: '100%',
-  height: '21rem',
   display: 'flex',
   flexWrap: 'wrap',
   justifyContent: 'space-between',
@@ -43,6 +42,14 @@ const FormContainer = styled(Box)(({ theme }) => ({
   borderColor: theme.palette.gray_4.main,
   borderRadius: 6,
   marginBottom: '1rem',
+
+  '&.edit': {
+    height: '21rem',
+  },
+
+  '&.view': {
+    height: '19rem',
+  },
 }));
 
 const RoomImageContainer = styled(Box)(({ theme }) => ({
@@ -137,7 +144,7 @@ function FormAddRoom(props: FormAddRoomProps) {
   };
 
   return (
-    <FormContainer>
+    <FormContainer className={mode}>
       <RoomImageContainer>
         <ImageBox type='rooms' imageList={image_list} slide={true} count={true} />
       </RoomImageContainer>
@@ -147,13 +154,19 @@ function FormAddRoom(props: FormAddRoomProps) {
             return (
               <FormItem key={`form_add_room_item_${idx}`}>
                 <Typography sx={{ fontWeight: 'bold' }}>{item.title}</Typography>
-                <InputOutlined
-                  align='right'
-                  width='70%'
-                  value={item.value}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => onChange(e, item.key)}
-                  format={item.format}
-                />
+                {mode == 'edit' ? (
+                  <InputOutlined
+                    align='right'
+                    width='70%'
+                    value={item.value}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                      onChange ? onChange(e, item.key) : false;
+                    }}
+                    format={item.format}
+                  />
+                ) : (
+                  <Typography>{item.value}</Typography>
+                )}
               </FormItem>
             );
           })}
@@ -166,14 +179,20 @@ function FormAddRoom(props: FormAddRoomProps) {
           ) : null}
         </>
         {mode == 'edit' ? (
-          <CustomIconButton onClick={() => onDelete(room_idx)}>
+          <CustomIconButton
+            onClick={() => {
+              onDelete ? onDelete(room_idx) : false;
+            }}
+          >
             <RiCloseCircleFill />
           </CustomIconButton>
         ) : null}
       </FormItemContainer>
-      <UtilBox justifyContent='flex-start'>
-        <ButtonUpload title='객실 이미지 등록' onClick={uploadRoomImage} />
-      </UtilBox>
+      {mode == 'edit' ? (
+        <UtilBox justifyContent='flex-start'>
+          <ButtonUpload title='객실 이미지 등록' onClick={uploadRoomImage} />
+        </UtilBox>
+      ) : null}
     </FormContainer>
   );
 }

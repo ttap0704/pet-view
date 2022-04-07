@@ -41,6 +41,7 @@ interface AccommodationResponse {
   sigungu: string;
   updatedAt: string;
   zonecode: string;
+  road_address: string;
 }
 
 interface PeakSeasonType {
