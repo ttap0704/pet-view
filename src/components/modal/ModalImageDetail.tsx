@@ -8,6 +8,7 @@ import { RiCloseCircleFill } from 'react-icons/ri';
 
 const DetailWrap = styled(Box)(({ theme }) => ({
   width: '90vw',
+  maxWidth: '80rem',
   height: '100vh',
   display: 'flex',
   alignItems: 'center',
@@ -22,22 +23,8 @@ const DetailWrap = styled(Box)(({ theme }) => ({
 const ImageWrap = styled(Box)(({ theme }) => ({
   backgroundColor: theme.palette.black.main,
   position: 'relative',
-  width: '40rem',
-  height: '40rem',
-  // '&.exposure_menu': {
-  //   width: '40rem',
-  //   height: '40rem',
-  // },
-
-  // '&.restaurant': {
-  //   width: '40rem',
-  //   height: '40rem',
-  // },
-
-  // '&.accommodation': {
-  //   width: '40rem',
-  //   height: '40rem',
-  // },
+  width: '45rem',
+  height: '45rem',
 
   img: {
     top: '50%',
@@ -51,7 +38,7 @@ const ImageWrap = styled(Box)(({ theme }) => ({
 
 const CustomIconButton = styled(IconButton)(({ theme }) => ({
   position: 'absolute',
-  bottom: '5rem',
+  bottom: '3.5rem',
   left: '50%',
   transform: 'translateX(-50%)',
 

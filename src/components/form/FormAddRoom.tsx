@@ -20,6 +20,10 @@ interface AddRoomInputType {
   value: string;
 }
 
+interface TestType extends AddRoomContentsType {
+  price?: string;
+}
+
 interface FormAddRoomProps {
   onChange?: (e: React.ChangeEvent<HTMLInputElement>, type: string) => void;
   onClickPriceButton?: () => void;
@@ -28,7 +32,7 @@ interface FormAddRoomProps {
   mode?: string;
   modal?: boolean;
   onDelete?: (idx: number) => void;
-  contents: AddRoomContentsType;
+  contents: TestType;
 }
 
 const FormContainer = styled(Box)(({ theme }) => ({
@@ -112,7 +116,7 @@ function FormAddRoom(props: FormAddRoomProps) {
       {
         title: '가격',
         key: 'price',
-        value: contents.normal_price,
+        value: contents.price ? contents.price : contents.normal_price,
         format: 'price',
       },
       {
@@ -143,6 +147,18 @@ function FormAddRoom(props: FormAddRoomProps) {
     if (onClickPriceButton) onClickPriceButton();
   };
 
+  const setViewValue = (format: string, value: string) => {
+    let new_value = value;
+
+    if (format == 'people') {
+      new_value = new_value + ' 명';
+    } else if (format == 'price') {
+      new_value = Number(new_value).toLocaleString() + ' 원';
+    }
+
+    return new_value;
+  };
+
   return (
     <FormContainer className={mode}>
       <RoomImageContainer>
@@ -165,7 +181,7 @@ function FormAddRoom(props: FormAddRoomProps) {
                     format={item.format}
                   />
                 ) : (
-                  <Typography>{item.value}</Typography>
+                  <Typography>{setViewValue(item.format, item.value)}</Typography>
                 )}
               </FormItem>
             );

@@ -1,5 +1,6 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useContext } from 'react';
 import { styled } from '@mui/material/styles';
+import { ModalContext } from '../../provider/ModalProvider';
 
 import Box, { BoxProps } from '@mui/material/Box';
 import { Typography } from '@mui/material';
@@ -51,6 +52,8 @@ const CountTypography = styled(Typography)(({ theme }) => ({
 }));
 
 const ImageBox = (props: ImageBoxProps) => {
+  const { modal_image_detail } = useContext(ModalContext);
+
   const image_list = props.imageList;
   const type = props.type;
   const slide = props.slide;
@@ -133,6 +136,12 @@ const ImageBox = (props: ImageBoxProps) => {
     return src;
   };
 
+  const openDetailModal = () => {
+    if (image_list) {
+      modal_image_detail.openModalImageDetail(type, image_list);
+    }
+  };
+
   return (
     <>
       <CustomBox sx={{ ...boxStyle }}>
@@ -157,7 +166,7 @@ const ImageBox = (props: ImageBoxProps) => {
             <Typography component='h5'>{empty_text ? empty_text : '이미지를 등록해주세요.'}</Typography>
           </ContainerFullAbsolute>
         )}
-        {isSlide ? <ImageSlider onSlide={handleSlider} /> : null}
+        {isSlide ? <ImageSlider onSlide={handleSlider} onClickDetail={openDetailModal} useDetail={true} /> : null}
       </CustomBox>
     </>
   );

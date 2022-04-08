@@ -1,10 +1,11 @@
 import { GetStaticPaths, GetStaticProps } from 'next';
 import { ParsedUrlQuery } from 'querystring';
 import { Box } from '@mui/material';
-import { useEffect, useState, Fragment } from 'react';
+import { useEffect, useState, useContext } from 'react';
 import { styled } from '@mui/material/styles';
-import { setImageArray } from '../../src/utils/tools';
+import { setImageArray, getSeasonPriceKey } from '../../src/utils/tools';
 import { fetchGetApi } from '../../src/utils/api';
+import { ModalContext } from '../../src/provider/ModalProvider';
 
 import ImageBox from '../../src/components/image/ImageBox';
 import LabelDetailTitle from '../../src/components/label/LabelDetailTitle';
@@ -20,6 +21,10 @@ interface Params extends ParsedUrlQuery {
   id: string;
 }
 
+interface DetailRoomsType extends AddRoomContentsType {
+  price: string;
+}
+
 const AccommodationContainer = styled(Box)(({ theme }) => ({
   width: '100%',
   height: 'auto',
@@ -30,31 +35,54 @@ const AccommodationContainer = styled(Box)(({ theme }) => ({
 }));
 
 const AccommodationDetail = (props: { detail: AccommodationResponse; style: { [key: string]: string } }) => {
-  const [detail, setDetail] = useState<AccommodationResponse>();
+  const [isMounted, setIsMounted] = useState(false);
   const [exposureImages, setExposureImages] = useState<ImageListType[]>([]);
   const [accommodationLabel, setAccommodationLabel] = useState('');
   const [address, setAddress] = useState('');
   const [introduction, setIntroduction] = useState('');
-  const [rooms, setRooms] = useState<AddRoomContentsType[]>([]);
+  const [rooms, setRooms] = useState<DetailRoomsType[]>([]);
+  const [curPriceKey, setCurPriceKey] = useState<RoomPriceKeys>('normal_price');
 
   useEffect(() => {
-    const tmp_detail = { ...props.detail };
-    setAccommodationDetail(props.detail);
+    if (curPriceKey) {
+      const tmp_rooms = [...rooms];
+
+      for (const tmp_room of tmp_rooms) {
+        tmp_room.price = tmp_room[curPriceKey];
+      }
+
+      setRooms([...tmp_rooms]);
+    }
+  }, [curPriceKey]);
+
+  useEffect(() => {
+    if (!isMounted) {
+      console.log('여기');
+      const month = new Date().getMonth() + 1;
+      const date = new Date().getDate();
+      const today_key: RoomPriceKeys = getSeasonPriceKey(`${month}-${date}`, props.detail.accommodation_peak_season);
+      setCurPriceKey(today_key);
+
+      setAccommodationDetail(props.detail, today_key);
+    }
+    return () => {
+      setIsMounted(true);
+    };
   }, []);
 
-  const setAccommodationDetail = async (detail: AccommodationResponse) => {
+  const setAccommodationDetail = async (detail: AccommodationResponse, price_key: RoomPriceKeys) => {
     const tmp_exposure_images = detail.accommodation_images.map(item => ({
       file_name: item.file_name,
     }));
     const exposure_image_list = await setImageArray(tmp_exposure_images, true, 'accommodation');
 
-    console.log(detail);
-    const tmp_rooms: AddRoomContentsType[] = [];
+    const tmp_rooms: DetailRoomsType[] = [];
     for (const room of detail.accommodation_rooms) {
       tmp_rooms.push({
         label: room.label,
         normal_price: room.normal_price,
         normal_weekend_price: room.normal_weekend_price,
+        price: room[price_key],
         peak_price: room.peak_price,
         peak_weekend_price: room.peak_weekend_price,
         standard_num: `${room.standard_num}`,

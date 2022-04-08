@@ -3,12 +3,14 @@ import { styled } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import { IconButton } from '@mui/material';
 
-import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
+import { FaChevronLeft, FaChevronRight, FaSearchPlus } from 'react-icons/fa';
 import { useEffect, useState } from 'react';
 
 interface ImageSliderProps {
   onSlide: (dir: string) => void;
+  onClickDetail?: () => void;
   fill?: boolean;
+  useDetail?: boolean;
 }
 
 const SliderWrap = styled(Box)(({ theme }) => ({
@@ -61,9 +63,25 @@ const IconBox = styled(Box)(({ theme }) => ({
   },
 }));
 
+const DetailIconBox = styled(Box)(({ theme }) => ({
+  width: '3rem',
+  height: '3rem',
+  position: 'absolute',
+  bottom: 0,
+  right: 0,
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  svg: {
+    color: theme.palette.gray_6.main,
+  },
+}));
+
 const ImageSlider = (props: ImageSliderProps) => {
   const onSlide = props.onSlide;
+  const onClickDetail = props.onClickDetail;
   const fill = props.fill;
+  const use_detail = props.useDetail;
 
   return (
     <SliderWrap className='image-slider'>
@@ -77,6 +95,13 @@ const ImageSlider = (props: ImageSliderProps) => {
           <FaChevronRight />
         </IconButton>
       </IconBox>
+      {use_detail ? (
+        <DetailIconBox>
+          <IconButton onClick={onClickDetail}>
+            <FaSearchPlus />
+          </IconButton>
+        </DetailIconBox>
+      ) : null}
     </SliderWrap>
   );
 };

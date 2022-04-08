@@ -133,3 +133,43 @@ export function getDate(req: string) {
   const date = new Date(req).getDate() < 10 ? `0${new Date(req).getDate()}` : new Date(req).getDate();
   return `${year}-${month}-${date}`;
 }
+
+export function getSeasonPriceKey(date: string, season: PeakSeasonType[]): RoomPriceKeys {
+  let res = false;
+  let key: RoomPriceKeys = 'normal_price'
+  const target_date = `1001-${date}`
+  for (let i = 0, leng = season.length; i < leng; i++) {
+    const cur_season = season[i];
+    let start = cur_season.start;
+    let end = cur_season.end
+    if (new Date(start) < new Date(end)) {
+      start = `1001-${start}`;
+      end = `1001-${end}`
+    } else {
+      start = `1000-${start}`;
+      end = `1001-${end}`
+    }
+
+    if (new Date(start) <= new Date(target_date) && new Date(end) >= new Date(target_date)) {
+      res = true;
+      break;
+    }
+  }
+
+  const day = new Date().getDay();
+  if (res) {
+    if ([5, 6].includes(day)) {
+      key = 'peak_weekend_price';
+    } else {
+      key = 'peak_price';
+    }
+  } else {
+    if ([5, 6].includes(day)) {
+      key = 'normal_weekend_price';
+    } else {
+      key = 'normal_price';
+    }
+  }
+
+  return key;
+}
