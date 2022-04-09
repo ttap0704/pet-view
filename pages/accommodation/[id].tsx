@@ -12,6 +12,7 @@ import LabelDetailTitle from '../../src/components/label/LabelDetailTitle';
 import BoxIntroduction from '../../src/components/box/BoxIntroduction';
 import ContainerRegistrationItem from '../../src/components/container/ContainerRegistrationItem';
 import FormAddRoom from '../../src/components/form/FormAddRoom';
+import Tabs from '../../src/components/tabs/Tabs';
 
 type Props = {
   detail: AccommodationResponse;
@@ -108,6 +109,7 @@ const AccommodationDetail = (props: { detail: AccommodationResponse; style: { [k
         <ImageBox slide={true} type='accommodation' imageList={exposureImages} count={true} />
         <LabelDetailTitle title={accommodationLabel} address={address} />
       </ContainerRegistrationItem>
+      <Tabs></Tabs>
       <ContainerRegistrationItem title='숙소 소개'>
         <BoxIntroduction introduction={introduction} />
       </ContainerRegistrationItem>
