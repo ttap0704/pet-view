@@ -93,6 +93,8 @@ const AccommodationDetail = (props: { detail: AccommodationResponse; style: { [k
           true,
           'rooms',
         ),
+        entrance: '',
+        leaving: '',
       });
     }
 

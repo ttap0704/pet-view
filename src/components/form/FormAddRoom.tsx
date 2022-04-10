@@ -27,6 +27,7 @@ interface TestType extends AddRoomContentsType {
 interface FormAddRoomProps {
   onChange?: (e: React.ChangeEvent<HTMLInputElement>, type: string) => void;
   onClickPriceButton?: () => void;
+  onClickTimeButton?: () => void;
   imageList: ImageListType[];
   room_idx: number;
   mode?: string;
@@ -98,6 +99,7 @@ function FormAddRoom(props: FormAddRoomProps) {
   const onChange = props.onChange;
   const onDelete = props.onDelete;
   const onClickPriceButton = props.onClickPriceButton;
+  const onClickTimeButton = props.onClickTimeButton;
   const image_list = props.imageList;
   const room_idx = props.room_idx;
   const mode = props.mode;
@@ -155,10 +157,6 @@ function FormAddRoom(props: FormAddRoomProps) {
     modal_upload.openModalUpload('객실 이미지 업로드', 'rooms', image_list, room_idx);
   };
 
-  const setPrice = () => {
-    if (onClickPriceButton) onClickPriceButton();
-  };
-
   const setViewValue = (format: string, value: string) => {
     let new_value = value;
 
@@ -199,8 +197,11 @@ function FormAddRoom(props: FormAddRoomProps) {
             );
           })}
           {mode == 'edit' ? (
-            <FormItem sx={{ justifyContent: 'flex-end' }}>
-              <Button color='blue' variant='contained' onClick={setPrice}>
+            <FormItem sx={{ justifyContent: 'flex-end', gap: '0.5rem' }}>
+              <Button color='blue' variant='outlined' onClick={onClickTimeButton}>
+                입실/퇴실 시간 설정
+              </Button>
+              <Button color='blue' variant='contained' onClick={onClickPriceButton}>
                 가격 설정
               </Button>
             </FormItem>

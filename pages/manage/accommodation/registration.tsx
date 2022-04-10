@@ -23,6 +23,7 @@ import FormPeakSeason from '../../../src/components/form/FormPeakSeason';
 
 import ModalUpload from '../../../src/components/modal/ModalUpload';
 import ModalRoomPrice from '../../../src/components/modal/ModalRoomPrice';
+import ModalRoomTime from '../../../src/components/modal/ModalRoomTime';
 
 const ManageAccommodationRegistration = () => {
   const { modal_upload, modal_confirm, modal_alert, modal_notice } = useContext(ModalContext);
@@ -45,6 +46,21 @@ const ManageAccommodationRegistration = () => {
 
   const [accommodationLabel, setAccommodationLabel] = useState('');
   const [introduction, setIntroduction] = useState('');
+  const [savedRoomsTime, setSavedRoomsTime] = useState({
+    all: false,
+    contents: {
+      entrance: '',
+      leaving: '',
+    },
+  });
+  const [roomTimeContents, setRoomTimeContents] = useState({
+    visible: false,
+    contents: {
+      entrance: '',
+      leaving: '',
+    },
+    current_room_idx: 0,
+  });
   const [roomPriceContents, setRoomPriceContents] = useState({
     visible: false,
     contents: {
@@ -65,6 +81,8 @@ const ManageAccommodationRegistration = () => {
       standard_num: '',
       maximum_num: '',
       image_list: [],
+      entrance: '',
+      leaving: '',
     },
   ]);
 
@@ -144,6 +162,51 @@ const ManageAccommodationRegistration = () => {
     clearRoomPriceModal();
   };
 
+  const setRoomTimeModal = (idx: number) => {
+    const target = rooms[idx];
+    setRoomTimeContents({
+      visible: true,
+      current_room_idx: idx,
+      contents: {
+        entrance: target.entrance,
+        leaving: target.leaving,
+      },
+    });
+  };
+
+  const clearRoomTimeModal = () => {
+    setRoomTimeContents({
+      visible: false,
+      current_room_idx: 0,
+      contents: {
+        entrance: '',
+        leaving: '',
+      },
+    });
+  };
+
+  const setRoomTime = (data: { [key: string]: string }, check_all: boolean) => {
+    setSavedRoomsTime({
+      all: check_all,
+      contents: {
+        entrance: check_all ? data.entrance : '',
+        leaving: check_all ? data.leaving : '',
+      },
+    });
+    const tmp_rooms = [...rooms];
+    if (check_all) {
+      for (let i = 0, leng = tmp_rooms.length; i < leng; i++) {
+        tmp_rooms[i].entrance = data.entrance;
+        tmp_rooms[i].leaving = data.leaving;
+      }
+    } else {
+      tmp_rooms[roomPriceContents.current_room_idx] = { ...tmp_rooms[roomPriceContents.current_room_idx], ...data };
+    }
+
+    setRooms([...tmp_rooms]);
+    clearRoomTimeModal();
+  };
+
   const addRoom = () => {
     setRooms([
       ...rooms,
@@ -156,6 +219,8 @@ const ManageAccommodationRegistration = () => {
         standard_num: '',
         maximum_num: '',
         image_list: [],
+        entrance: savedRoomsTime.all ? savedRoomsTime.contents.entrance : '',
+        leaving: savedRoomsTime.all ? savedRoomsTime.contents.leaving : '',
       },
     ]);
   };
@@ -247,6 +312,8 @@ const ManageAccommodationRegistration = () => {
           peak_weekend_price: room.peak_weekend_price,
           standard_num: room.standard_num,
           maximum_num: room.maximum_num,
+          entrance: room.entrance,
+          leaving: room.leaving,
           seq: room_idx,
         };
       }),
@@ -353,6 +420,7 @@ const ManageAccommodationRegistration = () => {
               imageList={room.image_list}
               mode='edit'
               onClickPriceButton={() => setRoomPriceModal(room_idx)}
+              onClickTimeButton={() => setRoomTimeModal(room_idx)}
               contents={room}
               onDelete={deleteRoom}
             />
@@ -380,6 +448,12 @@ const ManageAccommodationRegistration = () => {
         contents={roomPriceContents.contents}
         onClose={() => clearRoomPriceModal()}
         onUpdatePrice={setRoomPrice}
+      />
+      <ModalRoomTime
+        visible={roomTimeContents.visible}
+        contents={roomTimeContents.contents}
+        onClose={() => clearRoomTimeModal()}
+        onUpdateTime={setRoomTime}
       />
     </>
   );

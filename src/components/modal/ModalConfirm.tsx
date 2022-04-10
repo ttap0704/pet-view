@@ -48,6 +48,13 @@ const NoticeTypography = styled(Typography)(({ theme }) => ({
 function ModalConfirm() {
   const { modal_confirm } = useContext(ModalContext);
 
+  const cancelConfrim = () => {
+    if (modal_confirm.cancelModalConfirm) {
+      modal_confirm.cancelModalConfirm();
+    }
+    modal_confirm.closeModalConfirm();
+  };
+
   return (
     <>
       <ModalDefault
@@ -67,7 +74,7 @@ function ModalConfirm() {
             <Button className='fill' onClick={modal_confirm.checkModalConfirm}>
               확인
             </Button>
-            <Button className='fill' color='gray_1' onClick={modal_confirm.closeModalConfirm}>
+            <Button className='fill' color='gray_1' onClick={cancelConfrim}>
               취소
             </Button>
           </ModalConfirmButtonBox>

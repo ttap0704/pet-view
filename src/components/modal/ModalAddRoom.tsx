@@ -65,6 +65,8 @@ function ModalAddRoom(props: ModalAddRoomProps) {
       standard_num: '',
       maximum_num: '',
       image_list: [],
+      entrance: '',
+      leaving: '',
     },
   ]);
 
@@ -86,6 +88,8 @@ function ModalAddRoom(props: ModalAddRoomProps) {
           standard_num: '',
           maximum_num: '',
           image_list: [],
+          entrance: '',
+          leaving: '',
         },
       ]);
     }
@@ -120,6 +124,8 @@ function ModalAddRoom(props: ModalAddRoomProps) {
         standard_num: '',
         maximum_num: '',
         image_list: [],
+        entrance: '',
+        leaving: '',
       },
     ]);
   };

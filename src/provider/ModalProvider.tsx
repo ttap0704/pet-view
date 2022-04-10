@@ -11,7 +11,8 @@ import ModalImageDetail from '../components/modal/ModalImageDetail';
 interface ModalConfirmDataType {
   visible: boolean;
   title: string;
-  callback: () => void;
+  check_callback: () => void;
+  cancel_callback: () => void;
 }
 
 interface ModalAlertDataType {
@@ -57,8 +58,9 @@ interface ModalControllerType {
   modal_confirm: {
     data: ModalConfirmDataType;
     closeModalConfirm: () => void;
-    openModalConfirm: (title: string, callback: () => void) => void;
+    openModalConfirm: (title: string, check_callback: () => void, cancel_callback?: () => void) => void;
     checkModalConfirm: () => void;
+    cancelModalConfirm: () => void;
   };
   modal_alert: {
     data: ModalAlertDataType;
@@ -104,17 +106,23 @@ export const ModalContext = createContext<ModalControllerType>({
     data: {
       visible: false,
       title: '',
-      callback: () => {
+      check_callback: () => {
+        return;
+      },
+      cancel_callback: () => {
         return;
       },
     },
     closeModalConfirm: () => {
       return;
     },
-    openModalConfirm: (title: string, callback: () => void) => {
+    openModalConfirm: (title: string, check_callback: () => void, cancel_callback?: () => void) => {
       return;
     },
     checkModalConfirm: () => {
+      return;
+    },
+    cancelModalConfirm: () => {
       return;
     },
   },
@@ -217,7 +225,10 @@ function ModalProvider(props: { children: React.ReactNode }) {
   const [modalConfirmData, setModalConfirmData] = useState<ModalConfirmDataType>({
     visible: false,
     title: '',
-    callback: () => {
+    check_callback: () => {
+      return;
+    },
+    cancel_callback: () => {
       return;
     },
   });
@@ -269,23 +280,45 @@ function ModalProvider(props: { children: React.ReactNode }) {
         setModalConfirmData({
           visible: false,
           title: '',
-          callback: () => {
+          check_callback: () => {
+            return;
+          },
+          cancel_callback: () => {
             return;
           },
         });
       },
-      openModalConfirm: (title: string, callback: () => void) => {
+      openModalConfirm: (title: string, check_callback: () => void, cancel_callback?: () => void) => {
         setModalConfirmData(state => {
           return {
             ...state,
             visible: true,
             title: title,
-            callback,
+            check_callback,
+            cancel_callback: cancel_callback
+              ? cancel_callback
+              : () => {
+                  return;
+                },
           };
         });
       },
       checkModalConfirm: () => {
-        modalController.modal_confirm.data.callback();
+        modalController.modal_confirm.data.check_callback();
+
+        setModalConfirmData(state => {
+          return {
+            ...state,
+            visible: false,
+            title: '',
+            callback: () => {
+              return;
+            },
+          };
+        });
+      },
+      cancelModalConfirm: () => {
+        modalController.modal_confirm.data.cancel_callback();
 
         setModalConfirmData(state => {
           return {

@@ -7,6 +7,8 @@ interface AddRoomContentsType {
   standard_num: string;
   maximum_num: string;
   image_list: ImageListType[];
+  entrance: string;
+  leaving: string;
 }
 
 interface CreateAccommodationResponse {
@@ -71,6 +73,8 @@ interface RoomType extends RoomPriceType {
   maximum_num: number;
   seq: number;
   standard_num: number;
+  entrance: string;
+  leaving: string;
   updatedAt: string;
   rooms_images: ImageType[];
 }

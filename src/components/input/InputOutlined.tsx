@@ -2,7 +2,7 @@ import OutlinedInput, { OutlinedInputProps } from '@mui/material/OutlinedInput';
 
 import React, { useEffect, useState } from 'react';
 import { styled } from '@mui/material/styles';
-import { InputBaseComponentProps } from '@mui/material';
+import { InputBaseComponentProps, Typography } from '@mui/material';
 
 interface InputOutlinedProps extends OutlinedInputProps {
   onKeyDownEnter?: () => void;
@@ -17,7 +17,7 @@ const StyledInput = styled(OutlinedInput)(({ theme }) => ({
   width: '100%',
   borderRadius: 6,
   borderColor: theme.palette.gray_4.main,
-  padding: '0 1rem 0 0',
+  padding: '0 1rem 0 0.5rem',
 
   '&.bottom': {
     borderRadius: 0,
@@ -134,7 +134,11 @@ const CustomInput = (props: InputOutlinedProps) => {
         value={currentValue}
         placeholder={placeholder}
         onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleInput(e)}
-        startAdornment={start_adornment}
+        startAdornment={
+          <Typography variant='inherit' sx={{ width: '10%', textAlign: 'center' }}>
+            {start_adornment}
+          </Typography>
+        }
         endAdornment={currentFormat}
         type={type}
         readOnly={read_only}
