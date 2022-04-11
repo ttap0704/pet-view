@@ -1,11 +1,19 @@
 import * as React from 'react';
+import { useState, useEffect } from 'react';
 import { styled, alpha } from '@mui/material/styles';
-import Button from '@mui/material/Button';
+import Button from '../button/Button';
+import { ButtonProps } from '@mui/material';
 import Menu, { MenuProps } from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 
+interface MenuButtonPropsStateType {
+  variant: ButtonProps['variant'];
+  color: ButtonProps['color'];
+}
+
 interface DropdownProps {
   items: string[];
+  fill?: boolean;
   buttonDisabled: boolean;
   onClick: (idx: number) => void;
 }
@@ -54,9 +62,24 @@ const StyledMenu = styled((props: MenuProps) => (
 const CustomDropdown = (props: DropdownProps) => {
   const items: string[] = props.items;
   const disabled = props.buttonDisabled;
+  const fill = props.fill;
 
-  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [menuButtonProps, setMenuButtonProps] = useState<MenuButtonPropsStateType>({
+    variant: 'contained',
+    color: 'blue',
+  });
   const open = Boolean(anchorEl);
+
+  useEffect(() => {
+    if (fill) {
+      setMenuButtonProps({
+        variant: 'text',
+        color: 'black',
+      });
+    }
+  }, []);
+
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
   };
@@ -70,19 +93,20 @@ const CustomDropdown = (props: DropdownProps) => {
   }
 
   return (
-    <div>
+    <>
       <Button
         id='demo-customized-button'
         aria-controls={open ? 'demo-customized-menu' : undefined}
         aria-haspopup='true'
         aria-expanded={open ? 'true' : undefined}
-        variant='outlined'
+        variant={menuButtonProps.variant}
         disableElevation
         onClick={handleClick}
         disabled={disabled}
-        color='blue'
+        color={menuButtonProps.color}
+        className={fill ? 'fill' : ''}
       >
-        편집
+        {fill ? '선택' : '편집'}
       </Button>
       <StyledMenu
         id='demo-customized-menu'
@@ -101,7 +125,7 @@ const CustomDropdown = (props: DropdownProps) => {
           );
         })}
       </StyledMenu>
-    </div>
+    </>
   );
 };
 

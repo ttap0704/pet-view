@@ -32,6 +32,7 @@ function Button(props: ButtonProps) {
   const sx = props.sx;
   const onClick = props.onClick;
   const class_name = props.className;
+
   return (
     <CustomButton
       variant={variant}

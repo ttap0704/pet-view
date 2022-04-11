@@ -20,6 +20,7 @@ import Textarea from '../../../src/components/textarea/Textarea';
 import ChevronDivder from '../../../src/components/common/ChevronDivder';
 import InputOutlined from '../../../src/components/input/InputOutlined';
 import FormPeakSeason from '../../../src/components/form/FormPeakSeason';
+import FormServiceInfo from '../../../src/components/form/FormServiceInfo';
 
 import ModalUpload from '../../../src/components/modal/ModalUpload';
 import ModalRoomPrice from '../../../src/components/modal/ModalRoomPrice';
@@ -46,6 +47,11 @@ const ManageAccommodationRegistration = () => {
 
   const [accommodationLabel, setAccommodationLabel] = useState('');
   const [introduction, setIntroduction] = useState('');
+  const [serviceInfo, setServiceInfo] = useState<{ [key: string]: string }>({
+    phone: '',
+    site: '',
+    kakao: '',
+  });
   const [savedRoomsTime, setSavedRoomsTime] = useState({
     all: false,
     contents: {
@@ -390,6 +396,9 @@ const ManageAccommodationRegistration = () => {
           onChangeAddress={data => setAddress({ ...address, ...data })}
           address={address}
         />
+      </ContainerRegistrationItem>
+      <ContainerRegistrationItem title='숙박문의 정보'>
+        <FormServiceInfo data={serviceInfo} />
       </ContainerRegistrationItem>
       <ContainerRegistrationItem title='숙박업소 소개'>
         <Textarea

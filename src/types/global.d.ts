@@ -47,6 +47,12 @@ interface orderContents {
   title: string;
 }
 
+interface ServiceInfoType {
+  contact: string;
+  site: string;
+  kakao: string;
+}
+
 interface ImageType {
   accommodation_id: number;
   category: number;

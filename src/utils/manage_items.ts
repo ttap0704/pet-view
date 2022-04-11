@@ -92,6 +92,12 @@ export const accommodation_rooms = {
       key: 'maximum_num',
     },
     {
+      label: '입실/퇴실',
+      center: true,
+      key: 'room_time',
+      type: 'button',
+    },
+    {
       label: '가격 확인',
       center: true,
       key: 'price',
@@ -109,7 +115,7 @@ export const accommodation_rooms = {
       key: 'created_at',
     },
   ],
-  edit_items: ["객실명 수정", "기준 인원 수정", "최대 인원 수정", "가격 수정", "대표이미지 수정", "객실 삭제"],
+  edit_items: ["객실명 수정", "기준 인원 수정", "최대 인원 수정", "입실/퇴실 시간 수정", "가격 수정", "대표이미지 수정", "객실 삭제"],
   type: 'rooms',
   title: '객실 관리',
   rows_length: 0,

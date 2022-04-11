@@ -13,6 +13,8 @@ import Button from '../button/Button';
 
 interface ModalRoomTimeProps {
   visible: boolean;
+  mode?: string;
+  type?: string;
   contents: {
     entrance: string;
     leaving: string;
@@ -30,7 +32,7 @@ interface TimeContentsType {
 
 const ModalRoomTimeContentsBox = styled(Box)(({ theme }) => ({
   fontSize: '0.9rem',
-  width: '40rem',
+  width: '25rem',
   height: 'auto',
   display: 'flex',
   flexDirection: 'column',
@@ -57,6 +59,8 @@ function ModalRoomTime(props: ModalRoomTimeProps) {
 
   const visible = props.visible;
   const contents = props.contents;
+  const mode = props.mode;
+  const type = props.type;
   const onClose = props.onClose;
   const onUpdateTime = props.onUpdateTime;
 
@@ -84,17 +88,21 @@ function ModalRoomTime(props: ModalRoomTimeProps) {
         time_data[key] = val.time;
       }
 
-      setTimeout(() => {
-        modal_confirm.openModalConfirm(
-          '모든 객실에 해당 시간을 적용하시겠습니까?',
-          () => {
-            onUpdateTime(time_data, true);
-          },
-          () => {
-            onUpdateTime(time_data, false);
-          },
-        );
-      }, 200);
+      if (type != 'edit') {
+        setTimeout(() => {
+          modal_confirm.openModalConfirm(
+            '모든 객실에 해당 시간을 적용하시겠습니까?',
+            () => {
+              onUpdateTime(time_data, true);
+            },
+            () => {
+              onUpdateTime(time_data, false);
+            },
+          );
+        }, 200);
+      } else {
+        onUpdateTime(time_data, false);
+      }
     });
   };
 
@@ -120,23 +128,34 @@ function ModalRoomTime(props: ModalRoomTimeProps) {
               return (
                 <TimeInputBox key={`room_price_${item_idx}`}>
                   <Typography sx={{ fontWeight: 'bold' }}>{timeContents[key].title}</Typography>
-                  <InputOutlined
-                    align='right'
-                    width='70%'
-                    value={timeContents[key].time}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => onChangePirce(e.target.value, key)}
-                    format=''
-                    startAdornment={key == 'leaving' ? '익일' : ''}
-                  />
+                  {mode != 'read' ? (
+                    <InputOutlined
+                      align='right'
+                      width='70%'
+                      value={timeContents[key].time}
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => onChangePirce(e.target.value, key)}
+                      format=''
+                      startAdornment={key == 'leaving' ? '익일' : ''}
+                    />
+                  ) : (
+                    <>
+                      <Typography>
+                        {key == 'leaving' ? '익일 ' : ''}
+                        {timeContents[key].time}
+                      </Typography>
+                    </>
+                  )}
                 </TimeInputBox>
               );
             })}
           </ModalRoomTimeContentsBox>
-          <UtilBox>
-            <Button variant='contained' color='orange' onClick={confirmUpdate}>
-              등록
-            </Button>
-          </UtilBox>
+          {mode != 'read' ? (
+            <UtilBox>
+              <Button variant='contained' color='orange' onClick={confirmUpdate}>
+                등록
+              </Button>
+            </UtilBox>
+          ) : null}
         </ContainerModalContents>
       </ModalDefault>
     </>

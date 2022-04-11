@@ -8,6 +8,7 @@ import { accommodation_rooms } from '../../../src/utils/manage_items';
 import ModalEdit from '../../../src/components/modal/ModalEdit';
 import ModalUpload from '../../../src/components/modal/ModalUpload';
 import ModalRoomPrice from '../../../src/components/modal/ModalRoomPrice';
+import ModalRoomTime from '../../../src/components/modal/ModalRoomTime';
 import Table from '../../../src/components/table/Table';
 import { TableContext } from '../../../src/provider/TableProvider';
 import { ModalContext } from '../../../src/provider/ModalProvider';
@@ -17,6 +18,15 @@ const ManageAccommodationRooms = (props: { list: AccommodationRoomsListType; sty
   const { modal_confirm, modal_edit, modal_alert, modal_upload, modal_image_detail } = useContext(ModalContext);
 
   const [roomContents, setRoomContents] = useState<ChildrenDataType>(accommodation_rooms);
+  const [roomTimeContents, setRoomTimeContents] = useState({
+    mode: '',
+    visible: false,
+    contents: {
+      entrance: '',
+      leaving: '',
+    },
+    current_room_idx: 0,
+  });
   const [roomPriceContents, setRoomPriceContents] = useState({
     mode: '',
     visible: false,
@@ -49,11 +59,13 @@ const ManageAccommodationRooms = (props: { list: AccommodationRoomsListType; sty
         setModalEdit();
       } else if (dropdown_idx == 3) {
         const edit_idx = data.table_items.findIndex(item => item == target);
-        console.log(edit_idx);
-        setRoomPriceModal('edit', edit_idx);
+        setRoomTimeModal('edit', edit_idx);
       } else if (dropdown_idx == 4) {
-        setUploadModal();
+        const edit_idx = data.table_items.findIndex(item => item == target);
+        setRoomPriceModal('edit', edit_idx);
       } else if (dropdown_idx == 5) {
+        setUploadModal();
+      } else if (dropdown_idx == 6) {
         const accommodation_id = target.accommodation_id;
         modal_confirm.openModalConfirm(`정말 [${target.label}] 객실를 삭제하시겠습니까?`, () =>
           deleteRoom(accommodation_id, target.id),
@@ -68,6 +80,8 @@ const ManageAccommodationRooms = (props: { list: AccommodationRoomsListType; sty
         setExposureImageDetail(data.clicked_row_button_idx);
       } else if (data.clicked_row_button_key == 'price') {
         setRoomPriceModal('read', data.clicked_row_button_idx);
+      } else if (data.clicked_row_button_key == 'room_time') {
+        setRoomTimeModal('read', data.clicked_row_button_idx);
       }
     }
   }, [data.clicked_row_button_idx, data.clicked_row_button_key]);
@@ -118,20 +132,58 @@ const ManageAccommodationRooms = (props: { list: AccommodationRoomsListType; sty
     });
   };
 
-  const setRoomPrice = async (price: { [key: string]: string }) => {
+  const setRoomTimeModal = (mode: string, idx: number) => {
+    const target = data.table_items[idx];
+    if (target) {
+      setRoomTimeContents({
+        mode: mode,
+        visible: true,
+        current_room_idx: idx,
+        contents: {
+          entrance: target.entrance,
+          leaving: target.leaving,
+        },
+      });
+    }
+  };
+
+  const clearRoomTimeModal = () => {
+    setRoomTimeContents({
+      mode: '',
+      visible: false,
+      current_room_idx: 0,
+      contents: {
+        entrance: '',
+        leaving: '',
+      },
+    });
+  };
+
+  const updateRoomInfo = async (price: { [key: string]: string }, type: string) => {
     const target = data.table_items.find(item => item.checked);
     if (target) {
       const accommodation_id = target.accommodation_id;
       const id = target.id;
-      const update_res = await fetchPostApi(`/manager/1/accommodation/${accommodation_id}/rooms/${id}/price`, price);
+      const update_res = await fetchPostApi(`/manager/1/accommodation/${accommodation_id}/rooms/${id}/info`, price);
 
       if (update_res) {
-        modal_alert.openModalAlert('가격 변경이 완료되었습니다.');
+        let title = '';
+        if (type == 'price') {
+          title = '가격 변경이 완료되었습니다.';
+        } else {
+          title = '입실/퇴실 시간 변경이 완료되었습니다.';
+        }
+
+        modal_alert.openModalAlert(title);
       } else {
         modal_alert.openModalAlert('오류로 인해 변경이 실패되었습니다.');
       }
       getTableItems();
-      clearRoomPriceModal();
+      if (type == 'price') {
+        clearRoomPriceModal();
+      } else {
+        clearRoomTimeModal();
+      }
     }
   };
 
@@ -286,6 +338,8 @@ const ManageAccommodationRooms = (props: { list: AccommodationRoomsListType; sty
         peak_price: Number(x.peak_price).toLocaleString(),
         peak_weekend_price: Number(x.peak_weekend_price).toLocaleString(),
         images: x.rooms_images,
+        entrance: x.entrance,
+        leaving: x.leaving,
         additional_info: x.additional_info,
         amenities: x.amenities,
         created_at: getDate(x.createdAt),
@@ -310,7 +364,15 @@ const ManageAccommodationRooms = (props: { list: AccommodationRoomsListType; sty
         visible={roomPriceContents.visible}
         contents={roomPriceContents.contents}
         onClose={() => clearRoomPriceModal()}
-        onUpdatePrice={setRoomPrice}
+        onUpdatePrice={(data: { [key: string]: string }) => updateRoomInfo(data, 'price')}
+      />
+      <ModalRoomTime
+        mode={roomTimeContents.mode}
+        visible={roomTimeContents.visible}
+        contents={roomTimeContents.contents}
+        onClose={() => clearRoomTimeModal()}
+        onUpdateTime={(data: { [key: string]: string }) => updateRoomInfo(data, 'time')}
+        type='edit'
       />
     </>
   );

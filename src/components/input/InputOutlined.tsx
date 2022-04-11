@@ -42,7 +42,7 @@ const StyledInput = styled(OutlinedInput)(({ theme }) => ({
 
   input: {
     height: '100%',
-    paddingRight: '0.5rem',
+    padding: '0.5rem',
 
     '&:read-only': {
       cursor: 'unset',
@@ -135,9 +135,11 @@ const CustomInput = (props: InputOutlinedProps) => {
         placeholder={placeholder}
         onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleInput(e)}
         startAdornment={
-          <Typography variant='inherit' sx={{ width: '10%', textAlign: 'center' }}>
-            {start_adornment}
-          </Typography>
+          start_adornment ? (
+            <Typography variant='inherit' sx={{ width: '20%', textAlign: 'center' }}>
+              {start_adornment}
+            </Typography>
+          ) : null
         }
         endAdornment={currentFormat}
         type={type}

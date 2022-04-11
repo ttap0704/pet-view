@@ -52,6 +52,8 @@ interface PeakSeasonType {
   end: string;
 }
 
+
+
 type RoomPriceKeys = 'normal_price' | 'normal_weekend_price' | 'peak_price' | 'peak_weekend_price';
 
 interface RoomPriceType {
