@@ -14,6 +14,7 @@ import ButtonUpload from '../../../src/components/button/ButtonUpload';
 import UtilBox from '../../../src/components/common/UtilBox';
 import FormPostcode from '../../../src/components/form/FormPostcode';
 import FormExposureMenu from '../../../src/components/form/FormExposureMenu';
+import FormServiceInfo from '../../../src/components/form/FormServiceInfo';
 import Textarea from '../../../src/components/textarea/Textarea';
 import ChevronDivder from '../../../src/components/common/ChevronDivder';
 import InputOutlined from '../../../src/components/input/InputOutlined';
@@ -24,6 +25,11 @@ import ModalUpload from '../../../src/components/modal/ModalUpload';
 const ManageRestaurantRegistration = () => {
   const { modal_upload, modal_confirm } = useContext(ModalContext);
 
+  const [serviceInfo, setServiceInfo] = useState<ServiceInfoType>({
+    contact: '',
+    site: '',
+    kakao_chat: '',
+  });
   const [exposureImages, setExposureImages] = useState<ImageListType[]>([]);
   const [address, setAddress] = useState<FinalPostcodeDataType>({
     zonecode: '',
@@ -136,6 +142,12 @@ const ManageRestaurantRegistration = () => {
     const tmp_exposure_menu = [...exposureMenu];
     tmp_exposure_menu.splice(idx, 1);
     setExposureMenu([...tmp_exposure_menu]);
+  };
+
+  const updateInfo = (key: ServiceContents, value: string) => {
+    const tmp_info = { ...serviceInfo };
+    tmp_info[key] = value;
+    setServiceInfo({ ...tmp_info });
   };
 
   const handleEntireMenuInput = (
@@ -295,6 +307,9 @@ const ManageRestaurantRegistration = () => {
           onChangeAddress={data => setAddress({ ...address, ...data })}
           address={address}
         />
+      </ContainerRegistrationItem>
+      <ContainerRegistrationItem title='음식점 문의 정보'>
+        <FormServiceInfo data={serviceInfo} onChangeInfo={updateInfo} />
       </ContainerRegistrationItem>
       <ContainerRegistrationItem title='음식점 소개'>
         <Textarea

@@ -26,7 +26,7 @@ interface AccommodationRoomsListType {
   rows: RoomType[];
 }
 
-interface AccommodationResponse {
+interface AccommodationResponse extends ServiceInfoType {
   accommodation_images: ImageType[];
   accommodation_rooms: RoomType[];
   accommodation_peak_season: PeakSeasonType[];
@@ -52,8 +52,7 @@ interface PeakSeasonType {
   end: string;
 }
 
-
-
+type ServiceContents = 'contact' | 'site' | 'kakao_chat';
 type RoomPriceKeys = 'normal_price' | 'normal_weekend_price' | 'peak_price' | 'peak_weekend_price';
 
 interface RoomPriceType {

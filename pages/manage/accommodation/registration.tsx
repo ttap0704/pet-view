@@ -47,10 +47,10 @@ const ManageAccommodationRegistration = () => {
 
   const [accommodationLabel, setAccommodationLabel] = useState('');
   const [introduction, setIntroduction] = useState('');
-  const [serviceInfo, setServiceInfo] = useState<{ [key: string]: string }>({
-    phone: '',
+  const [serviceInfo, setServiceInfo] = useState<ServiceInfoType>({
+    contact: '',
     site: '',
-    kakao: '',
+    kakao_chat: '',
   });
   const [savedRoomsTime, setSavedRoomsTime] = useState({
     all: false,
@@ -261,6 +261,12 @@ const ManageAccommodationRegistration = () => {
     setPeakSeason([...tmp_season]);
   };
 
+  const updateInfo = (key: ServiceContents, value: string) => {
+    const tmp_info = { ...serviceInfo };
+    tmp_info[key] = value;
+    setServiceInfo({ ...tmp_info });
+  };
+
   const validateCreateData = () => {
     let alert_message = '';
 
@@ -276,7 +282,7 @@ const ManageAccommodationRegistration = () => {
       }
     }
     if (!rooms_vali) {
-      alert_message = '객실의 모든 정보를 입력해주세요.';
+      alert_message = '올바른 객실 정보를 입력해주세요.\r\n객실의 모든 정보를 입력해야합니다.';
     }
     const season_vali = validation.season(peakSeason);
     if (!season_vali) {
@@ -285,6 +291,14 @@ const ManageAccommodationRegistration = () => {
     const introduction_vali = validation.label(introduction);
     if (!introduction_vali) {
       alert_message = '1자 이상의 숙박업소 소개를 입력해주세요.';
+    }
+    const service_info_vali = validation.service(serviceInfo);
+    if (!service_info_vali) {
+      alert_message = '1개 이상의 문의 정보를 입력해주세요.';
+    }
+    const service_info_concact_vali = validation.number(serviceInfo.contact);
+    if (!service_info_concact_vali && serviceInfo.contact.length > 0) {
+      alert_message = '문의 전화번호는 숫자로만 입력해주세요.';
     }
     const address_vali = validation.address(address);
     if (!address_vali) {
@@ -306,6 +320,7 @@ const ManageAccommodationRegistration = () => {
     const validate = validateCreateData();
     if (!validate.pass) {
       modal_alert.openModalAlert(validate.message, true);
+      return;
     }
 
     const rooms_data = [
@@ -325,8 +340,19 @@ const ManageAccommodationRegistration = () => {
       }),
     ];
 
+    const tmp_address: { [key: string]: string | null } = {};
+    for (const [key, val] of Object.entries(address)) {
+      tmp_address[key] = val.length > 0 ? val : null;
+    }
+
+    const tmp_service_info: { [key: string]: string | null } = {};
+    for (const [key, val] of Object.entries(serviceInfo)) {
+      tmp_service_info[key] = val.length > 0 ? val : null;
+    }
+
     const accom_data = {
-      ...address,
+      ...tmp_address,
+      ...tmp_service_info,
       label: accommodationLabel,
       introduction,
       manager: 1,
@@ -398,7 +424,7 @@ const ManageAccommodationRegistration = () => {
         />
       </ContainerRegistrationItem>
       <ContainerRegistrationItem title='숙박문의 정보'>
-        <FormServiceInfo data={serviceInfo} />
+        <FormServiceInfo data={serviceInfo} onChangeInfo={updateInfo} />
       </ContainerRegistrationItem>
       <ContainerRegistrationItem title='숙박업소 소개'>
         <Textarea

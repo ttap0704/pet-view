@@ -76,7 +76,7 @@ const CustomTable = (props: TableProps) => {
                       if (cell.type == 'button') {
                         contents = (
                           <Button
-                            variant='contained'
+                            variant='outlined'
                             color='blue'
                             sx={{ margin: '0 auto', fontSize: '0.875rem' }}
                             onClick={() => TableController.setClickedButtonIndex(index, cell.key)}

@@ -72,6 +72,8 @@ const ManageRestaurantInfo = (props: { list: RestaurantListType; style: { [key: 
         modal_edit.openModalEdit('소개', target[data.clicked_row_button_key], '', 'textarea', true);
       } else if (data.clicked_row_button_key == 'image') {
         setExposureImageDetail(data.clicked_row_button_idx);
+      } else if (data.clicked_row_button_key == 'service_info') {
+        console.log('hihi');
       }
     }
   }, [data.clicked_row_button_idx, data.clicked_row_button_key]);

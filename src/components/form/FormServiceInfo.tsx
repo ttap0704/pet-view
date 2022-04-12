@@ -8,12 +8,10 @@ import { getDate } from '../../utils/tools';
 import { TiDelete } from 'react-icons/ti';
 import Dropdown from '../dropdown/Dropdown';
 
-type ServiceContents = 'contact' | 'site' | 'kakao';
-
 interface FormServiceInfoProps {
   data: ServiceInfoType;
   mode?: string;
-  // onDelete: (parent_idx: number) => void;
+  onChangeInfo: (key: ServiceContents, value: string) => void;
 }
 
 type FormServiceDataType = {
@@ -67,32 +65,32 @@ const ContentsBox = styled(Box)(({ theme }) => ({
 function FormServiceInfo(props: FormServiceInfoProps) {
   const data = props.data;
   const mode = props.mode;
-  // const onDelete = props.onDelete;
+  const onChangeInfo = props.onChangeInfo;
 
   const [info, setInfo] = useState<FormServiceDataType>({
     contact: {
-      title: '핸드폰',
+      title: '전화번호',
       value: '',
-      placeholder: '문의 가능한 핸드폰 또는 유선 전화번호를 입력해주세요.',
+      placeholder: '문의 가능한 핸드폰 또는 유선 전화번호를 입력해주세요. (숫자만 입력해주세요.)',
     },
-    site: {
-      title: '웹 사이트',
-      value: '',
-      placeholder: '숙박업소 전용 웹사이트를 입력해주세요.',
-    },
-    kakao: {
+    kakao_chat: {
       title: '카카오톡 오픈채팅',
       value: '',
       placeholder: '문의 가능한 카카오톡 오픈채팅 방 주소를 입력해주세요.',
     },
+    site: {
+      title: '웹 사이트',
+      value: '',
+      placeholder: '전용 웹사이트를 입력해주세요.',
+    },
   });
-  const map_items: ServiceContents[] = ['contact', 'site', 'kakao'];
+  const map_items: ServiceContents[] = ['contact', 'kakao_chat', 'site'];
 
   useEffect(() => {
     const tmp_info = { ...info };
     tmp_info.contact.value = data.contact;
-    tmp_info.site.value = data.contact;
-    tmp_info.kakao.value = data.contact;
+    tmp_info.site.value = data.site;
+    tmp_info.kakao_chat.value = data.kakao_chat;
     setInfo({ ...tmp_info });
   }, [data]);
 
@@ -104,7 +102,12 @@ function FormServiceInfo(props: FormServiceInfoProps) {
             <FormItems key={`form_service_info_item_${item_idx}`}>
               <TitleBox>{info[item].title}</TitleBox>
               <ContentsBox>
-                <InputOutlined className='none' placeholder={info[item].placeholder} />
+                <InputOutlined
+                  className='none'
+                  placeholder={info[item].placeholder}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => onChangeInfo(item, e.target.value)}
+                  value={info[item].value}
+                />
               </ContentsBox>
             </FormItems>
           );
@@ -112,11 +115,6 @@ function FormServiceInfo(props: FormServiceInfoProps) {
       </FormContainer>
     </>
   );
-}
-{
-  /* <IconButton onClick={() => onDelete(item_idx)}>
-<TiDelete />
-</IconButton> */
 }
 
 export default FormServiceInfo;

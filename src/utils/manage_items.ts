@@ -34,6 +34,12 @@ export const accommodation_info = {
       type: 'button',
     },
     {
+      label: '문의 정보',
+      center: true,
+      key: 'service_info',
+      type: 'button',
+    },
+    {
       label: '소개',
       center: true,
       key: 'introduction',
@@ -51,6 +57,7 @@ export const accommodation_info = {
     '주소 수정',
     '소개 수정',
     '대표이미지 수정',
+    '문의 정보 수정',
     '객실 순서 변경',
     '성수기 기간 변경',
     '업소 삭제',

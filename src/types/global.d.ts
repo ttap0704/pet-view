@@ -50,7 +50,7 @@ interface orderContents {
 interface ServiceInfoType {
   contact: string;
   site: string;
-  kakao: string;
+  kakao_chat: string;
 }
 
 interface ImageType {

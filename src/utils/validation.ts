@@ -7,10 +7,18 @@ export default {
   },
   room: (room: AddRoomContentsType): boolean => {
     let res = true;
+    const check_number = /^[0-9]+$/;
     for (const [key, val] of Object.entries(room)) {
       if (key != 'image_list' && val.length == 0) {
         res = false;
         break;
+      }
+
+      if (key == 'standard_num' || key == 'maximum_num') {
+        if (!check_number.test(val)) {
+          res = false;
+          break;
+        }
       }
     }
     return res;
@@ -18,6 +26,42 @@ export default {
   image_list: (image_list: ImageListType[]): boolean => {
     let res = true;
     if (image_list.length == 0) {
+      res = false;
+    }
+
+    return res;
+  },
+  time: (time: string): boolean => {
+    let res = true;
+    const time_format = /^([01][0-9]|2[0-3]):([0-5][0-9])$/;
+
+    if (!time_format.test(time)) {
+      res = false;
+    }
+
+    return res;
+  },
+  number: (value: string): boolean => {
+    let res = true;
+    const check_number = /^[0-9]+$/;
+
+    if (!check_number.test(value)) {
+      res = false;
+    }
+
+    return res;
+  },
+  service: (info: ServiceInfoType): boolean => {
+    let res = true;
+
+    let cnt = 0;
+    for (const [key, val] of Object.entries(info)) {
+      if (val.length > 0) {
+        cnt++;
+      }
+    }
+
+    if (cnt == 0) {
       res = false;
     }
 

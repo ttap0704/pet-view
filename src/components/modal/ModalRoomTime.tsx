@@ -11,6 +11,8 @@ import LabelModal from '../label/LabelModal';
 import UtilBox from '../common/UtilBox';
 import Button from '../button/Button';
 
+import validation from '../../../src/utils/validation';
+
 interface ModalRoomTimeProps {
   visible: boolean;
   mode?: string;
@@ -55,7 +57,7 @@ const TimeInputBox = styled(Box)(({ theme }) => ({
 }));
 
 function ModalRoomTime(props: ModalRoomTimeProps) {
-  const { modal_confirm } = useContext(ModalContext);
+  const { modal_confirm, modal_alert } = useContext(ModalContext);
 
   const visible = props.visible;
   const contents = props.contents;
@@ -82,12 +84,17 @@ function ModalRoomTime(props: ModalRoomTimeProps) {
   }, [visible]);
 
   const confirmUpdate = () => {
-    modal_confirm.openModalConfirm('객실 입실/퇴실 시간을 등록하시겠습니까?', () => {
-      const time_data: { [key: string]: string } = {};
-      for (const [key, val] of Object.entries(timeContents)) {
-        time_data[key] = val.time;
-      }
+    const time_data: { [key: string]: string } = {};
+    for (const [key, val] of Object.entries(timeContents)) {
+      time_data[key] = val.time;
 
+      if (!validation.time(val.time)) {
+        modal_alert.openModalAlert('[ OO:OO ] 형식으로 입력해주세요.');
+        return;
+      }
+    }
+
+    modal_confirm.openModalConfirm('객실 입실/퇴실 시간을 등록하시겠습니까?', () => {
       if (type != 'edit') {
         setTimeout(() => {
           modal_confirm.openModalConfirm(
