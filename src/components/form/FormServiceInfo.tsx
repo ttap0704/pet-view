@@ -10,6 +10,7 @@ import Dropdown from '../dropdown/Dropdown';
 
 interface FormServiceInfoProps {
   data: ServiceInfoType;
+  type: string;
   mode?: string;
   onChangeInfo: (key: ServiceContents, value: string) => void;
 }
@@ -62,9 +63,21 @@ const ContentsBox = styled(Box)(({ theme }) => ({
   gap: '1rem',
 }));
 
+interface ReadContentsProps {
+  length: number;
+}
+const ReadContents = styled(Typography)<ReadContentsProps>(props => {
+  const color = props.length > 0 ? props.theme.palette.black.main : props.theme.palette.gray_1.main;
+  return {
+    paddingLeft: '1rem',
+    color,
+  };
+});
+
 function FormServiceInfo(props: FormServiceInfoProps) {
   const data = props.data;
   const mode = props.mode;
+  const type = props.type;
   const onChangeInfo = props.onChangeInfo;
 
   const [info, setInfo] = useState<FormServiceDataType>({
@@ -83,31 +96,62 @@ function FormServiceInfo(props: FormServiceInfoProps) {
       value: '',
       placeholder: '전용 웹사이트를 입력해주세요.',
     },
+    open: {
+      title: '오픈 시간',
+      value: '',
+      placeholder: '오픈 시간을 [ HH:MM ]형식으로 입력해주세요. ex) 10:00',
+    },
+    close: {
+      title: '마감 시간',
+      value: '',
+      placeholder: '마감 시간을 [ HH:MM ]형식으로 입력해주세요. ex) 21:00',
+    },
+    last_order: {
+      title: '마지막 주문 시간',
+      value: '',
+      placeholder: '마지막 주문 시간을 [ HH:MM ]형식으로 입력해주세요. ex) 20:30',
+    },
   });
-  const map_items: ServiceContents[] = ['contact', 'kakao_chat', 'site'];
+  const [mapItems, setMapItems] = useState<ServiceContents[]>([]);
 
   useEffect(() => {
     const tmp_info = { ...info };
     tmp_info.contact.value = data.contact;
     tmp_info.site.value = data.site;
     tmp_info.kakao_chat.value = data.kakao_chat;
+
+    if (type == 'accommodation') {
+      setMapItems(['contact', 'kakao_chat', 'site']);
+    } else {
+      tmp_info.open.value = `${data.open}`;
+      tmp_info.close.value = `${data.close}`;
+      tmp_info.last_order.value = `${data.last_order}`;
+      setMapItems(['contact', 'kakao_chat', 'site', 'open', 'close', 'last_order']);
+    }
+
     setInfo({ ...tmp_info });
   }, [data]);
 
   return (
     <>
       <FormContainer>
-        {map_items.map((item, item_idx) => {
+        {mapItems.map((key, item_idx) => {
           return (
             <FormItems key={`form_service_info_item_${item_idx}`}>
-              <TitleBox>{info[item].title}</TitleBox>
+              <TitleBox>{info[key].title}</TitleBox>
               <ContentsBox>
-                <InputOutlined
-                  className='none'
-                  placeholder={info[item].placeholder}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => onChangeInfo(item, e.target.value)}
-                  value={info[item].value}
-                />
+                {mode != 'read' ? (
+                  <InputOutlined
+                    className='none'
+                    placeholder={info[key].placeholder}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => onChangeInfo(key, e.target.value)}
+                    value={info[key].value}
+                  />
+                ) : (
+                  <ReadContents length={info[key].value.length}>
+                    {info[key].value ? info[key].value : '등록된 정보가 없습니다.'}
+                  </ReadContents>
+                )}
               </ContentsBox>
             </FormItems>
           );

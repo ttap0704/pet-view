@@ -16,6 +16,7 @@ import validation from '../../../src/utils/validation';
 interface ModalServiceInfoProps {
   visible: boolean;
   contents: ServiceInfoType;
+  type: string;
   mode?: string;
   onClose: () => void;
   onUpdateInfo: (service_info: ServiceInfoType) => void;
@@ -41,6 +42,7 @@ function ModalServiceInfo(props: ModalServiceInfoProps) {
 
   const visible = props.visible;
   const mode = props.mode;
+  const type = props.type;
   const contents = props.contents;
   const onClose = props.onClose;
   const onUpdateInfo = props.onUpdateInfo;
@@ -83,7 +85,6 @@ function ModalServiceInfo(props: ModalServiceInfoProps) {
       alert_message = '문의 전화번호는 숫자로만 입력해주세요.';
     }
 
-    console.log(alert_message);
     if (alert_message.length > 0) {
       modal_alert.openModalAlert(alert_message, true);
       return;
@@ -100,7 +101,7 @@ function ModalServiceInfo(props: ModalServiceInfoProps) {
         <ContainerModalContents>
           <LabelModal title='가격 설정' onClose={onClose} />
           <ModalServiceInfoContentsBox>
-            <FormServiceInfo data={serviceInfo} onChangeInfo={updateInfo} />
+            <FormServiceInfo data={serviceInfo} onChangeInfo={updateInfo} mode={mode} type={type} />
           </ModalServiceInfoContentsBox>
           {mode == 'read' ? null : (
             <UtilBox>

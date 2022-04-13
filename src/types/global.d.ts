@@ -51,6 +51,9 @@ interface ServiceInfoType {
   contact: string;
   site: string;
   kakao_chat: string;
+  open?: string;
+  close?: string;
+  last_order?: string;
 }
 
 interface ImageType {

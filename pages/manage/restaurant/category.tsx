@@ -43,14 +43,15 @@ const ManageAccommodationCategory = (props: { list: EntireMenuCategoryListType; 
   });
 
   useEffect(() => {
-    getTableItems(props.list);
-  }, []);
-
-  useEffect(() => {
     if (firstUpdate) {
       getTableItems();
     }
   }, [data.per_page]);
+
+  useEffect(() => {
+    getTableItems(props.list);
+    setFirstUpdate(true);
+  }, []);
 
   useEffect(() => {
     const target_idx = data.clicked_dropdown_idx;
@@ -171,7 +172,6 @@ const ManageAccommodationCategory = (props: { list: EntireMenuCategoryListType; 
     if (list) {
       count = list.count;
       rows = list.rows;
-      setFirstUpdate(true);
     } else {
       const category: EntireMenuCategoryListType = await fetchGetApi(
         `/manager/1/restaurant/category?page=${data.per_page}`,

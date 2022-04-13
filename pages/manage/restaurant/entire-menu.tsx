@@ -30,15 +30,15 @@ const ManageRestaurantEntireMenu = (props: { list: EntireMenuListType; style: { 
   });
 
   useEffect(() => {
-    console.log(props.list);
-    getTableItems(props.list);
-  }, []);
-
-  useEffect(() => {
     if (firstUpdate) {
       getTableItems();
     }
   }, [data.per_page]);
+
+  useEffect(() => {
+    getTableItems(props.list);
+    setFirstUpdate(true);
+  }, []);
 
   useEffect(() => {
     const target_idx = data.clicked_dropdown_idx;
@@ -152,7 +152,6 @@ const ManageRestaurantEntireMenu = (props: { list: EntireMenuListType; style: { 
     if (list) {
       count = list.count;
       rows = list.rows;
-      setFirstUpdate(true);
     } else {
       const restaurant: EntireMenuListType = await fetchGetApi(
         `/manager/1/restaurant/entire_menu?page=${data.per_page}`,

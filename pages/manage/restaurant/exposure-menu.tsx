@@ -27,14 +27,15 @@ const ManageRestaurantExposureMenu = (props: { list: ExposureMenuListType; style
     useState<UpdateExposureMenuImageContentsType>({ visible: false, origin_image_list: [] });
 
   useEffect(() => {
-    getTableItems(props.list);
-  }, []);
-
-  useEffect(() => {
     if (firstUpdate) {
       getTableItems();
     }
   }, [data.per_page]);
+
+  useEffect(() => {
+    getTableItems(props.list);
+    setFirstUpdate(true);
+  }, []);
 
   useEffect(() => {
     const target_idx = data.clicked_dropdown_idx;
@@ -215,7 +216,6 @@ const ManageRestaurantExposureMenu = (props: { list: ExposureMenuListType; style
     if (list) {
       count = list.count;
       rows = list.rows;
-      setFirstUpdate(true);
     } else {
       const accommodation: ExposureMenuListType = await fetchGetApi(
         `/manager/1/restaurant/exposure_menu?page=${data.per_page}`,

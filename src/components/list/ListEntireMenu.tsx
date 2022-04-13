@@ -131,6 +131,7 @@ const ListEntireMenu = (props: ListEntireMenuProps) => {
                         width='70%'
                         endAdornment='원'
                         height='2rem'
+                        format='price'
                         placeholder='가격을 입력해주세요.'
                         align='right'
                         onChange={(e: React.ChangeEvent<HTMLInputElement>) =>

@@ -91,7 +91,7 @@ function FormExposureMenu(props: FormExposureMenuProps) {
     },
     {
       key: 'price',
-      format: '원',
+      format: 'price',
       placeholder: '숫자만 입력해주세요.',
     },
   ];
@@ -108,7 +108,7 @@ function FormExposureMenu(props: FormExposureMenuProps) {
               <InputOutlined
                 align='right'
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => onChange(e, item.key)}
-                endAdornment={item.format}
+                format={item.format}
                 className='none'
                 height='2.5rem'
                 placeholder={item.placeholder}

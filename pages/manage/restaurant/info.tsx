@@ -20,6 +20,7 @@ const ManageRestaurantInfo = (props: { list: RestaurantListType; style: { [key: 
   const { data } = useContext(TableContext);
   const { modal_confirm, modal_edit, modal_alert, modal_upload, modal_image_detail } = useContext(ModalContext);
 
+  const [firstUpdate, setFirstUpdate] = useState(false);
   const [curOrderModalType, setCurOrderModalType] = useState('');
   const [postcodeVisible, setPostcodeVisible] = useState<boolean>(false);
   const [exposureMenuContents, setExposureMenuContents] = useState({
@@ -36,9 +37,15 @@ const ManageRestaurantInfo = (props: { list: RestaurantListType; style: { [key: 
     list: [],
     title: '',
   });
+  useEffect(() => {
+    if (firstUpdate) {
+      getTableItems();
+    }
+  }, [data.per_page]);
 
   useEffect(() => {
     getTableItems(props.list);
+    setFirstUpdate(true);
   }, []);
 
   useEffect(() => {

@@ -275,7 +275,6 @@ const ManageAccommodationRegistration = () => {
       const room_image_vali = validation.image_list(room.image_list);
       const room_info_vali = validation.room(room);
 
-      console.log(room_image_vali, room_info_vali);
       if (!room_image_vali || !room_info_vali) {
         rooms_vali = false;
         break;
@@ -424,7 +423,7 @@ const ManageAccommodationRegistration = () => {
         />
       </ContainerRegistrationItem>
       <ContainerRegistrationItem title='숙박문의 정보'>
-        <FormServiceInfo data={serviceInfo} onChangeInfo={updateInfo} />
+        <FormServiceInfo data={serviceInfo} onChangeInfo={updateInfo} type='accommodation' />
       </ContainerRegistrationItem>
       <ContainerRegistrationItem title='숙박업소 소개'>
         <Textarea

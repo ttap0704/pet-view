@@ -23,6 +23,66 @@ export default {
     }
     return res;
   },
+  entire_menu: (entire_menu: AddEntireMenuContentsType[]): { pass: boolean, message: string } => {
+    let message = '';
+    const check_number = /^[0-9]+$/;
+    for (const menu of entire_menu) {
+      if (menu.category.length == 0) {
+        message = '카테고리명을 한 자이상 입력해주세요.'
+        break;
+      } else {
+        if (menu.menu.length == 0) {
+          message = '카테고리의 메뉴는 1개이상 등록되어야 합니다.'
+          break;
+        } else {
+          for (const menu_item of menu.menu) {
+            if (menu_item.label.length == 0) {
+              message = '전체메뉴의 이름이 비어있습니다. 확인해주세요.'
+              break;
+            }
+
+            if (menu_item.price.length == 0) {
+              message = '전체메뉴의 가격 비어있습니다. 확인해주세요.'
+              break;
+            } else if (!check_number.test(menu_item.price)) {
+              message = '전체메뉴의 가격은 숫자로만 입력해주세요.'
+              break;
+            }
+          }
+        }
+      }
+    }
+
+    return { pass: message.length == 0, message };
+  },
+  exposure_menu: (exposure_menu: AddExposureMenuContentsType[]): { pass: boolean, message: string } => {
+    let message = '';
+    const check_number = /^[0-9]+$/;
+
+    for (const menu of exposure_menu) {
+      if (menu.image_list.length == 0) {
+        message = '대표메뉴의 이미지를 등록해주세요.'
+        break;
+      }
+      if (menu.label.length == 0) {
+        message = '대표메뉴의 메뉴명을 입력해주세요.'
+        break;
+      }
+      if (menu.price.length == 0) {
+        message = '대표메뉴의 메뉴명을 입력해주세요.'
+        break;
+      } else if (!check_number.test(menu.price)) {
+        message = '대표메뉴의 가격은 숫자로만 입력해주세요.'
+        break;
+      }
+      if (menu.comment.length == 0) {
+        message = '대표메뉴의 한 줄 설명을 입력해주세요.'
+        break;
+      }
+    }
+
+    return { pass: message.length == 0, message }
+  },
   image_list: (image_list: ImageListType[]): boolean => {
     let res = true;
     if (image_list.length == 0) {
@@ -62,6 +122,24 @@ export default {
     }
 
     if (cnt == 0) {
+      res = false;
+    }
+
+    return res;
+  },
+  restaurant_time: (info: ServiceInfoType): boolean => {
+    let res = true;
+
+    let cnt = 0;
+    for (const [key, val] of Object.entries(info)) {
+      if (key == 'open' || key == 'close' || key == 'last_order') {
+        if (val.length > 0) {
+          cnt++;
+        }
+      }
+    }
+
+    if (cnt != 3) {
       res = false;
     }
 

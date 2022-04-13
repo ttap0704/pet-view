@@ -113,9 +113,9 @@ const CustomInput = (props: InputOutlinedProps) => {
 
   const handleInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     const input_value = e.target.value;
+    const cur_value = input_value.replace(/[\,]/gi, '');
     if (typeof input_value == 'string') {
       if (format == 'price') {
-        const cur_value = input_value.replace(/[\,]/gi, '');
         setCurrentValue(Number(cur_value).toLocaleString());
       } else {
         setCurrentValue(input_value);

@@ -55,7 +55,10 @@ const CustomTable = (props: TableProps) => {
             <TableRow>
               {TableController.data.header.map((data, index) => {
                 return (
-                  <TableCell align={data.center ? 'center' : 'left'} key={`custom_table_header_${index}`}>
+                  <TableCell
+                    align={data.center || TableController.data.rows_length == 0 ? 'center' : 'left'}
+                    key={`custom_table_header_${index}`}
+                  >
                     {data.label == 'check' ? '' : data.label}
                   </TableCell>
                 );
@@ -63,53 +66,61 @@ const CustomTable = (props: TableProps) => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {TableController.data.table_items.map((data, index) => {
-              return (
-                <TableRow
-                  key={`body_row_${index}`}
-                  onClick={() => TableController.setChecked(index, 'click')}
-                  sx={{ cursor: 'pointer' }}
-                >
-                  {TableController.data.header.map((cell, index2) => {
-                    let contents: React.ReactNode | string = '';
-                    if (cell.type) {
-                      if (cell.type == 'button') {
-                        contents = (
-                          <Button
-                            variant='outlined'
-                            color='blue'
-                            sx={{ margin: '0 auto', fontSize: '0.875rem' }}
-                            onClick={() => TableController.setClickedButtonIndex(index, cell.key)}
-                          >
-                            확인
-                          </Button>
-                        );
-                      } else if (cell.type == 'checkbox') {
-                        contents = (
-                          <Checkbox
-                            checked={data.checked}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                              TableController.setChecked(index, 'change', e)
-                            }
-                          />
-                        );
+            {TableController.data.rows_length > 0 ? (
+              TableController.data.table_items.map((data, index) => {
+                return (
+                  <TableRow
+                    key={`body_row_${index}`}
+                    onClick={() => TableController.setChecked(index, 'click')}
+                    sx={{ cursor: 'pointer' }}
+                  >
+                    {TableController.data.header.map((cell, index2) => {
+                      let contents: React.ReactNode | string = '';
+                      if (cell.type) {
+                        if (cell.type == 'button') {
+                          contents = (
+                            <Button
+                              variant='outlined'
+                              color='blue'
+                              sx={{ margin: '0 auto', fontSize: '0.875rem' }}
+                              onClick={() => TableController.setClickedButtonIndex(index, cell.key)}
+                            >
+                              확인
+                            </Button>
+                          );
+                        } else if (cell.type == 'checkbox') {
+                          contents = (
+                            <Checkbox
+                              checked={data.checked}
+                              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                                TableController.setChecked(index, 'change', e)
+                              }
+                            />
+                          );
+                        }
+                      } else {
+                        contents = data[cell.key];
                       }
-                    } else {
-                      contents = data[cell.key];
-                    }
-                    return (
-                      <TableCell align={cell.center ? 'center' : 'left'} key={`body_row_${index}_cell_${index2}`}>
-                        {contents}
-                      </TableCell>
-                    );
-                  })}
-                </TableRow>
-              );
-            })}
+                      return (
+                        <TableCell align={cell.center ? 'center' : 'left'} key={`body_row_${index}_cell_${index2}`}>
+                          {contents}
+                        </TableCell>
+                      );
+                    })}
+                  </TableRow>
+                );
+              })
+            ) : (
+              <TableRow sx={{ verticalAlign: 'center' }}>
+                <TableCell colSpan={12} sx={{ textAlign: 'center' }}>
+                  등록된 데이터가 없습니다.
+                </TableCell>
+              </TableRow>
+            )}
           </TableBody>
           <TableFooter>
             <TableRow>
-              <TableCell colSpan={TableController.data.footer_colspan}>
+              <TableCell colSpan={12}>
                 <TablePaginationBox>
                   <IconButton
                     disabled={TableController.data.left}

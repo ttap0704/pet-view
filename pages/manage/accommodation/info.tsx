@@ -32,6 +32,7 @@ const ManageAccommodationInfo = (props: { list: AccommodationListType; style: { 
   const { data } = useContext(TableContext);
   const { modal_confirm, modal_edit, modal_alert, modal_upload, modal_image_detail } = useContext(ModalContext);
 
+  const [first, setFirst] = useState(false);
   const [postcodeVisible, setPostcodeVisible] = useState<boolean>(false);
   const [addRoomContents, setAddRoomContents] = useState<AddRoomContents>({
     visible: false,
@@ -60,7 +61,14 @@ const ManageAccommodationInfo = (props: { list: AccommodationListType; style: { 
   });
 
   useEffect(() => {
+    if (first) {
+      getTableItems();
+    }
+  }, [data.per_page]);
+
+  useEffect(() => {
     getTableItems(props.list);
+    setFirst(true);
   }, []);
 
   useEffect(() => {
@@ -502,6 +510,7 @@ const ManageAccommodationInfo = (props: { list: AccommodationListType; style: { 
         visible={serviceInfoModalContents.visible}
         contents={serviceInfoModalContents.contents}
         mode={serviceInfoModalContents.mode}
+        type='accommodation'
         onUpdateInfo={updateServiceInfo}
         onClose={clearServiceInfoModal}
       />

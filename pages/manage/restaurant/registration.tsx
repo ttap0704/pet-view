@@ -2,6 +2,7 @@ import React from 'react';
 
 import { Box } from '@mui/material';
 import { useState, useContext, useEffect } from 'react';
+import { useRouter } from 'next/router';
 
 import { ModalContext } from '../../../src/provider/ModalProvider';
 import { setFileArray, setFileToImage, setImageFormData } from '../../../src/utils/tools';
@@ -22,13 +23,19 @@ import ListEntireMenu from '../../../src/components/list/ListEntireMenu';
 
 import ModalUpload from '../../../src/components/modal/ModalUpload';
 
+import validation from '../../../src/utils/validation';
+
 const ManageRestaurantRegistration = () => {
-  const { modal_upload, modal_confirm } = useContext(ModalContext);
+  const router = useRouter();
+  const { modal_upload, modal_confirm, modal_alert, modal_notice } = useContext(ModalContext);
 
   const [serviceInfo, setServiceInfo] = useState<ServiceInfoType>({
     contact: '',
     site: '',
     kakao_chat: '',
+    open: '',
+    close: '',
+    last_order: '',
   });
   const [exposureImages, setExposureImages] = useState<ImageListType[]>([]);
   const [address, setAddress] = useState<FinalPostcodeDataType>({
@@ -66,7 +73,9 @@ const ManageRestaurantRegistration = () => {
   };
 
   const handleExposureMenuInput = (e: React.ChangeEvent<HTMLInputElement>, type: string, idx: number) => {
-    const value = e.target.value;
+    const cur_value = e.target.value.replace(/[\,]/gi, '');
+    const value = cur_value;
+    console.log(value);
     setExposureMenu(state => {
       return [
         ...state.map((menu, menu_idx) => {
@@ -157,7 +166,8 @@ const ManageRestaurantRegistration = () => {
     children: string | undefined,
     children_idx: number | undefined,
   ) => {
-    const value = e.target.value;
+    const cur_value = e.target.value.replace(/[\,]/gi, '');
+    const value = cur_value;
     const tmp_entire_menu = [
       ...entireMenu.map((item, item_idx) => {
         if (idx == item_idx) {
@@ -211,7 +221,66 @@ const ManageRestaurantRegistration = () => {
     });
   };
 
+  const validateCreateData = () => {
+    let alert_message = '';
+
+    const entire_menu_vali = validation.entire_menu(entireMenu);
+    if (!entire_menu_vali.pass) {
+      alert_message = entire_menu_vali.message;
+    }
+    const exposure_menu_vali = validation.exposure_menu(exposureMenu);
+    if (!exposure_menu_vali.pass) {
+      alert_message = exposure_menu_vali.message;
+    }
+    const introduction_vali = validation.label(introduction);
+    if (!introduction_vali) {
+      alert_message = '1자 이상의 음식점 소개를 입력해주세요.';
+    }
+    const address_vali = validation.address(address);
+    if (!address_vali) {
+      alert_message = '올바른 주소를 등록해주세요.';
+    }
+    const service_info_vali = validation.restaurant_time(serviceInfo);
+    if (!service_info_vali) {
+      alert_message = '[ 오픈 시간, 마감 시간, 마지막 주문 시간]은\r\n필수 입력사항입니다.';
+    }
+    let service_info_time_vali = true;
+    for (const [key, val] of Object.entries(serviceInfo)) {
+      if (['open', 'close', 'last_order'].includes(key)) {
+        const service_time_vali = validation.time(val);
+
+        if (!service_time_vali) {
+          service_info_time_vali = false;
+          break;
+        }
+      }
+    }
+    if (!service_info_time_vali) {
+      alert_message = '[ 오픈 시간, 마감 시간, 마지막 주문 시간]은\r\n[ HH:MM ]형식으로 입력해주세요.';
+    }
+    const service_info_concact_vali = validation.number(serviceInfo.contact);
+    if (!service_info_concact_vali && serviceInfo.contact.length > 0) {
+      alert_message = '문의 전화번호는 숫자로만 입력해주세요.';
+    }
+    const title_vali = validation.label(restaurantLabel);
+    if (!title_vali) {
+      alert_message = '음식점 이름을 입력해주세요.';
+    }
+    const exposure_image_vali = validation.image_list(exposureImages);
+    if (!exposure_image_vali) {
+      alert_message = '1개 이상의 대표이미지를 등록해주세요.';
+    }
+
+    return { pass: alert_message.length == 0, message: alert_message };
+  };
+
   const createRestaurant = async () => {
+    const validate = validateCreateData();
+    if (!validate.pass) {
+      modal_alert.openModalAlert(validate.message, true);
+      return;
+    }
+
     const tmp_exposure_menu = exposureMenu.map((menu, menu_idx) => {
       return {
         label: menu.label,
@@ -237,8 +306,19 @@ const ManageRestaurantRegistration = () => {
       };
     });
 
+    const tmp_address: { [key: string]: string | null } = {};
+    for (const [key, val] of Object.entries(address)) {
+      tmp_address[key] = val.length > 0 ? val : null;
+    }
+
+    const tmp_service_info: { [key: string]: string | null } = {};
+    for (const [key, val] of Object.entries(serviceInfo)) {
+      tmp_service_info[key] = val.length > 0 ? val : null;
+    }
+
     const restaurant_data = {
-      ...address,
+      ...tmp_address,
+      ...tmp_service_info,
       label: restaurantLabel,
       introduction,
       manager: 1,
@@ -278,7 +358,11 @@ const ManageRestaurantRegistration = () => {
     const upload_exposure_response = await fetchFileApi('/upload/image', exposure_image_data);
     const upload_exposure_menu_response = await fetchFileApi('/upload/image', exposure_menu_image_data);
 
-    console.log(upload_exposure_response, upload_exposure_menu_response);
+    if (upload_exposure_response.length > 0 && upload_exposure_menu_response.length > 0) {
+      modal_notice.openModalNotice('음식점이 성공적으로 등록되었습니다.\r\n관리 페이지로 이동합니다.', () => {
+        router.push(`/manage/restaurant/info`);
+      });
+    }
   };
 
   return (
@@ -308,8 +392,8 @@ const ManageRestaurantRegistration = () => {
           address={address}
         />
       </ContainerRegistrationItem>
-      <ContainerRegistrationItem title='음식점 문의 정보'>
-        <FormServiceInfo data={serviceInfo} onChangeInfo={updateInfo} />
+      <ContainerRegistrationItem title='음식점 추가 정보'>
+        <FormServiceInfo data={serviceInfo} onChangeInfo={updateInfo} type='retaurant' />
       </ContainerRegistrationItem>
       <ContainerRegistrationItem title='음식점 소개'>
         <Textarea

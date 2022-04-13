@@ -52,7 +52,7 @@ interface PeakSeasonType {
   end: string;
 }
 
-type ServiceContents = 'contact' | 'site' | 'kakao_chat';
+type ServiceContents = 'contact' | 'site' | 'kakao_chat' | 'open' | 'close' | 'last_order';
 type RoomPriceKeys = 'normal_price' | 'normal_weekend_price' | 'peak_price' | 'peak_weekend_price';
 
 interface RoomPriceType {
