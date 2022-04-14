@@ -37,6 +37,12 @@ interface RestaurantResponse {
   sigungu: string;
   updatedAt: string;
   zonecode: string;
+  contact: string;
+  site: string;
+  kakao_chat: string;
+  open: string;
+  close: string;
+  last_order: string;
 }
 
 interface RestaurantType {

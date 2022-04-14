@@ -26,6 +26,10 @@ const CustomBox = styled(Box)(({ theme }) => ({
     '& > .image-slider': {
       display: 'block',
     },
+
+    '.image_count': {
+      display: 'block',
+    },
   },
 }));
 
@@ -49,6 +53,7 @@ const CountTypography = styled(Typography)(({ theme }) => ({
   zIndex: 3,
   right: '0.75rem',
   top: '0.5rem',
+  display: 'none',
 }));
 
 const ImageBox = (props: ImageBoxProps) => {
@@ -148,7 +153,9 @@ const ImageBox = (props: ImageBoxProps) => {
         {image_list && image_list.length > 0 ? (
           <ImageWrap>
             <>
-              {count ? <CountTypography>{`${curNum + 1} / ${image_list.length}`}</CountTypography> : null}
+              {count ? (
+                <CountTypography className='image_count'>{`${curNum + 1} / ${image_list.length}`}</CountTypography>
+              ) : null}
               {image_list.map((image, image_idx) => {
                 return (
                   <img

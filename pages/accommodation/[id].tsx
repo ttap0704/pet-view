@@ -26,6 +26,16 @@ interface DetailRoomsType extends AddRoomContentsType {
   price: string;
 }
 
+interface AccommodationInfoDetailType {
+  introduction: string;
+  season: PeakSeasonType[];
+  service_info: {
+    contact: string;
+    site: string;
+    kakao_chat: string;
+  };
+}
+
 const AccommodationContainer = styled(Box)(({ theme }) => ({
   width: '100%',
   height: 'auto',
@@ -35,13 +45,50 @@ const AccommodationContainer = styled(Box)(({ theme }) => ({
   flexDirection: 'column',
 }));
 
+const AccommodationRoomsDetail = (props: { rooms: DetailRoomsType[] }) => {
+  const rooms = props.rooms;
+
+  return (
+    <>
+      {rooms.map((room, room_idx) => {
+        return (
+          <FormAddRoom
+            key={`room_form_${room_idx}`}
+            room_idx={room_idx}
+            imageList={room.image_list}
+            mode='view'
+            contents={room}
+          />
+        );
+      })}
+    </>
+  );
+};
+
+const AccommodationInfoDetail = (props: { detail: AccommodationInfoDetailType }) => {
+  const detail = props.detail;
+  return (
+    <ContainerRegistrationItem title='숙소 소개'>
+      <BoxIntroduction introduction={detail.introduction} />
+    </ContainerRegistrationItem>
+  );
+};
+
 const AccommodationDetail = (props: { detail: AccommodationResponse; style: { [key: string]: string } }) => {
   const [isMounted, setIsMounted] = useState(false);
   const [exposureImages, setExposureImages] = useState<ImageListType[]>([]);
   const [accommodationLabel, setAccommodationLabel] = useState('');
   const [address, setAddress] = useState('');
-  const [introduction, setIntroduction] = useState('');
   const [rooms, setRooms] = useState<DetailRoomsType[]>([]);
+  const [detailInfo, setDetailInfo] = useState<AccommodationInfoDetailType>({
+    introduction: '',
+    season: [],
+    service_info: {
+      contact: '',
+      site: '',
+      kakao_chat: '',
+    },
+  });
   const [curPriceKey, setCurPriceKey] = useState<RoomPriceKeys>('normal_price');
 
   useEffect(() => {
@@ -58,7 +105,6 @@ const AccommodationDetail = (props: { detail: AccommodationResponse; style: { [k
 
   useEffect(() => {
     if (!isMounted) {
-      console.log('여기');
       const month = new Date().getMonth() + 1;
       const date = new Date().getDate();
       const today_key: RoomPriceKeys = getSeasonPriceKey(`${month}-${date}`, props.detail.accommodation_peak_season);
@@ -102,7 +148,40 @@ const AccommodationDetail = (props: { detail: AccommodationResponse; style: { [k
     setRooms([...tmp_rooms]);
     setAddress(detail.road_address);
     setAccommodationLabel(detail.label);
-    setIntroduction(detail.introduction);
+
+    const total_room_price: { [key: string]: number } = {
+      normal_price_min: 0,
+      normal_price_max: 0,
+      normal_weekend_price_min: 0,
+      normal_weekend_price_max: 0,
+      peak_price_min: 0,
+      peak_price_max: 0,
+      peak_weekend_price_min: 0,
+      peak_weekend_price_max: 0,
+    };
+
+    const price_keys: RoomPriceKeys[] = ['normal_price', 'normal_weekend_price', 'peak_price', 'peak_weekend_price'];
+    for (const price_type of price_keys) {
+      for (const room of tmp_rooms) {
+        if (total_room_price[`${price_type}_min`] >= Number(room[price_type])) {
+          total_room_price[`${price_type}_min`] = Number(room[price_key]);
+        } else if (total_room_price[`${price_type}_max`] <= Number(room[price_type])) {
+          total_room_price[`${price_type}_max`] = Number(room[price_key]);
+        }
+      }
+    }
+
+    console.log(total_room_price);
+
+    setDetailInfo({
+      introduction: detail.introduction,
+      season: detail.accommodation_peak_season,
+      service_info: {
+        contact: detail.contact,
+        site: detail.site,
+        kakao_chat: detail.kakao_chat,
+      },
+    });
   };
 
   return (
@@ -111,23 +190,10 @@ const AccommodationDetail = (props: { detail: AccommodationResponse; style: { [k
         <ImageBox slide={true} type='accommodation' imageList={exposureImages} count={true} />
         <LabelDetailTitle title={accommodationLabel} address={address} />
       </ContainerRegistrationItem>
-      <Tabs></Tabs>
-      <ContainerRegistrationItem title='숙소 소개'>
-        <BoxIntroduction introduction={introduction} />
-      </ContainerRegistrationItem>
-      <ContainerRegistrationItem title='객실'>
-        {rooms.map((room, room_idx) => {
-          return (
-            <FormAddRoom
-              key={`room_form_${room_idx}`}
-              room_idx={room_idx}
-              imageList={room.image_list}
-              mode='view'
-              contents={room}
-            />
-          );
-        })}
-      </ContainerRegistrationItem>
+      <Tabs
+        contents={['객실 정보', '문의/숙소 정보']}
+        elements={[<AccommodationRoomsDetail rooms={rooms} />, <AccommodationInfoDetail detail={detailInfo} />]}
+      ></Tabs>
     </AccommodationContainer>
   );
 };

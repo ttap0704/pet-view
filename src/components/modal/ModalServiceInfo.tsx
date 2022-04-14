@@ -59,6 +59,9 @@ function ModalServiceInfo(props: ModalServiceInfoProps) {
         contact: contents.contact ?? '',
         site: contents.site ?? '',
         kakao_chat: contents.kakao_chat ?? '',
+        open: contents.open ?? '',
+        close: contents.close ?? '',
+        last_order: contents.last_order ?? '',
       });
     }
   }, [visible]);
@@ -75,14 +78,35 @@ function ModalServiceInfo(props: ModalServiceInfoProps) {
   const confirmUpdate = () => {
     let alert_message = '';
 
-    console.log(serviceInfo);
-    const service_info_vali = validation.service(serviceInfo);
-    if (!service_info_vali) {
-      alert_message = '1개 이상의 문의 정보를 입력해주세요.';
-    }
     const service_info_concact_vali = validation.number(serviceInfo.contact);
     if (!service_info_concact_vali && serviceInfo.contact.length > 0) {
       alert_message = '문의 전화번호는 숫자로만 입력해주세요.';
+    }
+
+    if (type == 'accommodation') {
+      const service_info_vali = validation.service(serviceInfo);
+      if (!service_info_vali) {
+        alert_message = '1개 이상의 문의 정보를 입력해주세요.';
+      }
+    } else {
+      let service_info_time_vali = true;
+      for (const [key, val] of Object.entries(serviceInfo)) {
+        if (['open', 'close', 'last_order'].includes(key)) {
+          const service_time_vali = validation.time(val);
+
+          if (!service_time_vali) {
+            service_info_time_vali = false;
+            break;
+          }
+        }
+      }
+      if (!service_info_time_vali) {
+        alert_message = '[ 오픈 시간, 마감 시간, 마지막 주문 시간]은\r\n[ HH:MM ]형식으로 입력해주세요.';
+      }
+      const service_info_vali = validation.restaurant_time(serviceInfo);
+      if (!service_info_vali) {
+        alert_message = '[ 오픈 시간, 마감 시간, 마지막 주문 시간]은\r\n필수 입력사항입니다.';
+      }
     }
 
     if (alert_message.length > 0) {

@@ -165,6 +165,12 @@ export const restaurant_info = {
       type: 'button',
     },
     {
+      label: '추가 정보',
+      center: true,
+      key: 'service_info',
+      type: 'button',
+    },
+    {
       label: '소개',
       center: true,
       key: 'introduction',
@@ -185,6 +191,7 @@ export const restaurant_info = {
     "주소 수정",
     "소개 수정",
     "대표이미지 수정",
+    "추가 정보 수정",
     "음식점 삭제",
   ],
   type: 'accommodation',

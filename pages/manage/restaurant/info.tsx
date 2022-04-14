@@ -7,10 +7,10 @@ import { restaurant_info } from '../../../src/utils/manage_items';
 
 import ModalEdit from '../../../src/components/modal/ModalEdit';
 import ModalUpload from '../../../src/components/modal/ModalUpload';
-import ModalAddRoom from '../../../src/components/modal/ModalAddRoom';
 import ModalAddExposureMenu from '../../../src/components/modal/ModalAddExposureMenu';
 import ModalAddEntireMenu from '../../../src/components/modal/ModalAddEntireMenu';
 import Modalorder from '../../../src/components/modal/ModalOrder';
+import ModalServiceInfo from '../../../src/components/modal/ModalServiceInfo';
 import ModalPostcodeForm from '../../../src/components/modal/ModalPostcodeForm';
 import Table from '../../../src/components/table/Table';
 import { TableContext } from '../../../src/provider/TableProvider';
@@ -30,6 +30,18 @@ const ManageRestaurantInfo = (props: { list: RestaurantListType; style: { [key: 
   const [entireMenuContents, setEntireMenuContents] = useState({
     visible: false,
     type: '',
+  });
+  const [serviceInfoModalContents, setServiceInfoModalContents] = useState({
+    visible: false,
+    contents: {
+      contact: '',
+      site: '',
+      kakao_chat: '',
+      open: '',
+      close: '',
+      last_order: '',
+    },
+    mode: '',
   });
   const [infoContents, setInfoContents] = useState<ChildrenDataType>(restaurant_info);
   const [orderContents, setOrderContents] = useState<orderContents>({
@@ -65,6 +77,16 @@ const ManageRestaurantInfo = (props: { list: RestaurantListType; style: { [key: 
       } else if (target_idx == 7) {
         setUploadModal();
       } else if (target_idx == 8) {
+        const service_data = {
+          contact: target.contact,
+          site: target.site,
+          kakao_chat: target.kakao_chat,
+          open: target.open,
+          close: target.close,
+          last_order: target.last_order,
+        };
+        setServiceInfoModal(service_data, 'edit');
+      } else if (target_idx == 9) {
         modal_confirm.openModalConfirm(`정말 [${target.label}] 업소를 삭제하시겠습니까?`, () =>
           deleteRestaurant(target.id),
         );
@@ -80,7 +102,16 @@ const ManageRestaurantInfo = (props: { list: RestaurantListType; style: { [key: 
       } else if (data.clicked_row_button_key == 'image') {
         setExposureImageDetail(data.clicked_row_button_idx);
       } else if (data.clicked_row_button_key == 'service_info') {
-        console.log('hihi');
+        const service_info_data = {
+          contact: target.contact,
+          site: target.site,
+          kakao_chat: target.kakao_chat,
+          open: target.open,
+          close: target.close,
+          last_order: target.last_order,
+        };
+
+        setServiceInfoModal(service_info_data, 'read');
       }
     }
   }, [data.clicked_row_button_idx, data.clicked_row_button_key]);
@@ -350,6 +381,12 @@ const ManageRestaurantInfo = (props: { list: RestaurantListType; style: { [key: 
         exposure_menu_num: x.exposure_menu.length + '개',
         entire_menu_category: x.entire_menu_category,
         category_num: x.entire_menu_category.length + '개',
+        contact: x.contact,
+        site: x.site,
+        kakao_chat: x.kakao_chat,
+        open: x.open,
+        close: x.close,
+        last_order: x.last_order,
         checked: false,
       });
     }
@@ -402,6 +439,34 @@ const ManageRestaurantInfo = (props: { list: RestaurantListType; style: { [key: 
     }
   };
 
+  const setServiceInfoModal = (info: ServiceInfoType, mode: string) => {
+    setServiceInfoModalContents({
+      visible: true,
+      contents: {
+        ...info,
+        open: `${info.open ?? ''}`,
+        close: `${info.close ?? ''}`,
+        last_order: `${info.last_order ?? ''}`,
+      },
+      mode: mode,
+    });
+  };
+
+  const clearServiceInfoModal = () => {
+    setServiceInfoModalContents({
+      visible: false,
+      contents: {
+        contact: '',
+        site: '',
+        kakao_chat: '',
+        open: '',
+        close: '',
+        last_order: '',
+      },
+      mode: '',
+    });
+  };
+
   const updateAddress = async (address: ResponsePostcodeDataType) => {
     const target = data.table_items.find(item => item.checked);
     if (target) {
@@ -410,6 +475,22 @@ const ManageRestaurantInfo = (props: { list: RestaurantListType; style: { [key: 
         getTableItems();
         setPostcodeVisible(false);
         modal_alert.openModalAlert('주소가 변경되었습니다.');
+      } else {
+        modal_alert.openModalAlert('오류로 인해 실패되었습니다.');
+      }
+    }
+  };
+
+  const updateServiceInfo = async (service_info: ServiceInfoType) => {
+    const target = data.table_items.find(item => item.checked);
+    if (target) {
+      const update_res = await fetchPostApi(`/manager/1/restaurant/${target.id}/service`, {
+        service_info,
+      });
+      if (update_res) {
+        getTableItems();
+        clearServiceInfoModal();
+        modal_alert.openModalAlert('추가 정보가 변경되었습니다.');
       } else {
         modal_alert.openModalAlert('오류로 인해 실패되었습니다.');
       }
@@ -445,6 +526,14 @@ const ManageRestaurantInfo = (props: { list: RestaurantListType; style: { [key: 
         visible={postcodeVisible}
         onClose={() => setPostcodeVisible(false)}
         onChangeAddress={(address: ResponsePostcodeDataType) => updateAddress(address)}
+      />
+      <ModalServiceInfo
+        visible={serviceInfoModalContents.visible}
+        contents={serviceInfoModalContents.contents}
+        mode={serviceInfoModalContents.mode}
+        type='restaurant'
+        onUpdateInfo={updateServiceInfo}
+        onClose={clearServiceInfoModal}
       />
     </>
   );
