@@ -6,6 +6,7 @@ import { styled } from '@mui/material/styles';
 import { setImageArray, getSeasonPriceKey } from '../../src/utils/tools';
 import { fetchGetApi } from '../../src/utils/api';
 import { ModalContext } from '../../src/provider/ModalProvider';
+import { season_notice } from '../../src/utils/notice_contents';
 
 import ImageBox from '../../src/components/image/ImageBox';
 import LabelDetailTitle from '../../src/components/label/LabelDetailTitle';
@@ -13,6 +14,8 @@ import BoxIntroduction from '../../src/components/box/BoxIntroduction';
 import ContainerRegistrationItem from '../../src/components/container/ContainerRegistrationItem';
 import FormAddRoom from '../../src/components/form/FormAddRoom';
 import Tabs from '../../src/components/tabs/Tabs';
+import TableRoomsPrice from '../../src/components/table/TableRoomsPrice';
+import CardNotice from '../../src/components/card/CardNotice';
 
 type Props = {
   detail: AccommodationResponse;
@@ -33,6 +36,9 @@ interface AccommodationInfoDetailType {
     contact: string;
     site: string;
     kakao_chat: string;
+  };
+  total_room_price: {
+    [key: string]: number;
   };
 }
 
@@ -68,9 +74,16 @@ const AccommodationRoomsDetail = (props: { rooms: DetailRoomsType[] }) => {
 const AccommodationInfoDetail = (props: { detail: AccommodationInfoDetailType }) => {
   const detail = props.detail;
   return (
-    <ContainerRegistrationItem title='숙소 소개'>
-      <BoxIntroduction introduction={detail.introduction} />
-    </ContainerRegistrationItem>
+    <>
+      <ContainerRegistrationItem title='문의 정보'>ㅗㅑㅑ</ContainerRegistrationItem>
+      <ContainerRegistrationItem title='숙소 소개'>
+        <BoxIntroduction introduction={detail.introduction} />
+      </ContainerRegistrationItem>
+      <ContainerRegistrationItem title='성수기 기간 및 금액' sx={{ gap: '0.5rem' }}>
+        <TableRoomsPrice priceContents={detail.total_room_price} seasonContents={detail.season} />
+        <CardNotice contents={season_notice} />
+      </ContainerRegistrationItem>
+    </>
   );
 };
 
@@ -88,6 +101,7 @@ const AccommodationDetail = (props: { detail: AccommodationResponse; style: { [k
       site: '',
       kakao_chat: '',
     },
+    total_room_price: {},
   });
   const [curPriceKey, setCurPriceKey] = useState<RoomPriceKeys>('normal_price');
 
@@ -150,28 +164,27 @@ const AccommodationDetail = (props: { detail: AccommodationResponse; style: { [k
     setAccommodationLabel(detail.label);
 
     const total_room_price: { [key: string]: number } = {
-      normal_price_min: 0,
+      normal_price_min: Number(tmp_rooms[0].normal_price),
       normal_price_max: 0,
-      normal_weekend_price_min: 0,
+      normal_weekend_price_min: Number(tmp_rooms[0].normal_weekend_price),
       normal_weekend_price_max: 0,
-      peak_price_min: 0,
+      peak_price_min: Number(tmp_rooms[0].peak_price),
       peak_price_max: 0,
-      peak_weekend_price_min: 0,
+      peak_weekend_price_min: Number(tmp_rooms[0].peak_weekend_price),
       peak_weekend_price_max: 0,
     };
 
     const price_keys: RoomPriceKeys[] = ['normal_price', 'normal_weekend_price', 'peak_price', 'peak_weekend_price'];
     for (const price_type of price_keys) {
       for (const room of tmp_rooms) {
-        if (total_room_price[`${price_type}_min`] >= Number(room[price_type])) {
-          total_room_price[`${price_type}_min`] = Number(room[price_key]);
-        } else if (total_room_price[`${price_type}_max`] <= Number(room[price_type])) {
-          total_room_price[`${price_type}_max`] = Number(room[price_key]);
+        if (total_room_price[`${price_type}_min`] > Number(room[price_type])) {
+          total_room_price[`${price_type}_min`] = Number(room[price_type]);
+        }
+        if (total_room_price[`${price_type}_max`] < Number(room[price_type])) {
+          total_room_price[`${price_type}_max`] = Number(room[price_type]);
         }
       }
     }
-
-    console.log(total_room_price);
 
     setDetailInfo({
       introduction: detail.introduction,
@@ -181,17 +194,20 @@ const AccommodationDetail = (props: { detail: AccommodationResponse; style: { [k
         site: detail.site,
         kakao_chat: detail.kakao_chat,
       },
+      total_room_price: {
+        ...total_room_price,
+      },
     });
   };
 
   return (
     <AccommodationContainer>
-      <ContainerRegistrationItem title='대표 이미지'>
+      <ContainerRegistrationItem title=''>
         <ImageBox slide={true} type='accommodation' imageList={exposureImages} count={true} />
         <LabelDetailTitle title={accommodationLabel} address={address} />
       </ContainerRegistrationItem>
       <Tabs
-        contents={['객실 정보', '문의/숙소 정보']}
+        contents={['객실 정보', '숙소/문의 정보']}
         elements={[<AccommodationRoomsDetail rooms={rooms} />, <AccommodationInfoDetail detail={detailInfo} />]}
       ></Tabs>
     </AccommodationContainer>

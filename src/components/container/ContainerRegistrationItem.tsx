@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { styled } from '@mui/material/styles';
 import { Typography } from '@mui/material';
 
-interface RegistrationItemContainerProps {
+interface RegistrationItemContainerProps extends BoxProps {
   title: string;
   children: React.ReactNode;
 }
@@ -31,11 +31,12 @@ const ChildrenBox = styled(Box)(({ theme }) => ({
 const RegistrationItemContainer = (props: RegistrationItemContainerProps) => {
   const title = props.title;
   const children = props.children;
+  const sx = props.sx;
 
   return (
     <CustomBox>
       <Typography component='h3'>{title}</Typography>
-      <ChildrenBox>{children}</ChildrenBox>
+      <ChildrenBox sx={{ ...sx }}>{children}</ChildrenBox>
     </CustomBox>
   );
 };

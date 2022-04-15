@@ -9,7 +9,7 @@ interface LayoutAppProps {
 const ChildrenBox = styled(Box)(({ theme }) => ({
   width: '100%',
   maxWidth: '62rem',
-  padding: '1rem 1rem 0',
+  padding: '1rem 1rem 3rem',
   margin: '0 auto',
   height: 'auto',
 }));

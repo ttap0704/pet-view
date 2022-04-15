@@ -151,7 +151,7 @@ const ImageBox = (props: ImageBoxProps) => {
     <>
       <CustomBox sx={{ ...boxStyle }}>
         {image_list && image_list.length > 0 ? (
-          <ImageWrap>
+          <ImageWrap className={type ? `${type}` : ''}>
             <>
               {count ? (
                 <CountTypography className='image_count'>{`${curNum + 1} / ${image_list.length}`}</CountTypography>
