@@ -35,6 +35,7 @@ interface RestaurantResponse {
   manager: number;
   sido: string;
   sigungu: string;
+  road_address: string;
   updatedAt: string;
   zonecode: string;
   contact: string;
