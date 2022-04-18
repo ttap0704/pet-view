@@ -413,9 +413,9 @@ const ManageRestaurantRegistration = () => {
                 handleExposureMenuInput(e, type, menu_idx)
               }
               key={`add_menu_form_${menu_idx}`}
-              imageList={menu.image_list}
               onDelete={() => deleteExposureMemu(menu_idx)}
               menuIdx={menu_idx}
+              contents={menu}
             />
           );
         })}
@@ -438,6 +438,7 @@ const ManageRestaurantRegistration = () => {
           onAddMenu={addEntireMenu}
           onDeleteMenu={deleteEntireMenu}
           mode='add'
+          type='category'
         />
         <UtilBox justifyContent='flex-end' sx={{ marginTop: '1rem' }}>
           <Button color='blue' variant='contained' onClick={addCategory}>

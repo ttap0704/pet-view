@@ -1,24 +1,28 @@
 import * as React from 'react';
-import { useContext, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
-import { Box, Typography, IconButton } from '@mui/material';
+import { Box, IconButton } from '@mui/material';
 import { styled } from '@mui/material/styles';
 
 import InputOutlined from '../input/InputOutlined';
-import UtilBox from '../common/UtilBox';
 import ButtonFileInput from '../button/ButtonFileInput';
 import ImageBox from '../image/ImageBox';
 import { RiCloseCircleFill } from 'react-icons/ri';
-import { ModalContext } from '../../provider/ModalProvider';
-import { setFileToImage } from '../../../src/utils/tools';
 
 interface FormExposureMenuProps {
-  imageList: ImageListType[];
   onInputClick: () => void;
   onChangeImage: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onChange: (e: React.ChangeEvent<HTMLInputElement>, type: string) => void;
   onDelete: () => void;
   menuIdx: number;
+  contents: AddExposureMenuContentsType;
+}
+
+interface ExposureMenuContentsType {
+  key: string;
+  format: string;
+  placeholder: string;
+  value: string;
 }
 
 const FormContainer = styled(Box)(({ theme }) => ({
@@ -71,30 +75,44 @@ const CustomIconButton = styled(IconButton)(({ theme }) => ({
 }));
 
 function FormExposureMenu(props: FormExposureMenuProps) {
-  const image_list = props.imageList;
+  const image_list = props.contents.image_list;
   const onChange = props.onChange;
   const onChangeImage = props.onChangeImage;
   const onInputClick = props.onInputClick;
   const onDelete = props.onDelete;
   const menu_idx = props.menuIdx;
+  const contents = props.contents;
 
-  const exposure_menu_contents = [
+  const [exposureMenuContents, setExposureMenuContents] = useState<ExposureMenuContentsType[]>([
     {
       key: 'label',
       format: '',
       placeholder: '메뉴명을 입력해주세요.',
+      value: '',
     },
     {
       key: 'comment',
       format: '',
       placeholder: '한 줄 설명을 입력해주세요.',
+      value: '',
     },
     {
       key: 'price',
       format: 'price',
       placeholder: '숫자만 입력해주세요.',
+      value: '',
     },
-  ];
+  ]);
+
+  useEffect(() => {
+    if (contents) {
+      const tmp_contents = [...exposureMenuContents];
+      tmp_contents[0].value = contents.label;
+      tmp_contents[1].value = contents.comment;
+      tmp_contents[2].value = contents.price;
+      setExposureMenuContents([...tmp_contents]);
+    }
+  }, []);
 
   return (
     <FormContainer>
@@ -102,7 +120,7 @@ function FormExposureMenu(props: FormExposureMenuProps) {
         <ImageBox type='exposure_menu' imageList={image_list} slide={false} />
       </RoomImageContainer>
       <FormItemContainer>
-        {exposure_menu_contents.map((item, idx) => {
+        {exposureMenuContents.map((item, idx) => {
           return (
             <FormItem key={`form_exposure_menu_${idx}`}>
               <InputOutlined
@@ -112,6 +130,7 @@ function FormExposureMenu(props: FormExposureMenuProps) {
                 className='none'
                 height='2.5rem'
                 placeholder={item.placeholder}
+                value={item.value}
               />
             </FormItem>
           );

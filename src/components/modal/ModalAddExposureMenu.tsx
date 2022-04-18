@@ -150,8 +150,8 @@ function ModalAddExposureEenu(props: ModalAddExposureEenuProps) {
                     handleExposureMenuInput(e, type, menu_idx)
                   }
                   key={`add_menu_form_${menu_idx}`}
-                  imageList={menu.image_list}
                   onDelete={() => deleteExposureMemu(menu_idx)}
+                  contents={menu}
                   menuIdx={menu_idx}
                 />
               );

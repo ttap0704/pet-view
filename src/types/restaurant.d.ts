@@ -88,6 +88,8 @@ interface ExposureMenuType {
   price: number;
   seq: number;
   updatedAt: string;
+  comment: string;
+  exposure_menu_image: ImageType;
 }
 
 interface EntireMenuType {
@@ -101,7 +103,7 @@ interface EntireMenuType {
   updatedAt: string;
 }
 
-interface EntireMenyResponse extends EntireMenuType {
+interface EntireMenuResponse extends EntireMenuType {
   category: string;
   restaurant_label: string;
 }
