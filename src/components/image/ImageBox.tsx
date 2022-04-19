@@ -13,6 +13,7 @@ interface ImageBoxProps extends BoxProps {
   slide: boolean;
   count?: boolean;
   emptyText?: string;
+  useDetail?: boolean;
 }
 
 const CustomBox = styled(Box)(({ theme }) => ({
@@ -46,6 +47,13 @@ const ImageWrap = styled(Box)(({ theme }) => ({
     width: '100%',
     minWidth: '23rem',
   },
+
+  '&.exposure_menu': {
+    img: {
+      width: 'auto',
+      height: '100%',
+    },
+  },
 }));
 
 const CountTypography = styled(Typography)(({ theme }) => ({
@@ -64,6 +72,7 @@ const ImageBox = (props: ImageBoxProps) => {
   const slide = props.slide;
   const count = props.count;
   const empty_text = props.emptyText;
+  const use_detail = props.useDetail;
 
   const [curNum, setCurNum] = useState(0);
   const [isSlide, setIsSlide] = useState(false);
@@ -89,8 +98,8 @@ const ImageBox = (props: ImageBoxProps) => {
     } else if (type == 'exposure_menu') {
       setBoxStyle({
         width: '100%',
-        maxWidth: '15rem',
-        height: '15rem',
+        maxWidth: '18rem',
+        height: '18rem',
       });
     }
   }, []);
@@ -173,7 +182,9 @@ const ImageBox = (props: ImageBoxProps) => {
             <Typography component='h5'>{empty_text ? empty_text : '이미지를 등록해주세요.'}</Typography>
           </ContainerFullAbsolute>
         )}
-        {isSlide ? <ImageSlider onSlide={handleSlider} onClickDetail={openDetailModal} useDetail={true} /> : null}
+        {isSlide || use_detail ? (
+          <ImageSlider onSlide={handleSlider} onClickDetail={openDetailModal} useDetail={true} useSlider={slide} />
+        ) : null}
       </CustomBox>
     </>
   );

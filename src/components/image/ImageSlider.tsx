@@ -11,6 +11,7 @@ interface ImageSliderProps {
   onClickDetail?: () => void;
   fill?: boolean;
   useDetail?: boolean;
+  useSlider?: boolean;
 }
 
 const SliderWrap = styled(Box)(({ theme }) => ({
@@ -82,19 +83,25 @@ const ImageSlider = (props: ImageSliderProps) => {
   const onClickDetail = props.onClickDetail;
   const fill = props.fill;
   const use_detail = props.useDetail;
+  const use_slider = props.useSlider;
 
   return (
     <SliderWrap className='image-slider'>
-      <IconBox sx={{ left: 0 }} className={fill ? 'fill' : ''}>
-        <IconButton onClick={() => onSlide('left')}>
-          <FaChevronLeft />
-        </IconButton>
-      </IconBox>
-      <IconBox sx={{ right: 0 }} className={fill ? 'fill' : ''}>
-        <IconButton onClick={() => onSlide('right')}>
-          <FaChevronRight />
-        </IconButton>
-      </IconBox>
+      {use_slider !== false ? (
+        <>
+          <IconBox sx={{ left: 0 }} className={fill ? 'fill' : ''}>
+            <IconButton onClick={() => onSlide('left')}>
+              <FaChevronLeft />
+            </IconButton>
+          </IconBox>
+          <IconBox sx={{ right: 0 }} className={fill ? 'fill' : ''}>
+            <IconButton onClick={() => onSlide('right')}>
+              <FaChevronRight />
+            </IconButton>
+          </IconBox>
+        </>
+      ) : null}
+
       {use_detail ? (
         <DetailIconBox>
           <IconButton onClick={onClickDetail}>

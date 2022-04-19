@@ -10,11 +10,11 @@ import { season_notice } from '../../src/utils/notice_contents';
 
 import ImageBox from '../../src/components/image/ImageBox';
 import LabelDetailTitle from '../../src/components/label/LabelDetailTitle';
-import FormExposureMenu from '../../src/components/form/FormExposureMenu';
 import BoxIntroduction from '../../src/components/box/BoxIntroduction';
 import ContainerRegistrationItem from '../../src/components/container/ContainerRegistrationItem';
 import Tabs from '../../src/components/tabs/Tabs';
 import CardNotice from '../../src/components/card/CardNotice';
+import ImageExposureMenuList from '../../src/components/image/ImageExposureMenuList';
 
 type Props = {
   detail: RestaurantResponse;
@@ -68,11 +68,15 @@ const MenuDetails = (props: { detail: MenuDetailsType }) => {
         image_list: exposure_image_list,
       });
     }
+
+    setExposureMenu(exposure_menu);
     console.log(detail);
   };
   return (
     <>
-      <ContainerRegistrationItem title='대표 메뉴'>hihi</ContainerRegistrationItem>
+      <ContainerRegistrationItem title='대표 메뉴'>
+        <ImageExposureMenuList contents={exposureMenu} />
+      </ContainerRegistrationItem>
     </>
   );
 };

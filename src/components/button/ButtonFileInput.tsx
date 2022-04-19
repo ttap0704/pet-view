@@ -10,7 +10,7 @@ const CustomLabel = styled('label')(({ theme }) => ({
 interface ButtonFileInputProps {
   title: string;
   multiple: boolean;
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onClick?: () => void;
   id: string;
   sx?: ButtonProps['sx'];
@@ -26,17 +26,12 @@ const UploadInput = (props: ButtonFileInputProps) => {
 
   function onChangeEvent(e: React.ChangeEvent<HTMLInputElement>) {
     e.preventDefault();
-    onChange(e);
+    onChange ? onChange(e) : false;
   }
 
   return (
     <>
-      <Button
-        sx={sx ? { ...sx, padding: 0 } : { padding: 0 }}
-        onClick={() => {
-          onClick ? onClick() : false;
-        }}
-      >
+      <Button sx={sx ? { ...sx, padding: 0 } : { padding: 0 }} onClick={onClick}>
         <CustomLabel htmlFor={id}>{title}</CustomLabel>
       </Button>
       <input type='file' onChange={e => onChangeEvent(e)} id={id} name={id} multiple={multiple}></input>

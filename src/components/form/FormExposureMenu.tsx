@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
 
-import { Box, IconButton } from '@mui/material';
+import { Box, IconButton, Typography } from '@mui/material';
 import { styled } from '@mui/material/styles';
 
 import InputOutlined from '../input/InputOutlined';
@@ -10,12 +10,13 @@ import ImageBox from '../image/ImageBox';
 import { RiCloseCircleFill } from 'react-icons/ri';
 
 interface FormExposureMenuProps {
-  onInputClick: () => void;
-  onChangeImage: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  onChange: (e: React.ChangeEvent<HTMLInputElement>, type: string) => void;
-  onDelete: () => void;
+  onInputClick?: () => void;
+  onChangeImage?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onChange?: (e: React.ChangeEvent<HTMLInputElement>, type: string) => void;
+  onDelete?: () => void;
   menuIdx: number;
   contents: AddExposureMenuContentsType;
+  mode?: string;
 }
 
 interface ExposureMenuContentsType {
@@ -27,7 +28,7 @@ interface ExposureMenuContentsType {
 
 const FormContainer = styled(Box)(({ theme }) => ({
   width: '100%',
-  height: '17rem',
+  height: '20rem',
   display: 'flex',
   flexWrap: 'wrap',
   justifyContent: 'space-between',
@@ -40,22 +41,22 @@ const FormContainer = styled(Box)(({ theme }) => ({
   marginBottom: '1rem',
 }));
 
-const RoomImageContainer = styled(Box)(({ theme }) => ({
-  width: '15rem',
-  height: '15rem',
+const ExposureMenuImageContainer = styled(Box)(({ theme }) => ({
+  width: '18rem',
+  height: '18rem',
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
 }));
 
 const FormItemContainer = styled(Box)(({ theme }) => ({
-  width: 'calc(100% - 17rem)',
+  width: 'calc(100% - 20rem)',
   height: '100%',
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'flex-end',
   justifyContent: 'space-between',
-  padding: '0 4rem 0 0',
+  padding: '2rem 4rem 2rem 0',
 }));
 
 const FormItem = styled(Box)(({ theme }) => ({
@@ -82,6 +83,7 @@ function FormExposureMenu(props: FormExposureMenuProps) {
   const onDelete = props.onDelete;
   const menu_idx = props.menuIdx;
   const contents = props.contents;
+  const mode = props.mode;
 
   const [exposureMenuContents, setExposureMenuContents] = useState<ExposureMenuContentsType[]>([
     {
@@ -104,6 +106,12 @@ function FormExposureMenu(props: FormExposureMenuProps) {
     },
   ]);
 
+  const view_contents: { [key: string]: string } = {
+    label: '메뉴',
+    price: '가격',
+    comment: '한 줄 설명',
+  };
+
   useEffect(() => {
     if (contents) {
       const tmp_contents = [...exposureMenuContents];
@@ -116,16 +124,18 @@ function FormExposureMenu(props: FormExposureMenuProps) {
 
   return (
     <FormContainer>
-      <RoomImageContainer>
+      <ExposureMenuImageContainer>
         <ImageBox type='exposure_menu' imageList={image_list} slide={false} />
-      </RoomImageContainer>
-      <FormItemContainer>
+      </ExposureMenuImageContainer>
+      <FormItemContainer className={mode == 'view' ? 'view' : ''}>
         {exposureMenuContents.map((item, idx) => {
           return (
             <FormItem key={`form_exposure_menu_${idx}`}>
               <InputOutlined
                 align='right'
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => onChange(e, item.key)}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                  onChange ? onChange(e, item.key) : false;
+                }}
                 format={item.format}
                 className='none'
                 height='2.5rem'
@@ -137,13 +147,13 @@ function FormExposureMenu(props: FormExposureMenuProps) {
         })}
         <ButtonFileInput
           title='대표메뉴 이미지 등록'
-          onClick={() => onInputClick()}
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) => onChangeImage(e)}
+          onClick={onInputClick}
+          onChange={onChangeImage}
           multiple={false}
           id={`exposure_menu_${menu_idx}`}
         />
       </FormItemContainer>
-      <CustomIconButton onClick={() => onDelete()}>
+      <CustomIconButton onClick={onDelete}>
         <RiCloseCircleFill />
       </CustomIconButton>
     </FormContainer>

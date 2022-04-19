@@ -380,7 +380,10 @@ const ManageRestaurantRegistration = () => {
         <InputOutlined
           placeholder='음식점명을 작성해주세요..'
           value={restaurantLabel}
-          onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setRestaurantLabel(e.target.value)}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+            console.log(e);
+            setRestaurantLabel(e.target.value);
+          }}
         />
       </ContainerRegistrationItem>
       <ContainerRegistrationItem title='주소 등록'>

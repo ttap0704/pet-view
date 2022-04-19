@@ -122,7 +122,7 @@ const CustomInput = (props: InputOutlinedProps) => {
       }
     }
     if (onChange) {
-      if (isNaN(Number(cur_value))) return;
+      if (format == 'price' && isNaN(Number(cur_value))) return;
       onChange(e);
     }
   };
