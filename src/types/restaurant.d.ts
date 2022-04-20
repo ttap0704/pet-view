@@ -53,13 +53,14 @@ interface RestaurantType {
 }
 
 interface EntireMenuCategoryType {
-  category: string
-  createdAt: string
-  deletedAt: null | string
-  id: number
-  restaurant_id: number
-  seq: number
-  updatedAt: string
+  category: string;
+  createdAt: string;
+  deletedAt: null | string;
+  id: number;
+  restaurant_id: number;
+  seq: number;
+  updatedAt: string;
+  menu: EntireMenuType[];
 }
 
 interface ExposureMenuResponse {

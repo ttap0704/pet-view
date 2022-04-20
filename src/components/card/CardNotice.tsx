@@ -25,13 +25,13 @@ const ListItem = styled('li')(({ theme }) => ({
   fontSize: '0.9rem',
 }));
 
-function CardNotice(props: { contents: string[] }) {
+function CardNotice(props: { contents: (string | React.ReactElement)[] }) {
   const contents = props.contents;
   return (
     <NoticeBox>
       <ListBox>
-        {contents.map(item => {
-          return <ListItem>{item}</ListItem>;
+        {contents.map((item, item_idx) => {
+          return <ListItem key={`card_notice_list_${item_idx}`}>{item}</ListItem>;
         })}
       </ListBox>
     </NoticeBox>

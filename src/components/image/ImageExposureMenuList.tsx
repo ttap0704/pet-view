@@ -21,8 +21,8 @@ const ContentsWrap = styled(Box)(({ theme }) => ({
 }));
 
 const MenuImageContainer = styled(Box)(({ theme }) => ({
-  width: '18rem',
-  height: '18rem',
+  minWidth: '18rem',
+  minHeight: '18rem',
   position: 'relative',
 
   '&:hover': {
@@ -49,7 +49,7 @@ const LabelBox = styled(Box)(({ theme }) => ({
   zIndex: 0,
 }));
 
-const DetailIconBox = styled(Box)(({ theme }) => ({
+const DetailIcon = styled(IconButton)(({ theme }) => ({
   width: '3rem',
   height: '3rem',
   position: 'absolute',
@@ -64,12 +64,17 @@ const DetailIconBox = styled(Box)(({ theme }) => ({
 }));
 
 const MenuImageSliderWrap = styled(Box)(({ theme }) => ({
-  width: '90rem',
+  width: 'auto',
   height: 'auto',
   display: 'flex',
+  flexWrap: 'nowrap',
   alignItems: 'center',
   justifyContent: 'flex-start',
   overflowX: 'auto',
+}));
+
+const DetailTypography = styled(Typography)(({ theme }) => ({
+  textAlign: 'right',
 }));
 
 function ImageExposureMenuList(props: ImageExposureMenuListProps) {
@@ -85,10 +90,6 @@ function ImageExposureMenuList(props: ImageExposureMenuListProps) {
     }
   }, [contents]);
 
-  const handleSlider = (dir: string) => {
-    console.log(dir);
-  };
-
   const openDetailModal = (image_list: ImageListType[]) => {
     if (image_list) {
       modal_image_detail.openModalImageDetail('exposure_menu', image_list);
@@ -103,14 +104,14 @@ function ImageExposureMenuList(props: ImageExposureMenuListProps) {
             <MenuImageContainer key={`exposure_menu_image_${idx}`}>
               <ImageBox type='exposure_menu' imageList={item.image_list} slide={false} useDetail={false} />
               <LabelBox className='menu_label_box'>
-                <DetailIconBox>
-                  <IconButton>
-                    <FaSearchPlus />
-                  </IconButton>
-                </DetailIconBox>
-                <Typography>{item.label}</Typography>
-                <Typography>{item.comment}</Typography>
-                <Typography>{Number(item.price).toLocaleString()} 원</Typography>
+                <DetailIcon onClick={() => openDetailModal(item.image_list)}>
+                  <FaSearchPlus />
+                </DetailIcon>
+                <DetailTypography sx={{ fontSize: '1.1rem', fontWeight: 'bold' }}>{item.comment}</DetailTypography>
+                <DetailTypography sx={{ fontSize: '0.95rem' }}>{item.label}</DetailTypography>
+                <DetailTypography sx={{ fontSize: '0.95rem' }}>
+                  {Number(item.price).toLocaleString()} 원
+                </DetailTypography>
               </LabelBox>
             </MenuImageContainer>
           );

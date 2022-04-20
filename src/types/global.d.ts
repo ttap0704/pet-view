@@ -54,6 +54,7 @@ interface ServiceInfoType {
   open?: string;
   close?: string;
   last_order?: string;
+  [key: string]: string
 }
 
 interface ImageType {
