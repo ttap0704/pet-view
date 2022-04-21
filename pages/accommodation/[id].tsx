@@ -16,6 +16,7 @@ import FormAddRoom from '../../src/components/form/FormAddRoom';
 import Tabs from '../../src/components/tabs/Tabs';
 import TableRoomsPrice from '../../src/components/table/TableRoomsPrice';
 import CardNotice from '../../src/components/card/CardNotice';
+import KakaoMap from '../../src/components/common/KakaoMap';
 
 type Props = {
   detail: AccommodationResponse;

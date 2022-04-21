@@ -1,20 +1,18 @@
 import { GetStaticPaths, GetStaticProps } from 'next';
 import { ParsedUrlQuery } from 'querystring';
-import { Box } from '@mui/material';
+import { Box, Divider, Typography } from '@mui/material';
 import React, { useEffect, useState, useContext } from 'react';
 import { styled } from '@mui/material/styles';
 import { setImageArray, getSeasonPriceKey } from '../../src/utils/tools';
 import { fetchGetApi } from '../../src/utils/api';
-import { ModalContext } from '../../src/provider/ModalProvider';
-import { season_notice } from '../../src/utils/notice_contents';
 
 import ImageBox from '../../src/components/image/ImageBox';
 import LabelDetailTitle from '../../src/components/label/LabelDetailTitle';
 import ContainerRegistrationItem from '../../src/components/container/ContainerRegistrationItem';
-import Tabs from '../../src/components/tabs/Tabs';
 import CardNotice from '../../src/components/card/CardNotice';
 import ImageExposureMenuList from '../../src/components/image/ImageExposureMenuList';
 import ListEntireMenu from '../../src/components/list/ListEntireMenu';
+import KakaoMap from '../../src/components/common/KakaoMap';
 
 type Props = {
   detail: RestaurantResponse;
@@ -39,8 +37,15 @@ const RestaurantContainer = styled(Box)(({ theme }) => ({
 }));
 
 const InfoCardBox = styled(Box)(({ theme }) => ({
-  width: '40%',
-  height: 'auto',
+  minWidth: 'calc(100% - 43rem)',
+  height: '25.5rem',
+
+  '& > div': {
+    height: '100%',
+    ul: {
+      height: '100%',
+    },
+  },
 }));
 
 const InfoMapBox = styled(Box)(({ theme }) => ({
@@ -48,18 +53,42 @@ const InfoMapBox = styled(Box)(({ theme }) => ({
   height: 'auto',
 }));
 
-const MenuDetails = (props: { detail: MenuDetailsType }) => {
-  const detail = props.detail;
+const RestaurantDetail = (props: { detail: RestaurantResponse; style: { [key: string]: string } }) => {
+  const [isMounted, setIsMounted] = useState(false);
+  const [exposureImages, setExposureImages] = useState<ImageListType[]>([]);
+  const [restaurantLabel, setRestaurantLabel] = useState('');
+  const [address, setAddress] = useState('');
   const [exposureMenu, setExposureMenu] = useState<AddExposureMenuContentsType[]>([]);
   const [entireMenu, setEntireMenu] = useState<AddEntireMenuContentsType[]>([]);
 
+  const [noticeContents, setNoticeContents] = useState<(string | React.ReactElement)[]>([]);
+  const detail_type_text: { [key: string]: string } = {
+    contact: '문의',
+    kakao_chat: '오픈채팅',
+    site: '사이트',
+    open: '오픈',
+    close: '마감',
+    last_order: '마지막 주문',
+  };
+
   useEffect(() => {
-    setDetailContents();
+    console.log(props.detail);
+    if (!isMounted) {
+      setRestaurantDetail(props.detail);
+    }
+    return () => {
+      setIsMounted(true);
+    };
   }, []);
 
-  const setDetailContents = async () => {
+  const setRestaurantDetail = async (detail: RestaurantResponse) => {
+    const tmp_exposure_images = detail.restaurant_images.map(item => ({
+      file_name: item.file_name,
+    }));
+    const exposure_image_list = await setImageArray(tmp_exposure_images, true, 'restaurant');
+
     const tmp_exposure_menu = detail.exposure_menu;
-    const tmp_entire_menu = detail.category;
+    const tmp_entire_menu = detail.entire_menu_category;
 
     const exposure_menu: AddExposureMenuContentsType[] = [];
     for (const menu of tmp_exposure_menu) {
@@ -90,117 +119,71 @@ const MenuDetails = (props: { detail: MenuDetailsType }) => {
       });
     }
 
+    const tmp_info_details: { [key: string]: string } = {
+      open: props.detail.open,
+      close: props.detail.close,
+      contact: props.detail.contact,
+      kakao_chat: props.detail.kakao_chat,
+      site: props.detail.site,
+      last_order: props.detail.last_order,
+    };
+
+    const tmp_contents: (string | React.ReactElement)[] = [];
+    for (const [key, val] of Object.entries(detail_type_text)) {
+      if (tmp_info_details[key]) {
+        if (key == 'site') {
+          tmp_contents.push(
+            <>
+              {val} :{' '}
+              <Typography component='a' href={tmp_info_details[key]} target='_blank'>
+                사이트로 이동
+              </Typography>
+            </>,
+          );
+        } else if (key == 'kakao_chat') {
+          tmp_contents.push(
+            <>
+              {val} :{' '}
+              <Typography component='a' href={tmp_info_details[key]} target='_blank'>
+                문의하기
+              </Typography>
+            </>,
+          );
+        } else {
+          tmp_contents.push(`${val} : ${tmp_info_details[key]}`);
+        }
+      }
+    }
+
+    setNoticeContents([...tmp_contents]);
+    setExposureImages(exposure_image_list);
+    setAddress(detail.road_address);
+    setRestaurantLabel(detail.label);
     setExposureMenu(exposure_menu);
     setEntireMenu(entire_menu);
   };
+
   return (
-    <>
+    <RestaurantContainer>
+      <ContainerRegistrationItem title=''>
+        <Box sx={{ width: '100%', display: 'flex', gap: '1rem' }}>
+          <Box sx={{ width: '100%' }}>
+            <ImageBox slide={true} type='restaurant' imageList={exposureImages} count={true} />
+            <LabelDetailTitle title={restaurantLabel} address={address} />
+          </Box>
+          <InfoCardBox>
+            <CardNotice contents={noticeContents} />
+          </InfoCardBox>
+        </Box>
+      </ContainerRegistrationItem>
+      <Divider sx={{ width: '100%', borderWidth: '1px', marginBottom: '3rem' }} />
       <ContainerRegistrationItem title='대표 메뉴'>
         <ImageExposureMenuList contents={exposureMenu} />
       </ContainerRegistrationItem>
       <ContainerRegistrationItem title='전체 메뉴'>
         <ListEntireMenu entireMenu={entireMenu} type='category' mode='view' />
       </ContainerRegistrationItem>
-    </>
-  );
-};
-
-const InfoDetails = (props: { detail: ServiceInfoType }) => {
-  const detail = props.detail;
-
-  const [noticeContents, setNoticeContents] = useState<(string | React.ReactElement)[]>([]);
-  const detail_type_text: { [key: string]: string } = {
-    open: '오픈',
-    close: '마감',
-    last_order: '마지막 주문',
-    contact: '연락처',
-    kakao_chat: '카카오톡',
-    site: '사이트',
-  };
-
-  useEffect(() => {
-    const tmp_contents: (string | React.ReactElement)[] = [];
-    for (const [key, val] of Object.entries(detail_type_text)) {
-      if (detail[key]) {
-        if (key == 'site') {
-          tmp_contents.push(
-            <>
-              {val} :{' '}
-              <a href={detail[key]} target='_blank'>
-                사이트로 이동
-              </a>
-            </>,
-          );
-        } else {
-          tmp_contents.push(`${val} : ${detail[key]}`);
-        }
-      }
-    }
-    setNoticeContents([...tmp_contents]);
-  }, [detail]);
-
-  return (
-    <Box sx={{ display: 'flex', gap: '1rem' }}>
-      <InfoCardBox>
-        <CardNotice contents={noticeContents} />
-      </InfoCardBox>
-      <InfoMapBox>Map</InfoMapBox>
-    </Box>
-  );
-};
-
-const RestaurantDetail = (props: { detail: RestaurantResponse; style: { [key: string]: string } }) => {
-  const [isMounted, setIsMounted] = useState(false);
-  const [exposureImages, setExposureImages] = useState<ImageListType[]>([]);
-  const [restaurantLabel, setRestaurantLabel] = useState('');
-  const [address, setAddress] = useState('');
-
-  const [tabs, setTabs] = useState<React.ReactElement[]>([]);
-
-  useEffect(() => {
-    console.log(props.detail);
-    if (!isMounted) {
-      setRestaurantDetail(props.detail);
-
-      const tmp_menu_details = {
-        category: props.detail.entire_menu_category,
-        exposure_menu: props.detail.exposure_menu,
-      };
-
-      const tmp_info_details = {
-        open: props.detail.open,
-        close: props.detail.close,
-        contact: props.detail.contact,
-        kakao_chat: props.detail.kakao_chat,
-        site: props.detail.site,
-        last_order: props.detail.last_order,
-      };
-
-      setTabs([<MenuDetails detail={tmp_menu_details} />, <InfoDetails detail={tmp_info_details} />]);
-    }
-    return () => {
-      setIsMounted(true);
-    };
-  }, []);
-
-  const setRestaurantDetail = async (detail: RestaurantResponse) => {
-    const tmp_exposure_images = detail.restaurant_images.map(item => ({
-      file_name: item.file_name,
-    }));
-    const exposure_image_list = await setImageArray(tmp_exposure_images, true, 'restaurant');
-
-    setExposureImages(exposure_image_list);
-    setAddress(detail.road_address);
-    setRestaurantLabel(detail.label);
-  };
-
-  return (
-    <RestaurantContainer>
-      <ContainerRegistrationItem title=''>
-        <ImageBox slide={true} type='restaurant' imageList={exposureImages} count={true} />
-        <LabelDetailTitle title={restaurantLabel} address={address} />
-      </ContainerRegistrationItem>
-      <Tabs contents={['메뉴 정보', '음식점 정보']} elements={[...tabs]}></Tabs>
+      <KakaoMap />
     </RestaurantContainer>
   );
 };

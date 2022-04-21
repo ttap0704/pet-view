@@ -5,14 +5,15 @@ import { useRouter } from 'next/router';
 import { useState, useEffect } from 'react';
 import configureStore from '../src/store/configureStore';
 import '../src/assets/styles/globals.scss';
+import dotenv from 'dotenv';
 import { ThemeProvider } from '@mui/material/styles';
 import ModalProvider from '../src/provider/ModalProvider';
 import TableProvider from '../src/provider/TableProvider';
 import theme from '../src/utils/theme';
-
 import LayoutApp from '../src/components/layout/LayoutApp';
 import LayoutManage from '../src/components/layout/LayoutManage';
 
+dotenv.config();
 // store 설정파일 로드
 const store = configureStore();
 

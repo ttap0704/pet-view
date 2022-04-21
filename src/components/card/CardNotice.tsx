@@ -7,7 +7,6 @@ const NoticeBox = styled(Box)(({ theme }) => ({
   width: '100%',
   height: 'auto',
   padding: '1rem',
-  backgroundColor: theme.palette.gray_6.main,
   borderRadius: 6,
   border: '1px solid',
   borderColor: theme.palette.gray_6.main,
@@ -21,8 +20,8 @@ const ListBox = styled('ul')(({ theme }) => ({
 const ListItem = styled('li')(({ theme }) => ({
   width: '100%',
   listStyle: 'inside',
-  color: theme.palette.gray_1.main,
-  fontSize: '0.9rem',
+  color: theme.palette.black.main,
+  fontSize: '0.95rem',
 }));
 
 function CardNotice(props: { contents: (string | React.ReactElement)[] }) {
