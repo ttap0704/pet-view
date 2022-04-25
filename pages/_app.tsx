@@ -47,13 +47,20 @@ const _APP = ({ Component, pageProps }: AppProps) => {
   };
 
   return (
-    <Provider store={store}>
-      <ThemeProvider theme={theme}>
-        <ModalProvider>
-          <Layout />
-        </ModalProvider>
-      </ThemeProvider>
-    </Provider>
+    <>
+      <Provider store={store}>
+        <ThemeProvider theme={theme}>
+          <ModalProvider>
+            <Layout />
+          </ModalProvider>
+        </ThemeProvider>
+      </Provider>
+      <script
+        type='text/javascript'
+        src={`//dapi.kakao.com/v2/maps/sdk.js?autoload=false&appkey=${process.env.NEXT_PUBLIC_KAKAO_MAP_API_KEY}&libraries=services`}
+        id='KAKAO_MAP_SERVICE'
+      />
+    </>
   );
 };
 

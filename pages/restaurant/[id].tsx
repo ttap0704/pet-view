@@ -60,6 +60,7 @@ const RestaurantDetail = (props: { detail: RestaurantResponse; style: { [key: st
   const [address, setAddress] = useState('');
   const [exposureMenu, setExposureMenu] = useState<AddExposureMenuContentsType[]>([]);
   const [entireMenu, setEntireMenu] = useState<AddEntireMenuContentsType[]>([]);
+  const [roadAddress, setRoadAddress] = useState('');
 
   const [noticeContents, setNoticeContents] = useState<(string | React.ReactElement)[]>([]);
   const detail_type_text: { [key: string]: string } = {
@@ -72,9 +73,9 @@ const RestaurantDetail = (props: { detail: RestaurantResponse; style: { [key: st
   };
 
   useEffect(() => {
-    console.log(props.detail);
     if (!isMounted) {
       setRestaurantDetail(props.detail);
+      setRoadAddress(props.detail.road_address);
     }
     return () => {
       setIsMounted(true);
@@ -183,7 +184,7 @@ const RestaurantDetail = (props: { detail: RestaurantResponse; style: { [key: st
       <ContainerRegistrationItem title='전체 메뉴'>
         <ListEntireMenu entireMenu={entireMenu} type='category' mode='view' />
       </ContainerRegistrationItem>
-      <KakaoMap />
+      <KakaoMap address={roadAddress} label={restaurantLabel} />
     </RestaurantContainer>
   );
 };

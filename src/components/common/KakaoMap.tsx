@@ -2,6 +2,7 @@ import Box, { BoxProps } from '@mui/material/Box';
 
 import React, { useEffect, useState } from 'react';
 import { styled } from '@mui/material/styles';
+import { fetchGetApi } from '../../../src/utils/api';
 
 const StyledBox = styled(Box)(({ theme }) => ({
   width: '100%',
@@ -11,37 +12,55 @@ const StyledBox = styled(Box)(({ theme }) => ({
   backgroundColor: theme.palette.white.main,
 }));
 
-const KakaoMap = () => {
+const KakaoMap = (props: { address: string; label: string }) => {
+  const address = props.address;
+  const label = props.label;
+
+  const [kakaoContents, setKakaoContents] = useState({
+    x: 0,
+    y: 0,
+  });
+
   useEffect(() => {
-    const script_tag = document.createElement('script');
-    script_tag.type = 'text/javascript';
-    script_tag.src = `//dapi.kakao.com/v2/maps/sdk.js?autoload=false&appkey=${process.env.NEXT_PUBLIC_KAKAO_MAP_API_KEY}`;
-    document.head.appendChild(script_tag);
+    if (address.length > 0) {
+      setKakaoMap();
+    }
+  }, [address]);
 
-    let i = 0;
-    while (i < 100) {
-      const { kakao } = window as any;
-      if (kakao) {
-        console.log(kakao);
+  const setKakaoMap = async () => {
+    const { kakao } = window as any;
+    if (kakao) {
+      kakao.maps.load(() => {
+        const geocoder = new kakao.maps.services.Geocoder();
+        geocoder.addressSearch(address, function (result: any, status: any) {
+          const result_x = Number(result[0].x);
+          const result_y = Number(result[0].y);
+          console.log(result);
 
-        kakao.maps.load(() => {
+          setKakaoContents({
+            x: result_x,
+            y: result_y,
+          });
+
           const container = document.getElementById('kakao_map');
           const options = {
-            center: new kakao.maps.LatLng(33.450701, 126.570667),
+            center: new kakao.maps.LatLng(result_y, result_x),
             level: 3,
           };
-          new kakao.maps.Map(container, options);
+          const map = new kakao.maps.Map(container, options);
+          const markerPosition = new kakao.maps.LatLng(result_y, result_x);
+          const marker = new kakao.maps.Marker({
+            position: markerPosition,
+          });
+          marker.setMap(map);
+
+          kakao.maps.event.addListener(marker, 'click', function () {
+            window.open(`https://map.kakao.com/link/map/${label},${kakaoContents.y},${kakaoContents.x}`, '_blank');
+          });
         });
-
-        i = 100;
-      }
-      i++;
+      });
     }
-
-    return () => {
-      document.head.removeChild(script_tag);
-    };
-  }, []);
+  };
 
   return (
     <>

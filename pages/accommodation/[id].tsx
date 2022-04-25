@@ -52,22 +52,29 @@ const AccommodationContainer = styled(Box)(({ theme }) => ({
   flexDirection: 'column',
 }));
 
-const AccommodationRoomsDetail = (props: { rooms: DetailRoomsType[] }) => {
+const AccommodationRoomsDetail = (props: { rooms: DetailRoomsType[]; info: { address: string; label: string } }) => {
   const rooms = props.rooms;
+  const info = props.info;
 
   return (
     <>
-      {rooms.map((room, room_idx) => {
-        return (
-          <FormAddRoom
-            key={`room_form_${room_idx}`}
-            room_idx={room_idx}
-            imageList={room.image_list}
-            mode='view'
-            contents={room}
-          />
-        );
-      })}
+      <ContainerRegistrationItem title='객실 정보'>
+        {rooms.map((room, room_idx) => {
+          return (
+            <FormAddRoom
+              key={`room_form_${room_idx}`}
+              room_idx={room_idx}
+              imageList={room.image_list}
+              mode='view'
+              contents={room}
+            />
+          );
+        })}
+      </ContainerRegistrationItem>
+
+      <ContainerRegistrationItem title='위치 정보'>
+        <KakaoMap address={info.address} label={info.label} />
+      </ContainerRegistrationItem>
     </>
   );
 };
@@ -94,6 +101,10 @@ const AccommodationDetail = (props: { detail: AccommodationResponse; style: { [k
   const [accommodationLabel, setAccommodationLabel] = useState('');
   const [address, setAddress] = useState('');
   const [rooms, setRooms] = useState<DetailRoomsType[]>([]);
+  const [locationInfo, setLocationInfo] = useState({
+    address: '',
+    label: '',
+  });
   const [detailInfo, setDetailInfo] = useState<AccommodationInfoDetailType>({
     introduction: '',
     season: [],
@@ -199,6 +210,11 @@ const AccommodationDetail = (props: { detail: AccommodationResponse; style: { [k
         ...total_room_price,
       },
     });
+
+    setLocationInfo({
+      address: detail.road_address,
+      label: detail.label,
+    });
   };
 
   return (
@@ -208,8 +224,11 @@ const AccommodationDetail = (props: { detail: AccommodationResponse; style: { [k
         <LabelDetailTitle title={accommodationLabel} address={address} />
       </ContainerRegistrationItem>
       <Tabs
-        contents={['객실 정보', '숙소/문의 정보']}
-        elements={[<AccommodationRoomsDetail rooms={rooms} />, <AccommodationInfoDetail detail={detailInfo} />]}
+        contents={['객실/위치 정보', '숙소/문의 정보']}
+        elements={[
+          <AccommodationRoomsDetail rooms={rooms} info={locationInfo} />,
+          <AccommodationInfoDetail detail={detailInfo} />,
+        ]}
       ></Tabs>
     </AccommodationContainer>
   );
