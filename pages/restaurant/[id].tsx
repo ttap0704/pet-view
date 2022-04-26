@@ -3,7 +3,7 @@ import { ParsedUrlQuery } from 'querystring';
 import { Box, Divider, Typography } from '@mui/material';
 import React, { useEffect, useState, useContext } from 'react';
 import { styled } from '@mui/material/styles';
-import { setImageArray, getSeasonPriceKey } from '../../src/utils/tools';
+import { setImageArray, getNoticeContents } from '../../src/utils/tools';
 import { fetchGetApi } from '../../src/utils/api';
 
 import ImageBox from '../../src/components/image/ImageBox';
@@ -63,14 +63,6 @@ const RestaurantDetail = (props: { detail: RestaurantResponse; style: { [key: st
   const [roadAddress, setRoadAddress] = useState('');
 
   const [noticeContents, setNoticeContents] = useState<(string | React.ReactElement)[]>([]);
-  const detail_type_text: { [key: string]: string } = {
-    contact: '문의',
-    kakao_chat: '오픈채팅',
-    site: '사이트',
-    open: '오픈',
-    close: '마감',
-    last_order: '마지막 주문',
-  };
 
   useEffect(() => {
     if (!isMounted) {
@@ -120,7 +112,7 @@ const RestaurantDetail = (props: { detail: RestaurantResponse; style: { [key: st
       });
     }
 
-    const tmp_info_details: { [key: string]: string } = {
+    const tmp_info_details: ServiceInfoType = {
       open: props.detail.open,
       close: props.detail.close,
       contact: props.detail.contact,
@@ -129,32 +121,7 @@ const RestaurantDetail = (props: { detail: RestaurantResponse; style: { [key: st
       last_order: props.detail.last_order,
     };
 
-    const tmp_contents: (string | React.ReactElement)[] = [];
-    for (const [key, val] of Object.entries(detail_type_text)) {
-      if (tmp_info_details[key]) {
-        if (key == 'site') {
-          tmp_contents.push(
-            <>
-              {val} :{' '}
-              <Typography component='a' href={tmp_info_details[key]} target='_blank'>
-                사이트로 이동
-              </Typography>
-            </>,
-          );
-        } else if (key == 'kakao_chat') {
-          tmp_contents.push(
-            <>
-              {val} :{' '}
-              <Typography component='a' href={tmp_info_details[key]} target='_blank'>
-                문의하기
-              </Typography>
-            </>,
-          );
-        } else {
-          tmp_contents.push(`${val} : ${tmp_info_details[key]}`);
-        }
-      }
-    }
+    const tmp_contents: (string | React.ReactElement)[] = getNoticeContents(tmp_info_details);
 
     setNoticeContents([...tmp_contents]);
     setExposureImages(exposure_image_list);

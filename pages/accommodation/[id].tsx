@@ -3,7 +3,7 @@ import { ParsedUrlQuery } from 'querystring';
 import { Box } from '@mui/material';
 import { useEffect, useState, useContext } from 'react';
 import { styled } from '@mui/material/styles';
-import { setImageArray, getSeasonPriceKey } from '../../src/utils/tools';
+import { setImageArray, getSeasonPriceKey, getNoticeContents } from '../../src/utils/tools';
 import { fetchGetApi } from '../../src/utils/api';
 import { ModalContext } from '../../src/provider/ModalProvider';
 import { season_notice } from '../../src/utils/notice_contents';
@@ -33,11 +33,6 @@ interface DetailRoomsType extends AddRoomContentsType {
 interface AccommodationInfoDetailType {
   introduction: string;
   season: PeakSeasonType[];
-  service_info: {
-    contact: string;
-    site: string;
-    kakao_chat: string;
-  };
   total_room_price: {
     [key: string]: number;
   };
@@ -50,6 +45,18 @@ const AccommodationContainer = styled(Box)(({ theme }) => ({
   alignItems: 'center',
   justifyContent: 'center',
   flexDirection: 'column',
+}));
+
+const InfoCardBox = styled(Box)(({ theme }) => ({
+  minWidth: 'calc(100% - 43rem)',
+  height: '25.5rem',
+
+  '& > div': {
+    height: '100%',
+    ul: {
+      height: '100%',
+    },
+  },
 }));
 
 const AccommodationRoomsDetail = (props: { rooms: DetailRoomsType[]; info: { address: string; label: string } }) => {
@@ -83,7 +90,6 @@ const AccommodationInfoDetail = (props: { detail: AccommodationInfoDetailType })
   const detail = props.detail;
   return (
     <>
-      <ContainerRegistrationItem title='문의 정보'>ㅗㅑㅑ</ContainerRegistrationItem>
       <ContainerRegistrationItem title='숙소 소개'>
         <BoxIntroduction introduction={detail.introduction} />
       </ContainerRegistrationItem>
@@ -101,6 +107,7 @@ const AccommodationDetail = (props: { detail: AccommodationResponse; style: { [k
   const [accommodationLabel, setAccommodationLabel] = useState('');
   const [address, setAddress] = useState('');
   const [rooms, setRooms] = useState<DetailRoomsType[]>([]);
+  const [noticeContents, setNoticeContents] = useState<(string | React.ReactElement)[]>([]);
   const [locationInfo, setLocationInfo] = useState({
     address: '',
     label: '',
@@ -108,11 +115,6 @@ const AccommodationDetail = (props: { detail: AccommodationResponse; style: { [k
   const [detailInfo, setDetailInfo] = useState<AccommodationInfoDetailType>({
     introduction: '',
     season: [],
-    service_info: {
-      contact: '',
-      site: '',
-      kakao_chat: '',
-    },
     total_room_price: {},
   });
   const [curPriceKey, setCurPriceKey] = useState<RoomPriceKeys>('normal_price');
@@ -134,8 +136,17 @@ const AccommodationDetail = (props: { detail: AccommodationResponse; style: { [k
       const month = new Date().getMonth() + 1;
       const date = new Date().getDate();
       const today_key: RoomPriceKeys = getSeasonPriceKey(`${month}-${date}`, props.detail.accommodation_peak_season);
-      setCurPriceKey(today_key);
 
+      const tmp_info_details: ServiceInfoType = {
+        contact: props.detail.contact,
+        kakao_chat: props.detail.kakao_chat,
+        site: props.detail.site,
+      };
+
+      const tmp_contents: (string | React.ReactElement)[] = getNoticeContents(tmp_info_details);
+
+      setNoticeContents([...tmp_contents]);
+      setCurPriceKey(today_key);
       setAccommodationDetail(props.detail, today_key);
     }
     return () => {
@@ -201,11 +212,6 @@ const AccommodationDetail = (props: { detail: AccommodationResponse; style: { [k
     setDetailInfo({
       introduction: detail.introduction,
       season: detail.accommodation_peak_season,
-      service_info: {
-        contact: detail.contact,
-        site: detail.site,
-        kakao_chat: detail.kakao_chat,
-      },
       total_room_price: {
         ...total_room_price,
       },
@@ -220,11 +226,18 @@ const AccommodationDetail = (props: { detail: AccommodationResponse; style: { [k
   return (
     <AccommodationContainer>
       <ContainerRegistrationItem title=''>
-        <ImageBox slide={true} type='accommodation' imageList={exposureImages} count={true} />
-        <LabelDetailTitle title={accommodationLabel} address={address} />
+        <Box sx={{ width: '100%', display: 'flex', gap: '1rem' }}>
+          <Box sx={{ width: '100%' }}>
+            <ImageBox slide={true} type='accommodation' imageList={exposureImages} count={true} />
+            <LabelDetailTitle title={accommodationLabel} address={address} />
+          </Box>
+          <InfoCardBox>
+            <CardNotice contents={noticeContents} />
+          </InfoCardBox>
+        </Box>
       </ContainerRegistrationItem>
       <Tabs
-        contents={['객실/위치 정보', '숙소/문의 정보']}
+        contents={['객실/위치 정보', '숙소 정보']}
         elements={[
           <AccommodationRoomsDetail rooms={rooms} info={locationInfo} />,
           <AccommodationInfoDetail detail={detailInfo} />,

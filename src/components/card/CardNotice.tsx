@@ -22,6 +22,11 @@ const ListItem = styled('li')(({ theme }) => ({
   listStyle: 'inside',
   color: theme.palette.black.main,
   fontSize: '0.95rem',
+
+  a: {
+    fontSize: '0.95rem',
+    textDecoration: 'underline',
+  },
 }));
 
 function CardNotice(props: { contents: (string | React.ReactElement)[] }) {
