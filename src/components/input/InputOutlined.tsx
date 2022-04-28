@@ -81,7 +81,6 @@ const CustomInput = (props: InputOutlinedProps) => {
   };
 
   useEffect(() => {
-    console.log('format', value);
     if (format == 'price') {
       const cur_value = `${value}`.replace(/[\,]/gi, '');
       setCurrentValue(Number(cur_value).toLocaleString());

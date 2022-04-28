@@ -2,18 +2,22 @@ import { Box, Divider, Typography } from '@mui/material';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 
-import { useEffect, useState, useContext } from 'react';
+import { useEffect, useState, useContext, forwardRef } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { styled } from '@mui/material/styles';
+import { SET_USER } from '../../../src/store/models/user';
 
 import { MdAttachEmail } from 'react-icons/md';
 import { RiLockPasswordFill } from 'react-icons/ri';
+import { HiArrowNarrowLeft } from 'react-icons/hi';
 
-import InputOutlined from '../../src/components/input/InputOutlined';
-import Button from '../../src/components/button/Button';
-import UtilBox from '../../src/components/common/UtilBox';
+import InputOutlined from '../../../src/components/input/InputOutlined';
+import Button from '../../../src/components/button/Button';
+import UtilBox from '../../../src/components/common/UtilBox';
 
-import { ModalContext } from '../../src/provider/ModalProvider';
-import { fetchPostApi } from '../../src/utils/api';
+import { ModalContext } from '../../../src/provider/ModalProvider';
+import { fetchPostApi } from '../../../src/utils/api';
+import { RootState } from '../../../src/store';
 
 const LoginWrap = styled(Box)(({ theme }) => ({
   width: '100%',
@@ -37,7 +41,10 @@ const LoginBox = styled(Box)(({ theme }) => ({
 }));
 
 const LoginIndex = () => {
+  const user = useSelector((state: RootState) => state.UserReducer);
   const router = useRouter();
+  const dispatch = useDispatch();
+
   const { modal_alert, modal_notice } = useContext(ModalContext);
 
   const [loginInfo, setLoginInfo] = useState([
@@ -56,6 +63,12 @@ const LoginIndex = () => {
       type: 'password',
     },
   ]);
+
+  useEffect(() => {
+    if (user.uid) {
+      router.push('/manage');
+    }
+  }, []);
 
   const handleLoginInput = (e: React.ChangeEvent<HTMLInputElement>, idx: number) => {
     setLoginInfo(state => {
@@ -87,9 +100,23 @@ const LoginIndex = () => {
 
     const user = await fetchPostApi('/user/login', login_data);
     if (user.pass) {
-      modal_notice.openModalNotice(user.message, () => {
-        router.push('/');
+      const saved_user = {
+        uid: user.uid,
+        unick: user.nickname,
+        profile_path: user.profile_path,
+      };
+      sessionStorage.setItem('user', JSON.stringify({ ...saved_user }));
+      dispatch({
+        type: SET_USER,
+        payload: {
+          ...saved_user,
+        },
       });
+      modal_notice.openModalNotice(user.message, () => {
+        router.push('/manage');
+      });
+    } else {
+      modal_alert.openModalAlert(user.message, true);
     }
   };
 
@@ -115,8 +142,21 @@ const LoginIndex = () => {
       </LoginBox>
       <UtilBox sx={{ paddingX: '1rem' }}>
         <Button color='gray_2'>비밀번호 찾기</Button>
-        <Button color='gray_2'>
-          <Link href='/join'>사업자 회원가입</Link>
+        <Link href='/manage/join'>
+          <Typography component='a'>
+            <Button color='gray_2'>사업자 회원가입</Button>
+          </Typography>
+        </Link>
+      </UtilBox>
+      <UtilBox>
+        <Button
+          color='gray_2'
+          onClick={() => {
+            router.push('/');
+          }}
+        >
+          <HiArrowNarrowLeft />
+          돌아가기
         </Button>
       </UtilBox>
     </LoginWrap>

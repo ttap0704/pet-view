@@ -4,40 +4,29 @@ import {
   , createReducer
 } from 'typesafe-actions';
 
-// 상태의 타입 선언
-interface UserReducer {
-  uid: number | undefined,
-  unick: string,
-  profile_path: string
-}
-
-// 상태 초기화
-const initialState: UserReducer = {
+const initialState: UserType = {
   uid: undefined,
   unick: "",
   profile_path: ""
 }
 
-// 액션타입 선언
 export const RESET_USER = "userReducer/RESET_USER";
-export const ADD_USER = "userReducer/ADD_USER";
+export const SET_USER = "userReducer/SET_USER";
 
-// 액션함수 선언
 export const resetUser = createAction(RESET_USER)();
-export const addUser = createAction(ADD_USER)<UserReducer>();
+export const setUser = createAction(SET_USER)<UserType>();
 
-// 액션 객체타입
-export const actions = { resetUser, addUser }
+export const actions = { resetUser, setUser }
 type UserReducerActions = ActionType<typeof actions>;
 
-// 리듀서 추가
-const userReducer = createReducer<UserReducer, UserReducerActions>(initialState, {
+const userReducer = createReducer<UserType, UserReducerActions>(initialState, {
   [RESET_USER]: () => ({
     uid: undefined,
     unick: "",
     profile_path: ""
   }),
-  [ADD_USER]: (state, action) => {
+  [SET_USER]: (state, action) => {
+    console.log(action.payload)
     return ({
       uid: action.payload.uid,
       unick: action.payload.unick,

@@ -1,3 +1,9 @@
+interface UserType {
+  uid: number | undefined,
+  unick: string,
+  profile_path: string
+}
+
 interface ImageListType {
   new: boolean;
   src: string;

@@ -1,4 +1,4 @@
-import { GetServerSideProps, GetStaticProps } from 'next';
+import { GetServerSideProps, GetStaticProps, NextPageContext } from 'next';
 import { useEffect, useState, useContext } from 'react';
 
 import { fetchGetApi, fetchPatchApi, fetchDeleteApi, fetchFileApi, fetchPostApi } from '../../../src/utils/api';
@@ -539,8 +539,8 @@ const ManageRestaurantInfo = (props: { list: RestaurantListType; style: { [key: 
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async () => {
-  const data: RestaurantListType = await fetchGetApi(`/manager/1/restaurant`);
+export const getServerSideProps: GetServerSideProps = async ctx => {
+  const data: RestaurantListType = await fetchGetApi(`/manager/1/restaurant`, ctx);
 
   return {
     props: {

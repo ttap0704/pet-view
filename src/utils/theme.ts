@@ -4,7 +4,6 @@ const theme = createTheme({
   palette: {
     orange: {
       contrastText: "#fff",
-      // main: "#e9131d"
       main: "#ff5349"
     },
     yellow: {

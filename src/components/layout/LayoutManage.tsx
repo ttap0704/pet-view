@@ -1,6 +1,13 @@
 import ManageSideMenu from '../common/ManageSideMenu';
 import Box from '@mui/material/Box';
 import { styled } from '@mui/material/styles';
+import { useRouter } from 'next/router';
+import { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from '../../store';
+import { SET_USER } from '../../store/models/user';
+
+const excepted_path = ['/manage/join', '/manage/login'];
 
 interface LayoutManageProps {
   children: React.ReactNode;
@@ -12,29 +19,59 @@ const LayoutManageBox = styled(Box)(({ theme }) => ({
   display: 'flex',
 }));
 
-const LayoutChildrenWarp = styled(Box)(({ theme }) => ({
-  width: '80vw',
-  height: '100vh',
-  padding: '2rem 2rem 5rem',
-  overflowY: 'auto',
-}));
+interface WarpProps {
+  path: string;
+}
+const LayoutChildrenWarp = styled(Box)<WarpProps>(props => {
+  let width = '';
+
+  if (excepted_path.includes(props.path)) {
+    width = '100vw';
+  } else {
+    width = '80vw';
+  }
+  return {
+    width,
+    height: '100vh',
+    padding: '2rem 2rem 5rem',
+    overflowY: 'auto',
+  };
+});
 
 const LayoutChildrenBox = styled(Box)(({ theme }) => ({
   width: '100%',
   maxWidth: '70rem',
-  height: '100%',
   margin: '0 auto',
 }));
 
 const LayoutManage = (props: LayoutManageProps) => {
+  const user = useSelector((state: RootState) => state.UserReducer);
+  const router = useRouter();
+  const dispatch = useDispatch();
+
   const children = props.children;
+
+  useEffect(() => {
+    if (!excepted_path.includes(router.pathname) && !user.uid) {
+      const user = sessionStorage.getItem('user');
+      if (user) {
+        const session: UserType = JSON.parse(user);
+        dispatch({
+          type: SET_USER,
+          payload: { ...session },
+        });
+      } else {
+        router.push('/manage/login');
+      }
+    }
+  }, []);
+
   return (
     <LayoutManageBox>
-      <ManageSideMenu />
-      <LayoutChildrenWarp>
+      {excepted_path.includes(router.pathname) ? null : <ManageSideMenu />}
+      <LayoutChildrenWarp path={router.pathname}>
         <LayoutChildrenBox>{children}</LayoutChildrenBox>
       </LayoutChildrenWarp>
-      Î
     </LayoutManageBox>
   );
 };

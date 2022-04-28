@@ -1,4 +1,5 @@
 import { Typography } from '@mui/material';
+import Link from 'next/link';
 
 export async function setImageArray(data: { file_name: string }[], set_file?: boolean, type?: string) {
   let image_arr = [];
@@ -190,18 +191,22 @@ export function getNoticeContents(details: ServiceInfoType): (string | React.Rea
         tmp_contents.push(
           <>
             {val} :{' '}
-            <Typography component='a' href={details[key]} target='_blank'>
-              이동
-            </Typography>
+            <Link href={details[key]} passHref={true}>
+              <Typography component='a' target='_blank'>
+                이동
+              </Typography>
+            </Link>
           </>,
         );
       } else if (key == 'kakao_chat') {
         tmp_contents.push(
           <>
             {val} :{' '}
-            <Typography component='a' href={details[key]} target='_blank'>
-              문의하기
-            </Typography>
+            <Link href={details[key]} passHref={true}>
+              <Typography component='a' target='_blank'>
+                문의하기
+              </Typography>
+            </Link>
           </>,
         );
       } else {

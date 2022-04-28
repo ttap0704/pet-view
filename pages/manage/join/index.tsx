@@ -8,13 +8,13 @@ import { styled } from '@mui/material/styles';
 import { MdAttachEmail } from 'react-icons/md';
 import { RiLockPasswordFill } from 'react-icons/ri';
 
-import InputOutlined from '../../src/components/input/InputOutlined';
-import Button from '../../src/components/button/Button';
-import UtilBox from '../../src/components/common/UtilBox';
+import InputOutlined from '../../../src/components/input/InputOutlined';
+import Button from '../../../src/components/button/Button';
+import UtilBox from '../../../src/components/common/UtilBox';
 
-import { fetchPostApi } from '../../src/utils/api';
+import { fetchPostApi } from '../../../src/utils/api';
 
-import { ModalContext } from '../../src/provider/ModalProvider';
+import { ModalContext } from '../../../src/provider/ModalProvider';
 
 const LoginWrap = styled(Box)(({ theme }) => ({
   width: '100%',
@@ -122,7 +122,7 @@ const LoginIndex = () => {
 
     if (user.id) {
       modal_notice.openModalNotice('회원가입이 완료되었습니다.', () => {
-        router.push('/login');
+        router.push('/manage/login');
       });
     }
   };

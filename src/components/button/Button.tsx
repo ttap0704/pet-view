@@ -32,6 +32,7 @@ function Button(props: ButtonProps) {
   const sx = props.sx;
   const onClick = props.onClick;
   const class_name = props.className;
+  const disable_ripple = props.disableRipple;
 
   return (
     <CustomButton
@@ -42,6 +43,7 @@ function Button(props: ButtonProps) {
       sx={sx}
       onClick={onClick}
       className={class_name}
+      disableRipple={disable_ripple}
     >
       {children}
     </CustomButton>

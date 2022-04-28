@@ -23,12 +23,12 @@ interface AccommodationList {
 const AccommodationContainer = styled(Box)(({ theme }) => ({
   width: '100%',
   height: 'auto',
-  display: 'inline-flex',
-  justifyContent: 'space-between',
+  position: 'relative',
 }));
 
 const ListBox = styled(Box)(({ theme }) => ({
   width: '42rem',
+  maxWidth: '42rem',
   height: 'auto',
   cursor: 'pointer',
 }));
@@ -61,7 +61,7 @@ const AccommodationIndex = (props: { list: AccommodationList[]; style: { [key: s
           );
         })}
       </ContainerList>
-      <SideSearchBox onDateChange={test} />
+      <SideSearchBox onDateChange={test} type='accommodation' />
     </AccommodationContainer>
   );
 };

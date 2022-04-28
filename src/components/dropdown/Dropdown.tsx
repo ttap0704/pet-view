@@ -13,9 +13,9 @@ interface MenuButtonPropsStateType {
 
 interface DropdownProps {
   items: string[];
-  fill?: boolean;
   buttonDisabled: boolean;
   onClick: (idx: number) => void;
+  title?: string;
 }
 
 const StyledMenu = styled((props: MenuProps) => (
@@ -62,7 +62,7 @@ const StyledMenu = styled((props: MenuProps) => (
 const CustomDropdown = (props: DropdownProps) => {
   const items: string[] = props.items;
   const disabled = props.buttonDisabled;
-  const fill = props.fill;
+  const title = props.title;
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [menuButtonProps, setMenuButtonProps] = useState<MenuButtonPropsStateType>({
@@ -70,15 +70,6 @@ const CustomDropdown = (props: DropdownProps) => {
     color: 'blue',
   });
   const open = Boolean(anchorEl);
-
-  useEffect(() => {
-    if (fill) {
-      setMenuButtonProps({
-        variant: 'text',
-        color: 'black',
-      });
-    }
-  }, []);
 
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -104,9 +95,9 @@ const CustomDropdown = (props: DropdownProps) => {
         onClick={handleClick}
         disabled={disabled}
         color={menuButtonProps.color}
-        className={fill ? 'fill' : ''}
+        disableRipple={true}
       >
-        {fill ? '선택' : '편집'}
+        {title ? title : '편집'}
       </Button>
       <StyledMenu
         id='demo-customized-menu'

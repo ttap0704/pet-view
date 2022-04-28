@@ -1,39 +1,96 @@
 const servername = "http://localhost:3080";
 
+function getCookie(type: string) {
+  if (typeof window !== 'undefined') {
+    const cookie: string = document.cookie;
+    if (cookie.length > 0) {
+      const cookie_split: string[] = cookie.split(';');
+      const cookie_arr: { target: string; value: string }[] = cookie_split.map(item => {
+        const splited: string[] = item.split('=');
+
+        return {
+          target: splited[0].trim(),
+          value: splited[1].trim(),
+        };
+      });
+
+      const res_item: number = cookie_arr.findIndex(item => {
+        return item.target == type;
+      });
+
+      if (cookie_arr[res_item]) {
+        return cookie_arr[res_item].value;
+      } else {
+        return null;
+      }
+    }
+  }
+
+  return null;
+}
+
+function setHeader(uri: string, no_content_type?: boolean) {
+  const root_path = uri.split('/')[1];
+  const children_path = uri.split('/')[2];
+  const check_arr = ['manage', 'manager'];
+  const excepted_path = ['login', 'join']
+  const cookie: string | null = getCookie('a-token') ? getCookie('a-token') : null;
+
+  const header: { [key: string]: string } = {
+    Accept: 'application/json',
+    'Content-Type': 'application/json',
+  };
+
+  if (no_content_type) {
+    delete header['Content-Type'];
+  }
+
+  if (!excepted_path.includes(children_path) && check_arr.includes(root_path) && cookie) {
+    header['Authorization'] = `a-token ${cookie}`;
+  }
+
+  return header;
+}
+
+function setToken(res: any) {
+  const three_month_later = new Date(new Date().setMonth(new Date().getMonth() + 3));
+
+  if (res.token) {
+    document.cookie = `a-token=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;`; // 만료 코드
+    document.cookie = `a-token=${res.token}; expires=${three_month_later}; path=/`; // 업데이트 코드
+  }
+  if (res.new_token) {
+    document.cookie = `a-token=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;`;
+    document.cookie = `a-token=${res.new_token}; expires=${three_month_later}; path=/`;
+  }
+
+  return;
+}
+
 // Fetch POST
 export const fetchPostApi = async function (uri: string, args: object) {
   let response = await fetch(servername + uri, {
     method: 'POST',
     headers: {
-      Accept: 'application/json',
-      'Content-Type': 'application/json',
+      ...setHeader(uri)
     },
     body: JSON.stringify(args)
   });
   let responseJson = await response.json();
+  setToken(responseJson);
   return responseJson;
 };
 
 // Fetch GET
-export const fetchGetApi = async function (uri: string, token?: string) {
-  let headers;
-  if (token) {
-    headers = {
-      Accept: 'application/json',
-      'Content-Type': 'application/json',
-      cookie: `access-token=${token};`,
-    }
-  } else {
-    headers = {
-      Accept: 'application/json',
-      'Content-Type': 'application/json',
-    }
-  }
+export const fetchGetApi = async function (uri: string) {
   let response = await fetch(servername + uri, {
     method: 'GET',
-    headers
+    headers: {
+      ...setHeader(uri)
+    },
   });
   let responseJson = await response.json();
+  setToken(responseJson);
   return responseJson;
 };
 

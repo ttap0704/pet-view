@@ -106,6 +106,11 @@ const ManageSideMenu = () => {
       ],
       path: null,
     },
+    app: {
+      label: '사용자 페이지',
+      children: [],
+      path: '/',
+    },
   };
 
   const setTreeItems = () => {

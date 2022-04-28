@@ -3,6 +3,7 @@ import Box, { BoxProps } from '@mui/material/Box';
 import React, { useEffect, useState } from 'react';
 import { styled } from '@mui/material/styles';
 import { fetchGetApi } from '../../../src/utils/api';
+import Link from 'next/link';
 
 const StyledBox = styled(Box)(({ theme }) => ({
   width: '100%',
@@ -10,11 +11,6 @@ const StyledBox = styled(Box)(({ theme }) => ({
   display: 'flex',
   alignItems: 'center',
   backgroundColor: theme.palette.white.main,
-}));
-
-const MapWrap = styled(Box)(({ theme }) => ({
-  width: '100%',
-  height: '100%',
 }));
 
 const MapCategory = styled('ul')(({ theme }) => ({
@@ -35,12 +31,13 @@ const MapCategory = styled('ul')(({ theme }) => ({
     padding: '6px 0',
     textAlign: 'center',
     cursor: 'pointer',
+    fontSize: '0.9rem',
 
     '&.on': {
       background: '#eee',
 
       '.category_bg': {
-        backgroundPositionX: '-46px',
+        backgroundPositionX: '-43px',
       },
     },
 
@@ -86,6 +83,10 @@ const KakaoMap = (props: { address: string; label: string }) => {
   const address = props.address;
   const label = props.label;
 
+  const [markContents, setMarkContents] = useState({
+    x: 0,
+    y: 0,
+  });
   const [mapCategoryContents, setMapCategoryContents] = useState([
     {
       label: '은행',
@@ -106,6 +107,12 @@ const KakaoMap = (props: { address: string; label: string }) => {
       clicked: false,
     },
     {
+      label: '주유소',
+      id: 'OL7',
+      key: 'oil',
+      clicked: false,
+    },
+    {
       label: '카페',
       id: 'CE7',
       key: 'cafe',
@@ -115,12 +122,6 @@ const KakaoMap = (props: { address: string; label: string }) => {
       label: '편의점',
       id: 'CS2',
       key: 'store',
-      clicked: false,
-    },
-    {
-      label: '은행',
-      id: 'BK9',
-      key: 'bank',
       clicked: false,
     },
   ]);
@@ -135,7 +136,7 @@ const KakaoMap = (props: { address: string; label: string }) => {
     const { kakao } = window as any;
     if (kakao) {
       kakao.maps.load(() => {
-        var placeOverlay = new kakao.maps.CustomOverlay({ zIndex: 1 }),
+        let placeOverlay = new kakao.maps.CustomOverlay({ zIndex: 1 }),
           contentNode = document.createElement('div'),
           markers: any[] = [],
           currCategory = '';
@@ -149,7 +150,7 @@ const KakaoMap = (props: { address: string; label: string }) => {
           const container = document.getElementById('kakao_map');
           const options = {
             center: new kakao.maps.LatLng(result_y, result_x),
-            level: 4,
+            level: 5,
           };
           const map = new kakao.maps.Map(container, options);
           const ps = new kakao.maps.services.Places(map);
@@ -157,14 +158,17 @@ const KakaoMap = (props: { address: string; label: string }) => {
           kakao.maps.event.addListener(map, 'idle', searchPlaces);
           contentNode.className = 'placeinfo_wrap';
 
-          addEventHandle(contentNode, 'mousedown', kakao.maps.event.preventMap);
-          addEventHandle(contentNode, 'touchstart', kakao.maps.event.preventMap);
+          addEventHandle(contentNode, 'mousedown', () => {
+            kakao.maps.event.preventMap;
+          });
+          addEventHandle(contentNode, 'touchstart', () => {
+            kakao.maps.event.preventMap;
+          });
 
           placeOverlay.setContent(contentNode);
 
           addCategoryClickEvent();
 
-          // 엘리먼트에 이벤트 핸들러를 등록하는 함수입니다
           function addEventHandle(target: any, type: any, callback: any) {
             if (target.addEventListener) {
               target.addEventListener(type, callback);
@@ -174,18 +178,21 @@ const KakaoMap = (props: { address: string; label: string }) => {
           }
 
           function addCategoryClickEvent() {
-            var category: any = document.getElementById('category'),
+            let category: any = document.getElementById('category'),
               children: any = category?.children;
 
             if (children) {
-              for (var i = 0; i < children.length; i++) {
-                children[i].onclick = onClickCategory(children[i]);
+              for (let i = 0; i < children.length; i++) {
+                children[i].onclick = () => {
+                  onClickCategory(children[i]);
+                };
               }
             }
           }
 
           function onClickCategory(el: Element) {
-            var id = el.id,
+            console.log(el);
+            let id = el.id,
               className = el.className;
 
             placeOverlay.setMap(null);
@@ -202,7 +209,7 @@ const KakaoMap = (props: { address: string; label: string }) => {
           }
 
           function changeCategoryClass(el?: Element) {
-            var category: any = document.getElementById('category'),
+            let category: any = document.getElementById('category'),
               children = category.children,
               i;
 
@@ -220,9 +227,16 @@ const KakaoMap = (props: { address: string; label: string }) => {
             position: markerPosition,
           });
           marker.setMap(map);
+          setMarkContents({
+            x: result_x,
+            y: result_y,
+          });
 
           kakao.maps.event.addListener(marker, 'click', function () {
-            window.open(`https://map.kakao.com/link/map/${label},${result_y},${result_x}`, '_blank');
+            const mark = document.getElementById('kakao_mark');
+            if (mark) {
+              mark.click();
+            }
           });
 
           function searchPlaces() {
@@ -238,7 +252,7 @@ const KakaoMap = (props: { address: string; label: string }) => {
           }
 
           function removeMarker() {
-            for (var i = 0; i < markers.length; i++) {
+            for (let i = 0; i < markers.length; i++) {
               markers[i].setMap(null);
             }
             markers = [];
@@ -248,17 +262,15 @@ const KakaoMap = (props: { address: string; label: string }) => {
             if (status === kakao.maps.services.Status.OK) {
               displayPlaces(data);
             } else if (status === kakao.maps.services.Status.ZERO_RESULT) {
-              // 검색결과가 없는경우 해야할 처리가 있다면 이곳에 작성해 주세요
             } else if (status === kakao.maps.services.Status.ERROR) {
-              // 에러로 인해 검색결과가 나오지 않은 경우 해야할 처리가 있다면 이곳에 작성해 주세요
             }
           }
 
           function displayPlaces(places: any) {
-            var order = document.getElementById(currCategory)?.getAttribute('data-order');
+            let order = document.getElementById(currCategory)?.getAttribute('data-order');
 
-            for (var i = 0; i < places.length; i++) {
-              var marker = addMarker(new kakao.maps.LatLng(places[i].y, places[i].x), order);
+            for (let i = 0; i < places.length; i++) {
+              let marker = addMarker(new kakao.maps.LatLng(places[i].y, places[i].x), order);
 
               (function (marker, place) {
                 kakao.maps.event.addListener(marker, 'click', function () {
@@ -269,27 +281,27 @@ const KakaoMap = (props: { address: string; label: string }) => {
           }
 
           function addMarker(position: any, order: any) {
-            var imageSrc = 'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/places_category.png', // 마커 이미지 url, 스프라이트 이미지를 씁니다
-              imageSize = new kakao.maps.Size(27, 28), // 마커 이미지의 크기
+            let imageSrc = 'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/places_category.png',
+              imageSize = new kakao.maps.Size(27, 28),
               imgOptions = {
-                spriteSize: new kakao.maps.Size(72, 208), // 스프라이트 이미지의 크기
-                spriteOrigin: new kakao.maps.Point(46, order * 36), // 스프라이트 이미지 중 사용할 영역의 좌상단 좌표
-                offset: new kakao.maps.Point(11, 28), // 마커 좌표에 일치시킬 이미지 내에서의 좌표
+                spriteSize: new kakao.maps.Size(72, 208),
+                spriteOrigin: new kakao.maps.Point(46, order * 36),
+                offset: new kakao.maps.Point(11, 28),
               },
               markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize, imgOptions),
               marker = new kakao.maps.Marker({
-                position: position, // 마커의 위치
+                position: position,
                 image: markerImage,
               });
 
-            marker.setMap(map); // 지도 위에 마커를 표출합니다
-            markers.push(marker); // 배열에 생성된 마커를 추가합니다
+            marker.setMap(map);
+            markers.push(marker);
 
             return marker;
           }
 
           function displayPlaceInfo(place: any) {
-            var content =
+            let content =
               '<div class="placeinfo">' +
               '   <a class="title" href="' +
               place.place_url +
@@ -347,6 +359,11 @@ const KakaoMap = (props: { address: string; label: string }) => {
   return (
     <>
       <StyledBox id='kakao_map'>
+        <Link href={`https://map.kakao.com/link/map/${label},${markContents.y},${markContents.x}`} passHref={true}>
+          <a target='_blank' id='kakao_mark' style={{ display: 'none' }}>
+            TO LINK
+          </a>
+        </Link>
         <div id='map' style={{ width: '100%', height: '100%', position: 'relative', overflow: 'hidden' }}></div>
         <MapCategory id='category'>
           {mapCategoryContents.map((content, content_idx) => {

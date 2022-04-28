@@ -23,8 +23,8 @@ interface RestaurantList {
 const RestaurantContainer = styled(Box)(({ theme }) => ({
   width: '100%',
   height: 'auto',
-  display: 'inline-flex',
-  justifyContent: 'space-between',
+  display: 'block',
+  position: 'relative',
 }));
 
 const ListBox = styled(Box)(({ theme }) => ({
@@ -62,7 +62,7 @@ const RestaurantIndex = (props: { list: RestaurantList[]; style: { [key: string]
           );
         })}
       </ContainerList>
-      <SideSearchBox onDateChange={test} />
+      <SideSearchBox onDateChange={test} type='restaurant' />
     </RestaurantContainer>
   );
 };
