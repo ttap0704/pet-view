@@ -1,6 +1,7 @@
+import { GetServerSidePropsContext } from 'next'
 const servername = "http://localhost:3080";
 
-function getCookie(type: string) {
+function getCookie(type: string, ctx?: GetServerSidePropsContext) {
   if (typeof window !== 'undefined') {
     const cookie: string = document.cookie;
     if (cookie.length > 0) {
@@ -24,17 +25,23 @@ function getCookie(type: string) {
         return null;
       }
     }
+  } else if (ctx && ctx.req.cookies) {
+    if (ctx.req.cookies[type]) {
+      return ctx.req.cookies[type]
+    } else {
+      return null
+    }
   }
 
   return null;
 }
 
-function setHeader(uri: string, no_content_type?: boolean) {
+function setHeader(uri: string, no_content_type?: boolean, ctx?: GetServerSidePropsContext) {
   const root_path = uri.split('/')[1];
   const children_path = uri.split('/')[2];
   const check_arr = ['manage', 'manager'];
   const excepted_path = ['login', 'join']
-  const cookie: string | null = getCookie('a-token') ? getCookie('a-token') : null;
+  const cookie: string | null = getCookie('a-token', ctx) ? getCookie('a-token', ctx) : null;
 
   const header: { [key: string]: string } = {
     Accept: 'application/json',
@@ -52,19 +59,29 @@ function setHeader(uri: string, no_content_type?: boolean) {
   return header;
 }
 
-function setToken(res: any) {
+function setToken(res: any, ctx?: GetServerSidePropsContext) {
   const three_month_later = new Date(new Date().setMonth(new Date().getMonth() + 3));
 
-  if (res.token) {
-    document.cookie = `a-token=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;`; // 만료 코드
-    document.cookie = `a-token=${res.token}; expires=${three_month_later}; path=/`; // 업데이트 코드
+  if (typeof window !== 'undefined') {
+    if (res.token) {
+      document.cookie = `a-token=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;`; // 만료 코드
+      document.cookie = `a-token=${res.token}; expires=${three_month_later}; path=/`; // 업데이트 코드
+    }
+    if (res.new_token) {
+      document.cookie = `a-token=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;`;
+      document.cookie = `a-token=${res.new_token}; expires=${three_month_later}; path=/`;
+    }
+  } else if (ctx) {
+    console.log(res.new_token)
+    if (res.new_token) {
+      ctx.res.setHeader('set-cookie', [
+        `a-token=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;`,
+        `a-token=${res.new_token}; expires=${three_month_later.toUTCString()}; path=/`
+      ])
+      // document.cookie = `a-token=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;`;
+      // document.cookie = `a-token=${res.new_token}; expires=${three_month_later}; path=/`;
+    }
   }
-  if (res.new_token) {
-    document.cookie = `a-token=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;`;
-    document.cookie = `a-token=${res.new_token}; expires=${three_month_later}; path=/`;
-  }
-
-  return;
 }
 
 // Fetch POST
@@ -82,16 +99,22 @@ export const fetchPostApi = async function (uri: string, args: object) {
 };
 
 // Fetch GET
-export const fetchGetApi = async function (uri: string) {
+export const fetchGetApi = async function (uri: string, ctx?: GetServerSidePropsContext) {
   let response = await fetch(servername + uri, {
     method: 'GET',
     headers: {
-      ...setHeader(uri)
+      ...setHeader(uri, false, ctx)
     },
   });
   let responseJson = await response.json();
-  setToken(responseJson);
-  return responseJson;
+  console.log(responseJson)
+  if (responseJson.new_token) {
+    console.log(responseJson)
+    setToken(responseJson, ctx);
+    fetchGetApi(uri, ctx)
+  } else {
+    return responseJson;
+  }
 };
 
 // Fetch DELETE
@@ -128,7 +151,6 @@ export const fetchFileApi = async function (uri: string, args: FormData) {
 
 // 사업자 인증 API
 export const fecthCheckBusiness = async function (args: object) {
-  console.log(process.env.BUSINESS_KEY)
   const uri = `https://api.odcloud.kr/api/nts-businessman/v1/status?serviceKey=${process.env.BUSINESS_KEY}`
   let response = await fetch(uri, {
     method: 'POST',
