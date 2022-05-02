@@ -8,6 +8,8 @@ import Dropdown from '../dropdown/Dropdown';
 import { useEffect, useState } from 'react';
 import { styled } from '@mui/material/styles';
 import { useRouter } from 'next/router';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../store';
 
 const CustomBox = styled(Box)(({ theme }) => ({
   position: 'sticky',
@@ -67,6 +69,8 @@ const CustomToolbar = styled(Toolbar)(() => ({
 }));
 
 function AppHeader() {
+  const user_info = useSelector((state: RootState) => state.UserReducer);
+
   const [sticky, setSticky] = useState(false);
   const router = useRouter();
 
@@ -112,7 +116,11 @@ function AppHeader() {
       if (idx == 0) {
         console.log(idx);
       } else {
-        router.push('/manage/login');
+        if (Number(user_info.uid) > 0) {
+          router.push('/manage');
+        } else {
+          router.push('/manage/login');
+        }
       }
     };
 

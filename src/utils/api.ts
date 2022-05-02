@@ -1,4 +1,7 @@
 import { GetServerSidePropsContext } from 'next'
+import cookies from 'next-cookies'
+import { serialize } from 'cookie'
+
 const servername = "http://localhost:3080";
 
 function getCookie(type: string, ctx?: GetServerSidePropsContext) {
@@ -65,24 +68,20 @@ function setToken(res: any, ctx?: GetServerSidePropsContext) {
   if (typeof window !== 'undefined') {
     if (res.token) {
       document.cookie = `a-token=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;`; // 만료 코드
-      document.cookie = `a-token=${res.token}; expires=${three_month_later}; path=/`; // 업데이트 코드
+      // document.cookie = `a-token=${res.token}; expires=${three_month_later}; path=/`; // 업데이트 코드
     }
     if (res.new_token) {
       document.cookie = `a-token=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;`;
-      document.cookie = `a-token=${res.new_token}; expires=${three_month_later}; path=/`;
+      // document.cookie = `a-token=${res.new_token}; expires=${three_month_later}; path=/`;
     }
   } else if (ctx) {
-    console.log(res.new_token)
     if (res.new_token) {
-      ctx.res.setHeader('set-cookie', [
-        `a-token=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;`,
-        `a-token=${res.new_token}; expires=${three_month_later.toUTCString()}; path=/`
-      ])
-      // document.cookie = `a-token=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;`;
-      // document.cookie = `a-token=${res.new_token}; expires=${three_month_later}; path=/`;
+      ctx.res.setHeader('Set-Cookie', `a-token=; path=/; expires=-1`)
+      ctx.res.setHeader('Set-Cookie', serialize('a-token', `${res.new_token}`))
     }
   }
 }
+
 
 // Fetch POST
 export const fetchPostApi = async function (uri: string, args: object) {
@@ -107,14 +106,8 @@ export const fetchGetApi = async function (uri: string, ctx?: GetServerSideProps
     },
   });
   let responseJson = await response.json();
-  console.log(responseJson)
-  if (responseJson.new_token) {
-    console.log(responseJson)
-    setToken(responseJson, ctx);
-    fetchGetApi(uri, ctx)
-  } else {
-    return responseJson;
-  }
+  setToken(responseJson, ctx);
+  return responseJson;
 };
 
 // Fetch DELETE
