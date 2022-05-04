@@ -56,7 +56,11 @@ const ManageRestaurantInfo = (props: { list: RestaurantListType; style: { [key: 
   }, [data.per_page]);
 
   useEffect(() => {
-    getTableItems(props.list);
+    if (!props.list.rows) {
+      getTableItems();
+    } else {
+      getTableItems(props.list);
+    }
     setFirstUpdate(true);
   }, []);
 

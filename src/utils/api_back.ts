@@ -1,23 +1,50 @@
 import { GetServerSidePropsContext } from 'next'
-import { parse, serialize } from 'cookie'
+import cookies from 'next-cookies'
+import { serialize } from 'cookie'
 
 const servername = "http://localhost:3080";
-const localname = "http://localhost:3001";
 
+function getCookie(type: string, ctx?: GetServerSidePropsContext) {
+  if (typeof window !== 'undefined') {
+    const cookie: string = document.cookie;
+    if (cookie.length > 0) {
+      const cookie_split: string[] = cookie.split(';');
+      const cookie_arr: { target: string; value: string }[] = cookie_split.map(item => {
+        const splited: string[] = item.split('=');
 
-async function setHeader(uri: string, no_content_type?: boolean) {
+        return {
+          target: splited[0].trim(),
+          value: splited[1].trim(),
+        };
+      });
+
+      const res_item: number = cookie_arr.findIndex(item => {
+        return item.target == type;
+      });
+
+      if (cookie_arr[res_item]) {
+        return cookie_arr[res_item].value;
+      } else {
+        return null;
+      }
+    }
+  } else if (ctx && ctx.req.cookies) {
+    if (ctx.req.cookies[type]) {
+      return ctx.req.cookies[type]
+    } else {
+      return null
+    }
+  }
+
+  return null;
+}
+
+function setHeader(uri: string, no_content_type?: boolean, ctx?: GetServerSidePropsContext) {
   const root_path = uri.split('/')[1];
   const children_path = uri.split('/')[2];
   const check_arr = ['manage', 'manager'];
   const excepted_path = ['login', 'join']
-  const cookie_fetch = await fetch(localname + '/api/get-cookies', {
-    method: 'POST',
-    body: JSON.stringify({ type: 'a-token' })
-  })
-  console.log(cookie_fetch)
-  const cookie_res: { pass: boolean, token: string } = await cookie_fetch.json();
-  const cookie: string = cookie_res.token
-  console.log(cookie_res)
+  const cookie: string | null = getCookie('a-token', ctx) ? getCookie('a-token', ctx) : null;
 
   const header: { [key: string]: string } = {
     Accept: 'application/json',
@@ -41,22 +68,16 @@ function setToken(res: any, ctx?: GetServerSidePropsContext) {
   if (typeof window !== 'undefined') {
     if (res.token) {
       document.cookie = `a-token=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;`; // 만료 코드
-      document.cookie = `a-token=${res.token}; expires=${three_month_later}; path=/`; // 업데이트 코드
+      // document.cookie = `a-token=${res.token}; expires=${three_month_later}; path=/`; // 업데이트 코드
     }
     if (res.new_token) {
       document.cookie = `a-token=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;`;
-      document.cookie = `a-token=${res.new_token}; expires=${three_month_later}; path=/`;
+      // document.cookie = `a-token=${res.new_token}; expires=${three_month_later}; path=/`;
     }
   } else if (ctx) {
     if (res.new_token) {
-      ctx.res.setHeader('Set-Cookie', serialize(`a-token=`, ';', {
-        path: '/',
-        expires: new Date()
-      }))
-      ctx.res.setHeader('Set-Cookie', serialize('a-token', `${res.new_token}`, {
-        path: '/',
-        expires: three_month_later
-      }))
+      ctx.res.setHeader('Set-Cookie', `a-token=; path=/; expires=-1`)
+      ctx.res.setHeader('Set-Cookie', serialize('a-token', `${res.new_token}`))
     }
   }
 }
@@ -67,33 +88,25 @@ export const fetchPostApi = async function (uri: string, args: object) {
   let response = await fetch(servername + uri, {
     method: 'POST',
     headers: {
-      ...await setHeader(uri)
+      ...setHeader(uri)
     },
     body: JSON.stringify(args)
   });
   let responseJson = await response.json();
-  const set_token = await fetch(localname + '/api/set-cookies', {
-    method: 'POST',
-    body: JSON.stringify(responseJson)
-  })
-  console.log(set_token, 'setToken')
+  setToken(responseJson);
   return responseJson;
 };
 
 // Fetch GET
 export const fetchGetApi = async function (uri: string, ctx?: GetServerSidePropsContext) {
-  const headers = { ...await setHeader(uri) };
   let response = await fetch(servername + uri, {
     method: 'GET',
-    headers,
+    headers: {
+      ...setHeader(uri, false, ctx)
+    },
   });
   let responseJson = await response.json();
-  const set_token = await fetch(localname + '/api/set-cookies', {
-    method: 'POST',
-    body: JSON.stringify(responseJson)
-  })
-  console.log(set_token, 'setToken')
-
+  setToken(responseJson, ctx);
   return responseJson;
 };
 
