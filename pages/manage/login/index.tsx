@@ -18,6 +18,7 @@ import UtilBox from '../../../src/components/common/UtilBox';
 import { ModalContext } from '../../../src/provider/ModalProvider';
 import { fetchPostApi } from '../../../src/utils/api';
 import { RootState } from '../../../src/store';
+import wrapper from '../../../src/store/configureStore';
 
 const LoginWrap = styled(Box)(({ theme }) => ({
   width: '100%',

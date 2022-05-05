@@ -1,13 +1,28 @@
-import { combineReducers } from "redux";
+import { AnyAction, CombinedState, combineReducers } from 'redux'
+import { HYDRATE } from 'next-redux-wrapper'
 
-// models
 import UserReducer from "./models/user"
 
-const rootReducer = combineReducers({
-    // models
-    UserReducer,
-})
+export interface IState {
+	UserReducer: UserType
+}
+// models
 
-export default rootReducer;
+const rootReducer = (state: IState, action: AnyAction): CombinedState<IState> => {
+	switch (action.type) {
+		case HYDRATE:
+			console.log(action.payload)
+			return action.payload;
+		default:
+			const combineReducer = combineReducers({
+				// models
+				UserReducer,
+			})
+			return combineReducer(state, action)
+
+	}
+};
+
 
 export type RootState = ReturnType<typeof rootReducer>;
+export default rootReducer;

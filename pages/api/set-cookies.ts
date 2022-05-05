@@ -19,7 +19,6 @@ export default function handler(
     if (req.method === 'POST') {
       const three_month_later = new Date(new Date().setMonth(new Date().getMonth() + 3));
 
-      console.log(req.token, req.new_token, 'hihi')
       if (req.token) {
         res.setHeader('Set-Cookie', serialize(`a-token=`, ';', {
           path: '/',

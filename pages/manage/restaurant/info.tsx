@@ -15,6 +15,8 @@ import ModalPostcodeForm from '../../../src/components/modal/ModalPostcodeForm';
 import Table from '../../../src/components/table/Table';
 import { TableContext } from '../../../src/provider/TableProvider';
 import { ModalContext } from '../../../src/provider/ModalProvider';
+import wrapper from '../../../src/store/configureStore';
+import { Context } from 'next-redux-wrapper';
 
 const ManageRestaurantInfo = (props: { list: RestaurantListType; style: { [key: string]: string } }) => {
   const { data } = useContext(TableContext);
@@ -543,14 +545,25 @@ const ManageRestaurantInfo = (props: { list: RestaurantListType; style: { [key: 
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async ctx => {
-  const data: RestaurantListType = await fetchGetApi(`/manager/1/restaurant`, ctx);
+// export const getServerSideProps: GetServerSideProps = async ctx => {
+//   const data: RestaurantListType = await fetchGetApi(`/manager/1/restaurant`, ctx);
+
+//   return {
+//     props: {
+//       list: data,
+//     },
+//   };
+// };
+
+export const getServerSideProps = wrapper.getServerSideProps(store => async (context: Context) => {
+  const user = store.getState().UserReducer;
+  const data: RestaurantListType = await fetchGetApi(`/manager/${user.uid}/restaurant`);
 
   return {
     props: {
       list: data,
     },
   };
-};
+});
 
 export default ManageRestaurantInfo;

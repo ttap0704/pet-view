@@ -1,9 +1,7 @@
 import React from 'react';
-import App, { AppContext, AppProps } from 'next/app';
-import { Provider } from 'react-redux';
+import { AppProps } from 'next/app';
 import { useRouter } from 'next/router';
 import { useState, useEffect } from 'react';
-import configureStore from '../src/store/configureStore';
 import '../src/assets/styles/globals.scss';
 import dotenv from 'dotenv';
 import { ThemeProvider } from '@mui/material/styles';
@@ -12,10 +10,10 @@ import TableProvider from '../src/provider/TableProvider';
 import theme from '../src/utils/theme';
 import LayoutApp from '../src/components/layout/LayoutApp';
 import LayoutManage from '../src/components/layout/LayoutManage';
+import wrapper from '../src/store/configureStore';
 
 dotenv.config();
 // store 설정파일 로드
-const store = configureStore();
 
 const _APP = ({ Component, pageProps }: AppProps) => {
   const router = useRouter();
@@ -48,13 +46,11 @@ const _APP = ({ Component, pageProps }: AppProps) => {
 
   return (
     <>
-      <Provider store={store}>
-        <ThemeProvider theme={theme}>
-          <ModalProvider>
-            <Layout />
-          </ModalProvider>
-        </ThemeProvider>
-      </Provider>
+      <ThemeProvider theme={theme}>
+        <ModalProvider>
+          <Layout />
+        </ModalProvider>
+      </ThemeProvider>
       <script
         type='text/javascript'
         src={`//dapi.kakao.com/v2/maps/sdk.js?autoload=false&appkey=${process.env.NEXT_PUBLIC_KAKAO_MAP_API_KEY}&libraries=services`}
@@ -64,10 +60,4 @@ const _APP = ({ Component, pageProps }: AppProps) => {
   );
 };
 
-_APP.getInitialProps = async (appContext: AppContext) => {
-  const appProps = await App.getInitialProps(appContext);
-
-  return { ...appProps };
-};
-
-export default _APP;
+export default wrapper.withRedux(_APP);
