@@ -17,8 +17,11 @@ import { TableContext } from '../../../src/provider/TableProvider';
 import { ModalContext } from '../../../src/provider/ModalProvider';
 import wrapper from '../../../src/store/configureStore';
 import { Context } from 'next-redux-wrapper';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../../src/store';
 
 const ManageRestaurantInfo = (props: { list: RestaurantListType; style: { [key: string]: string } }) => {
+  const user = useSelector((state: RootState) => state.userReducer);
   const { data } = useContext(TableContext);
   const { modal_confirm, modal_edit, modal_alert, modal_upload, modal_image_detail } = useContext(ModalContext);
 
@@ -58,6 +61,7 @@ const ManageRestaurantInfo = (props: { list: RestaurantListType; style: { [key: 
   }, [data.per_page]);
 
   useEffect(() => {
+    console.log(user);
     if (!props.list.rows) {
       getTableItems();
     } else {
@@ -556,8 +560,8 @@ const ManageRestaurantInfo = (props: { list: RestaurantListType; style: { [key: 
 // };
 
 export const getServerSideProps = wrapper.getServerSideProps(store => async (context: Context) => {
-  const user = store.getState().UserReducer;
-  const data: RestaurantListType = await fetchGetApi(`/manager/${user.uid}/restaurant`);
+  console.log(store);
+  const data: RestaurantListType = await fetchGetApi(`/manager/1/restaurant`);
 
   return {
     props: {

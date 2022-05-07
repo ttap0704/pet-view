@@ -1,5 +1,5 @@
 interface UserType {
-  uid: number | undefined,
+  uid: number | null,
   unick: string,
   profile_path: string
 }

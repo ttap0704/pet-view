@@ -1,5 +1,5 @@
 import React from 'react';
-import { AppProps } from 'next/app';
+import { AppContext, AppProps } from 'next/app';
 import { useRouter } from 'next/router';
 import { useState, useEffect } from 'react';
 import '../src/assets/styles/globals.scss';

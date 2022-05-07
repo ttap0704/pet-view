@@ -1,26 +1,17 @@
-import { configureStore } from '@reduxjs/toolkit'
-import { createWrapper } from 'next-redux-wrapper';
-import { compose, Store, Reducer, AnyAction } from "redux";
-import rootReducer, { IState } from ".";
+import { AnyAction, configureStore, Reducer, Store } from '@reduxjs/toolkit'
+import { createWrapper } from 'next-redux-wrapper'
+import rootReducer, { IState } from '.'
 
-declare global {
-	interface Window {
-		__REDUX_DEVTOOLS_EXTENSION_COMPOSE__?: typeof compose;
-	}
-}
-
-const is_dev = process.env.NODE_ENV === 'development';
-
-// store 생성
 const createStore = () => {
 	const store = configureStore({
 		reducer: rootReducer as Reducer<IState, AnyAction>,
-		devTools: is_dev
-	});
-
-	return store;
+	})
+	return store
 }
+const store = createStore()
 
-const wrapper = createWrapper(createStore);
+export type RootState = ReturnType<typeof store.getState>
+export type AppDispatch = typeof store.dispatch
 
-export default wrapper;
+const wrapper = createWrapper<Store<IState>>(createStore)
+export default wrapper

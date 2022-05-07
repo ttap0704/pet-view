@@ -6,6 +6,7 @@ import { useEffect, useState, useContext, forwardRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { styled } from '@mui/material/styles';
 import { SET_USER } from '../../../src/store/models/user';
+import { setUser } from '../../../src/store/slices/user';
 
 import { MdAttachEmail } from 'react-icons/md';
 import { RiLockPasswordFill } from 'react-icons/ri';
@@ -18,7 +19,6 @@ import UtilBox from '../../../src/components/common/UtilBox';
 import { ModalContext } from '../../../src/provider/ModalProvider';
 import { fetchPostApi } from '../../../src/utils/api';
 import { RootState } from '../../../src/store';
-import wrapper from '../../../src/store/configureStore';
 
 const LoginWrap = styled(Box)(({ theme }) => ({
   width: '100%',
@@ -42,7 +42,7 @@ const LoginBox = styled(Box)(({ theme }) => ({
 }));
 
 const LoginIndex = () => {
-  const user = useSelector((state: RootState) => state.UserReducer);
+  const user = useSelector((state: RootState) => state.userReducer);
   const router = useRouter();
   const dispatch = useDispatch();
 
@@ -107,12 +107,7 @@ const LoginIndex = () => {
         profile_path: user.profile_path,
       };
       sessionStorage.setItem('user', JSON.stringify({ ...saved_user }));
-      dispatch({
-        type: SET_USER,
-        payload: {
-          ...saved_user,
-        },
-      });
+      dispatch(setUser({ ...saved_user }));
       modal_notice.openModalNotice(user.message, () => {
         router.push('/manage');
       });

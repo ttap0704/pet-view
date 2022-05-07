@@ -5,7 +5,7 @@ import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../store';
-import { SET_USER } from '../../store/models/user';
+import { setUser } from '../../store/slices/user';
 
 const excepted_path = ['/manage/join', '/manage/login'];
 
@@ -45,7 +45,7 @@ const LayoutChildrenBox = styled(Box)(({ theme }) => ({
 }));
 
 const LayoutManage = (props: LayoutManageProps) => {
-  const user = useSelector((state: RootState) => state.UserReducer);
+  const user = useSelector((state: RootState) => state.userReducer);
   const router = useRouter();
   const dispatch = useDispatch();
 
@@ -56,10 +56,7 @@ const LayoutManage = (props: LayoutManageProps) => {
       const user = sessionStorage.getItem('user');
       if (user) {
         const session: UserType = JSON.parse(user);
-        dispatch({
-          type: SET_USER,
-          payload: { ...session },
-        });
+        dispatch(setUser(session));
       } else {
         router.push('/manage/login');
       }

@@ -22,7 +22,6 @@ const CustomBox = styled(Box)(({ theme }) => ({
   overflow: 'hidden',
   position: 'relative',
   boxShadow: '2px 4px 4px 0 rgba(0, 0, 0, 0.4)',
-  backgroundColor: theme.palette.black.main,
 
   '&:hover': {
     '& > .image-slider': {
