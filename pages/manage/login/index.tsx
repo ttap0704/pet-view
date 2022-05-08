@@ -159,11 +159,4 @@ const LoginIndex = () => {
   );
 };
 
-// export const getServerSideProps = wrapper.getServerSideProps(store => async ({ params }) => {
-//   console.log(store.getState().userReducer, 'loginPage');
-//   const { dispatch } = store;
-//   dispatch(setUser({ uid: 100, unick: '', profile_path: '' }));
-//   return { props: {} };
-// });
-
 export default LoginIndex;

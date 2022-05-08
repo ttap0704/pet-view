@@ -10,6 +10,8 @@ import ModalRadio from '../../../src/components/modal/ModalRadio';
 import Table from '../../../src/components/table/Table';
 import { TableContext } from '../../../src/provider/TableProvider';
 import { ModalContext } from '../../../src/provider/ModalProvider';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../../src/store';
 
 interface RadioModalContentsDataType {
   visible: boolean;
@@ -18,6 +20,7 @@ interface RadioModalContentsDataType {
 }
 
 const ManageRestaurantEntireMenu = () => {
+  const user = useSelector((state: RootState) => state.userReducer);
   const { data } = useContext(TableContext);
   const { modal_confirm, modal_edit, modal_alert } = useContext(ModalContext);
 
@@ -58,7 +61,7 @@ const ManageRestaurantEntireMenu = () => {
 
   const setRadioModalContents = async (restaurant_id: number) => {
     const category_list: EntireMenuCategoryResponse[] = await fetchGetApi(
-      `/manager/1/restaurant/${restaurant_id}/category`,
+      `/manager/${user.uid}/restaurant/${restaurant_id}/category`,
     );
     const radio_data = category_list.map(item => {
       return {
@@ -74,7 +77,7 @@ const ManageRestaurantEntireMenu = () => {
   };
 
   const deleteEntireMenu = async (restaurant_id: number, id: number) => {
-    const response = await fetchDeleteApi(`/manager/1/restaurant/${restaurant_id}/entire_menu/${id}`);
+    const response = await fetchDeleteApi(`/manager/${user.uid}/restaurant/${restaurant_id}/entire_menu/${id}`);
     if (response == 200) {
       modal_alert.openModalAlert('삭제가 완료되었습니다.');
     } else {
@@ -113,7 +116,7 @@ const ManageRestaurantEntireMenu = () => {
     const target = data.table_items.find(item => item.checked);
 
     if (target) {
-      let url = `/manager/1/restaurant/${target.restaurant_id}/entire_menu/${target.id}`;
+      let url = `/manager/${user.uid}/restaurant/${target.restaurant_id}/entire_menu/${target.id}`;
 
       const status = await fetchPatchApi(url, { target: 'category_id', value: item.id });
 
@@ -133,7 +136,7 @@ const ManageRestaurantEntireMenu = () => {
     const target_string = modal_edit.data.target;
 
     if (target) {
-      let url = `/manager/1/restaurant/${target.restaurant_id}/entire_menu/${target.id}`;
+      let url = `/manager/${user.uid}/restaurant/${target.restaurant_id}/entire_menu/${target.id}`;
 
       const status = await fetchPatchApi(url, { target: target_string, value });
 
@@ -147,7 +150,9 @@ const ManageRestaurantEntireMenu = () => {
   };
 
   const getTableItems = async () => {
-    const restaurant: EntireMenuListType = await fetchGetApi(`/manager/1/restaurant/entire_menu?page=${data.per_page}`);
+    const restaurant: EntireMenuListType = await fetchGetApi(
+      `/manager/${user.uid}/restaurant/entire_menu?page=${data.per_page}`,
+    );
 
     const count = restaurant.count;
     const rows = restaurant.rows;

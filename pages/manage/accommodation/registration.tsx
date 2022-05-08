@@ -25,8 +25,11 @@ import FormServiceInfo from '../../../src/components/form/FormServiceInfo';
 import ModalUpload from '../../../src/components/modal/ModalUpload';
 import ModalRoomPrice from '../../../src/components/modal/ModalRoomPrice';
 import ModalRoomTime from '../../../src/components/modal/ModalRoomTime';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../../src/store';
 
 const ManageAccommodationRegistration = () => {
+  const user = useSelector((state: RootState) => state.userReducer);
   const { modal_upload, modal_confirm, modal_alert, modal_notice } = useContext(ModalContext);
   const router = useRouter();
 
@@ -359,7 +362,10 @@ const ManageAccommodationRegistration = () => {
       rooms: [...rooms_data],
     };
 
-    const accommodation: CreateAccommodationResponse = await fetchPostApi(`/manager/1/accommodation`, accom_data);
+    const accommodation: CreateAccommodationResponse = await fetchPostApi(
+      `/manager/${user.uid}/accommodation`,
+      accom_data,
+    );
     const accommodation_id = accommodation.accommodation_id;
 
     let exposure_images = [];

@@ -96,7 +96,6 @@ const ModalImageDetail = () => {
     } else {
       return false;
     }
-    console.log(dir);
   };
 
   const setImageSrc = (list: ImageListType) => {

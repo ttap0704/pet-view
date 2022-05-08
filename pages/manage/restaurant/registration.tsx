@@ -24,8 +24,11 @@ import ListEntireMenu from '../../../src/components/list/ListEntireMenu';
 import ModalUpload from '../../../src/components/modal/ModalUpload';
 
 import validation from '../../../src/utils/validation';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../../src/store';
 
 const ManageRestaurantRegistration = () => {
+  const user = useSelector((state: RootState) => state.userReducer);
   const router = useRouter();
   const { modal_upload, modal_confirm, modal_alert, modal_notice } = useContext(ModalContext);
 
@@ -325,7 +328,7 @@ const ManageRestaurantRegistration = () => {
       exposureMenu: tmp_exposure_menu,
       entireMenu: tmp_entire_menu,
     };
-    const restaurant: RestaurantType = await fetchPostApi(`/manager/1/restaurant`, restaurant_data);
+    const restaurant: RestaurantType = await fetchPostApi(`/manager/${user.uid}/restaurant`, restaurant_data);
     const restaurant_id = restaurant.restaurant_id;
 
     let exposure_images = [];

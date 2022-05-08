@@ -1,5 +1,6 @@
 import { GetServerSideProps, GetStaticProps } from 'next';
 import { useEffect, useState, useContext } from 'react';
+import { useSelector } from 'react-redux';
 
 import { fetchGetApi, fetchPatchApi, fetchDeleteApi, fetchFileApi, fetchPostApi } from '../../../src/utils/api';
 import { getDate, setImageArray, setImageFormData } from '../../../src/utils/tools';
@@ -15,6 +16,7 @@ import ModalServiceInfo from '../../../src/components/modal/ModalServiceInfo';
 import Table from '../../../src/components/table/Table';
 import { TableContext } from '../../../src/provider/TableProvider';
 import { ModalContext } from '../../../src/provider/ModalProvider';
+import { RootState } from '../../../src/store';
 
 interface AddRoomContents {
   visible: boolean;
@@ -29,6 +31,7 @@ interface PeakSeasonModalContentsType {
 }
 
 const ManageAccommodationInfo = () => {
+  const user = useSelector((state: RootState) => state.userReducer);
   const { data } = useContext(TableContext);
   const { modal_confirm, modal_edit, modal_alert, modal_upload, modal_image_detail } = useContext(ModalContext);
 
@@ -138,7 +141,7 @@ const ManageAccommodationInfo = () => {
   };
 
   const deleteAccommodation = async (id: number) => {
-    const response = await fetchDeleteApi(`/manager/1/accommodation/${id}`);
+    const response = await fetchDeleteApi(`/manager/${user.uid}/accommodation/${id}`);
     if (response == 200) {
       modal_alert.openModalAlert('삭제가 완료되었습니다.');
     } else {
@@ -171,7 +174,7 @@ const ManageAccommodationInfo = () => {
   const updatePeakSeason = async (season_data: { start: string; end: string }[]) => {
     const target = data.table_items.find(item => item.checked);
     if (target) {
-      const update_res = await fetchPostApi(`/manager/1/accommodation/${target.id}/season`, {
+      const update_res = await fetchPostApi(`/manager/${user.uid}/accommodation/${target.id}/season`, {
         season: season_data,
       });
       if (update_res) {
@@ -187,7 +190,7 @@ const ManageAccommodationInfo = () => {
   const updateServiceInfo = async (service_info: ServiceInfoType) => {
     const target = data.table_items.find(item => item.checked);
     if (target) {
-      const update_res = await fetchPostApi(`/manager/1/accommodation/${target.id}/service`, {
+      const update_res = await fetchPostApi(`/manager/${user.uid}/accommodation/${target.id}/service`, {
         service_info,
       });
       if (update_res) {
@@ -327,7 +330,7 @@ const ManageAccommodationInfo = () => {
     const target_string = modal_edit.data.target;
 
     if (target) {
-      let url = `/manager/1/accommodation/${target.id}`;
+      let url = `/manager/${user.uid}/accommodation/${target.id}`;
 
       const status = await fetchPatchApi(url, { target: target_string, value });
 
@@ -358,7 +361,10 @@ const ManageAccommodationInfo = () => {
       });
 
       let rooms_payload = [];
-      const res_rooms: RoomType[] = await fetchPostApi(`/manager/1/accommodation/${target.id}/rooms`, add_room_data);
+      const res_rooms: RoomType[] = await fetchPostApi(
+        `/manager/${user.uid}/accommodation/${target.id}/rooms`,
+        add_room_data,
+      );
       for (const room of rooms) {
         const target_room = res_rooms.find(room_item => room_item.label == room.label);
         let room_images = [];
@@ -387,7 +393,9 @@ const ManageAccommodationInfo = () => {
   };
 
   const getTableItems = async () => {
-    const accommodation: AccommodationListType = await fetchGetApi(`/manager/1/accommodation?page=${data.per_page}`);
+    const accommodation: AccommodationListType = await fetchGetApi(
+      `/manager/${user.uid}/accommodation?page=${data.per_page}`,
+    );
 
     const count = accommodation.count;
     const rows = accommodation.rows;
@@ -440,7 +448,7 @@ const ManageAccommodationInfo = () => {
         }
       }
 
-      const response = await fetchPostApi(`/manager/1/accommodation/${target.id}/rooms/order`, change_data);
+      const response = await fetchPostApi(`/manager/${user.uid}/accommodation/${target.id}/rooms/order`, change_data);
       if (response) {
         getTableItems();
         setOrderContents({ visible: false, title: '', list: [] });
@@ -456,7 +464,9 @@ const ManageAccommodationInfo = () => {
   const updateAddress = async (address: ResponsePostcodeDataType) => {
     const target = data.table_items.find(item => item.checked);
     if (target) {
-      const update_res = await await fetchPostApi(`/manager/1/accommodation/${target.id}/address`, { address });
+      const update_res = await fetchPostApi(`/manager/${user.uid}/accommodation/${target.id}/address`, {
+        address,
+      });
       if (update_res) {
         getTableItems();
         setPostcodeVisible(false);

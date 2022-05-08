@@ -11,6 +11,8 @@ import Modalorder from '../../../src/components/modal/ModalOrder';
 import Table from '../../../src/components/table/Table';
 import { TableContext } from '../../../src/provider/TableProvider';
 import { ModalContext } from '../../../src/provider/ModalProvider';
+import { RootState } from '../../../src/store';
+import { useSelector } from 'react-redux';
 
 interface EntireMenuModalContentsType {
   visible: boolean;
@@ -20,6 +22,7 @@ interface EntireMenuModalContentsType {
 }
 
 const ManageAccommodationCategory = () => {
+  const user = useSelector((state: RootState) => state.userReducer);
   const { data } = useContext(TableContext);
   const { modal_confirm, modal_edit, modal_alert, modal_upload } = useContext(ModalContext);
 
@@ -97,7 +100,7 @@ const ManageAccommodationCategory = () => {
   };
 
   const deleteCategory = async (restaurant_id: number, id: number) => {
-    const response = await fetchDeleteApi(`/manager/1/restaurant/${restaurant_id}/category/${id}`);
+    const response = await fetchDeleteApi(`/manager/${user.uid}/restaurant/${restaurant_id}/category/${id}`);
     if (response == 200) {
       modal_alert.openModalAlert('삭제가 완료되었습니다.');
     } else {
@@ -111,9 +114,12 @@ const ManageAccommodationCategory = () => {
 
     if (target) {
       const menu = [...category[0].menu];
-      const res = await fetchPostApi(`/manager/1/restaurant/${target.restaurant_id}/category/${target.id}/menu`, {
-        menu,
-      });
+      const res = await fetchPostApi(
+        `/manager/${user.uid}/restaurant/${target.restaurant_id}/category/${target.id}/menu`,
+        {
+          menu,
+        },
+      );
 
       if (res) {
         modal_alert.openModalAlert('전체메뉴 등록이 완료되었습니다.');
@@ -150,7 +156,7 @@ const ManageAccommodationCategory = () => {
     const target_string = modal_edit.data.target;
 
     if (target) {
-      let url = `/manager/1/restaurant/${target.restaurant_id}/category/${target.id}`;
+      let url = `/manager/${user.uid}/restaurant/${target.restaurant_id}/category/${target.id}`;
       const status = await fetchPatchApi(url, { target: target_string, value });
 
       if (status == 200) {
@@ -164,7 +170,7 @@ const ManageAccommodationCategory = () => {
 
   const getTableItems = async () => {
     const category: EntireMenuCategoryListType = await fetchGetApi(
-      `/manager/1/restaurant/category?page=${data.per_page}`,
+      `/manager/${user.uid}/restaurant/category?page=${data.per_page}`,
     );
 
     const count = category.count;
@@ -206,7 +212,7 @@ const ManageAccommodationCategory = () => {
         }
       }
       const response = await fetchPostApi(
-        `/manager/1/restaurant/${target.restaurant_id}/entire_menu/order`,
+        `/manager/${user.uid}/restaurant/${target.restaurant_id}/entire_menu/order`,
         change_data,
       );
       if (response) {

@@ -12,8 +12,11 @@ import ModalRoomTime from '../../../src/components/modal/ModalRoomTime';
 import Table from '../../../src/components/table/Table';
 import { TableContext } from '../../../src/provider/TableProvider';
 import { ModalContext } from '../../../src/provider/ModalProvider';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../../src/store';
 
 const ManageAccommodationRooms = () => {
+  const user = useSelector((state: RootState) => state.userReducer);
   const { data } = useContext(TableContext);
   const { modal_confirm, modal_edit, modal_alert, modal_upload, modal_image_detail } = useContext(ModalContext);
 
@@ -164,7 +167,10 @@ const ManageAccommodationRooms = () => {
     if (target) {
       const accommodation_id = target.accommodation_id;
       const id = target.id;
-      const update_res = await fetchPostApi(`/manager/1/accommodation/${accommodation_id}/rooms/${id}/info`, price);
+      const update_res = await fetchPostApi(
+        `/manager/${user.uid}/accommodation/${accommodation_id}/rooms/${id}/info`,
+        price,
+      );
 
       if (update_res) {
         let title = '';
@@ -188,7 +194,7 @@ const ManageAccommodationRooms = () => {
   };
 
   const deleteRoom = async (accommodation_id: number, id: number) => {
-    const response = await fetchDeleteApi(`/manager/1/accommodation/${accommodation_id}/rooms/${id}`);
+    const response = await fetchDeleteApi(`/manager/${user.uid}/accommodation/${accommodation_id}/rooms/${id}`);
     if (response == 200) {
       modal_alert.openModalAlert('삭제가 완료되었습니다.');
     } else {
@@ -293,7 +299,7 @@ const ManageAccommodationRooms = () => {
 
     if (target) {
       const accommodation_id = target.accommodation_id;
-      let url = `/manager/1/accommodation/${accommodation_id}/rooms/${target.id}`;
+      let url = `/manager/${user.uid}/accommodation/${accommodation_id}/rooms/${target.id}`;
       if (target_string == 'price') {
         value = `${value}`.replace(/\,/g, '');
       }
@@ -311,7 +317,7 @@ const ManageAccommodationRooms = () => {
 
   const getTableItems = async () => {
     const accommodation: AccommodationRoomsListType = await fetchGetApi(
-      `/manager/1/accommodation/rooms?page=${data.per_page}`,
+      `/manager/${user.uid}/accommodation/rooms?page=${data.per_page}`,
     );
 
     const count = accommodation.count;

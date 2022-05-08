@@ -11,6 +11,8 @@ import ModalUpdateExposureMenu from '../../../src/components/modal/ModalUpdateEx
 import Table from '../../../src/components/table/Table';
 import { TableContext } from '../../../src/provider/TableProvider';
 import { ModalContext } from '../../../src/provider/ModalProvider';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../../src/store';
 
 interface UpdateExposureMenuImageContentsType {
   visible: boolean;
@@ -18,6 +20,7 @@ interface UpdateExposureMenuImageContentsType {
 }
 
 const ManageRestaurantExposureMenu = () => {
+  const user = useSelector((state: RootState) => state.userReducer);
   const { data } = useContext(TableContext);
   const { modal_confirm, modal_edit, modal_alert, modal_upload, modal_image_detail } = useContext(ModalContext);
 
@@ -107,7 +110,7 @@ const ManageRestaurantExposureMenu = () => {
   };
 
   const deleteExposureMenu = async (restaurant_id: number, id: number) => {
-    const response = await fetchDeleteApi(`/manager/1/restaurant/${restaurant_id}/exposure_menu/${id}`);
+    const response = await fetchDeleteApi(`/manager/${user.uid}/restaurant/${restaurant_id}/exposure_menu/${id}`);
     if (response == 200) {
       modal_alert.openModalAlert('삭제가 완료되었습니다.');
     } else {
@@ -196,7 +199,7 @@ const ManageRestaurantExposureMenu = () => {
     const target_string = modal_edit.data.target;
 
     if (target) {
-      let url = `/manager/1/restaurant/${target.restaurant_id}/exposure_menu/${target.id}`;
+      let url = `/manager/${user.uid}/restaurant/${target.restaurant_id}/exposure_menu/${target.id}`;
 
       const status = await fetchPatchApi(url, { target: target_string, value });
 
@@ -211,7 +214,7 @@ const ManageRestaurantExposureMenu = () => {
 
   const getTableItems = async () => {
     const accommodation: ExposureMenuListType = await fetchGetApi(
-      `/manager/1/restaurant/exposure_menu?page=${data.per_page}`,
+      `/manager/${user.uid}/restaurant/exposure_menu?page=${data.per_page}`,
     );
 
     const count = accommodation.count;
