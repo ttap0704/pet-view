@@ -16,6 +16,14 @@ import { fetchPostApi } from '../../../src/utils/api';
 
 import { ModalContext } from '../../../src/provider/ModalProvider';
 
+interface JoinContentsType {
+  value: string;
+  status: boolean;
+  placeholder: string;
+  title: string;
+  type: string;
+}
+
 const LoginWrap = styled(Box)(({ theme }) => ({
   width: '100%',
   maxWidth: '350px',
@@ -42,6 +50,15 @@ const LoginIndex = () => {
   const router = useRouter();
 
   const { modal_alert, modal_notice } = useContext(ModalContext);
+  const [certStatus, setCertStatus] = useState(false);
+  const [certificationData, setCertificationData] = useState({
+    b_no: '',
+    p_nm: '',
+    start_dt: '',
+    b_nm: '',
+    b_sector: '',
+    b_type: '',
+  });
   const [joinInfo, setJoinInfo] = useState([
     {
       value: '',
@@ -80,21 +97,29 @@ const LoginIndex = () => {
     },
   ]);
 
+  const [certificationInfo, setCertificationInfo] = useState([
+    {
+      value: '',
+      status: true,
+      placeholder: '사업자등록번호를 입력해주세요.',
+      title: '사업자등록번호',
+      type: 'text',
+    },
+    { value: '', status: true, placeholder: '대표자를 입력해주세요.', title: '대표자', type: 'text' },
+    { value: '', status: true, placeholder: '개업일자를 입력해주세요.', title: '개업일자', type: 'text' },
+    { value: '', status: true, placeholder: '상호명을 입력해주세요.', title: '상호명', type: 'text' },
+    { value: '', status: true, placeholder: '업태명을 입력해주세요.', title: '업태', type: 'text' },
+    { value: '', status: true, placeholder: '종목명을 입력해주세요.', title: '종목', type: 'text' },
+  ]);
+
   const handleLoginInput = (e: React.ChangeEvent<HTMLInputElement>, idx: number) => {
-    setJoinInfo(state => {
-      return [
-        ...state.map((info, index) => {
-          if (index == idx) {
-            return {
-              ...info,
-              value: e.target.value,
-            };
-          } else {
-            return info;
-          }
-        }),
-      ];
-    });
+    const tmp_info = certStatus ? [...joinInfo] : [...certificationInfo];
+    tmp_info[idx].value = e.target.value;
+    if (certStatus) {
+      setJoinInfo([...tmp_info]);
+    } else {
+      setCertificationInfo([...tmp_info]);
+    }
   };
 
   const joinUser = async () => {
@@ -113,12 +138,15 @@ const LoginIndex = () => {
       join_data.name.length == 0 ||
       join_data.nickname.length == 0
     ) {
-      modal_alert.openModalAlert('모든 정보를 입력해주세요.');
+      modal_alert.openModalAlert('모든 정보를 입력해주세요.', true);
     } else if (join_data.password.length != join_data.password_check.length) {
-      modal_alert.openModalAlert('비밀번호가 일치하지 않습니다.');
+      modal_alert.openModalAlert('비밀번호가 일치하지 않습니다.', true);
     }
 
-    const user = await fetchPostApi('/user/join', join_data);
+    const user = await fetchPostApi('/user/join', {
+      join_data,
+      business_data: certificationData,
+    });
 
     if (user.id) {
       modal_notice.openModalNotice('회원가입이 완료되었습니다.', () => {
@@ -127,12 +155,54 @@ const LoginIndex = () => {
     }
   };
 
+  const certUser = async () => {
+    const cert_data = {
+      b_no: certificationInfo[0].value,
+      p_nm: certificationInfo[1].value,
+      start_dt: certificationInfo[2].value,
+      b_nm: certificationInfo[3].value,
+      b_sector: certificationInfo[4].value,
+      b_type: certificationInfo[5].value,
+      p_nm2: '',
+      corp_no: '',
+    };
+
+    const cert_res = await fetchPostApi('/user/certification', cert_data);
+
+    if (cert_res.pass) {
+      modal_alert.openModalAlert('인증에 성공하였습니다', true, () => {
+        setCertStatus(true);
+        clearCerttificationInfo();
+        setCertificationData({ ...cert_data });
+      });
+    } else {
+      modal_alert.openModalAlert('인증에 실패하였습니다.\r\n다시 시도해주세요.', true);
+    }
+  };
+
+  const clearCerttificationInfo = () => {
+    setCertificationInfo([
+      {
+        value: '',
+        status: true,
+        placeholder: '사업자등록번호를 입력해주세요.',
+        title: '사업자등록번호',
+        type: 'text',
+      },
+      { value: '', status: true, placeholder: '대표자를 입력해주세요.', title: '대표자', type: 'text' },
+      { value: '', status: true, placeholder: '개업일자를 입력해주세요.', title: '개업일자', type: 'text' },
+      { value: '', status: true, placeholder: '상호명을 입력해주세요.', title: '상호명', type: 'text' },
+      { value: '', status: true, placeholder: '업태명을 입력해주세요.', title: '업태', type: 'text' },
+      { value: '', status: true, placeholder: '종목명을 입력해주세요.', title: '종목', type: 'text' },
+    ]);
+  };
+
   return (
     <LoginWrap>
-      <Typography variant='h4'>회원가입</Typography>
+      <Typography variant='h4'>{certStatus ? '회원가입' : '사업자 인증'}</Typography>
       <Divider sx={{ width: '50%', margin: '0.5rem auto' }} />
       <LoginBox>
-        {joinInfo.map((info, index) => {
+        {(certStatus ? joinInfo : certificationInfo).map((info, index) => {
           return (
             <Box key={`join_contents_${index}`}>
               <Typography>{info.title}</Typography>
@@ -145,16 +215,15 @@ const LoginIndex = () => {
             </Box>
           );
         })}
-        <Button variant='contained' color='orange' sx={{ marginTop: '0.5rem' }} onClick={joinUser}>
-          회원가입
+        <Button
+          variant='contained'
+          color='orange'
+          sx={{ marginTop: '0.5rem' }}
+          onClick={certStatus ? joinUser : certUser}
+        >
+          {certStatus ? '회원가입' : '인증'}
         </Button>
       </LoginBox>
-      {/* <UtilBox sx={{ paddingX: '1rem' }}>
-        <Button color='gray_2'>비밀번호 찾기</Button>
-        <Button color='gray_2'>
-          <Link href='/join'>사업자 회원가입</Link>
-        </Button>
-      </UtilBox> */}
     </LoginWrap>
   );
 };

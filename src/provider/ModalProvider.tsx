@@ -65,7 +65,7 @@ interface ModalControllerType {
   modal_alert: {
     data: ModalAlertDataType;
     closeModalAlert: () => void;
-    openModalAlert: (title: string, center?: boolean) => void;
+    openModalAlert: (title: string, center?: boolean, callback?: () => void) => void;
   };
   modal_notice: {
     data: ModalNoticeDataType;
@@ -136,7 +136,7 @@ export const ModalContext = createContext<ModalControllerType>({
     closeModalAlert: () => {
       return;
     },
-    openModalAlert: (title: string, center?: boolean) => {
+    openModalAlert: (title: string, center?: boolean, callback?: () => void) => {
       return;
     },
   },
@@ -340,7 +340,7 @@ function ModalProvider(props: { children: React.ReactNode }) {
           clearTimeout(modalAlertData.timeout);
         }
       },
-      openModalAlert: (title: string, center?: boolean) => {
+      openModalAlert: (title: string, center?: boolean, callback?: () => void) => {
         setModalAlertData(state => {
           return {
             visible: true,
@@ -348,6 +348,7 @@ function ModalProvider(props: { children: React.ReactNode }) {
             center: center ? center : false,
             timeout: setTimeout(() => {
               modalController.modal_alert.closeModalAlert();
+              if (callback) callback();
             }, 2000),
           };
         });
