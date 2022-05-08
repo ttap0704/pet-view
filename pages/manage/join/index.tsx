@@ -143,15 +143,23 @@ const LoginIndex = () => {
       modal_alert.openModalAlert('비밀번호가 일치하지 않습니다.', true);
     }
 
-    const user = await fetchPostApi('/user/join', {
+    const create_res = await fetchPostApi('/user/join', {
       join_data,
       business_data: certificationData,
     });
 
-    if (user.id) {
+    if (create_res.pass) {
       modal_notice.openModalNotice('회원가입이 완료되었습니다.', () => {
         router.push('/manage/login');
       });
+    } else {
+      let message = '';
+      if (create_res.message == 'Duplicate Email') {
+        message = '중복된 이메일이 있습니다.';
+      } else {
+        message = '중복된 닉네임 있습니다.';
+      }
+      modal_alert.openModalAlert(`${message}\r\n확인해주세요.`, true);
     }
   };
 
