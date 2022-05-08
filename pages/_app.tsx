@@ -11,6 +11,7 @@ import theme from '../src/utils/theme';
 import LayoutApp from '../src/components/layout/LayoutApp';
 import LayoutManage from '../src/components/layout/LayoutManage';
 import wrapper from '../src/store/configureStore';
+import { setUser } from '../src/store/slices/user';
 
 dotenv.config();
 // store 설정파일 로드

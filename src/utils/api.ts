@@ -1,10 +1,7 @@
-import { GetServerSidePropsContext } from 'next'
-import cookies from 'next-cookies'
-import { serialize } from 'cookie'
 
 const servername = "http://localhost:3080";
 
-function getCookie(type: string, ctx?: GetServerSidePropsContext) {
+function getCookie(type: string) {
   if (typeof window !== 'undefined') {
     const cookie: string = document.cookie;
     if (cookie.length > 0) {
@@ -28,23 +25,17 @@ function getCookie(type: string, ctx?: GetServerSidePropsContext) {
         return null;
       }
     }
-  } else if (ctx && ctx.req.cookies) {
-    if (ctx.req.cookies[type]) {
-      return ctx.req.cookies[type]
-    } else {
-      return null
-    }
   }
 
   return null;
 }
 
-function setHeader(uri: string, no_content_type?: boolean, ctx?: GetServerSidePropsContext) {
+function setHeader(uri: string, no_content_type?: boolean) {
   const root_path = uri.split('/')[1];
   const children_path = uri.split('/')[2];
   const check_arr = ['manage', 'manager'];
   const excepted_path = ['login', 'join']
-  const cookie: string | null = getCookie('a-token', ctx) ? getCookie('a-token', ctx) : null;
+  const cookie: string | null = getCookie('a-token') ? getCookie('a-token') : null;
 
   const header: { [key: string]: string } = {
     Accept: 'application/json',
@@ -62,26 +53,17 @@ function setHeader(uri: string, no_content_type?: boolean, ctx?: GetServerSidePr
   return header;
 }
 
-function setToken(res: any, ctx?: GetServerSidePropsContext) {
+async function setToken(res: any) {
   const three_month_later = new Date(new Date().setMonth(new Date().getMonth() + 3));
 
   if (typeof window !== 'undefined') {
-    if (res.token) {
+    const token = res.token ? res.token : res.new_token;
+    if (token) {
       document.cookie = `a-token=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;`; // 만료 코드
-      document.cookie = `a-token=${res.token}; expires=${three_month_later}; path=/`; // 업데이트 코드
-    }
-    if (res.new_token) {
-      document.cookie = `a-token=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;`;
-      document.cookie = `a-token=${res.new_token}; expires=${three_month_later}; path=/`;
-    }
-  } else if (ctx) {
-    if (res.new_token) {
-      ctx.res.setHeader('Set-Cookie', `a-token=; path=/; expires=-1`)
-      ctx.res.setHeader('Set-Cookie', serialize('a-token', `${res.new_token}`))
+      document.cookie = `a-token=${token}; expires=${three_month_later}; path=/`; // 업데이트 코드
     }
   }
 }
-
 
 // Fetch POST
 export const fetchPostApi = async function (uri: string, args: object) {
@@ -94,20 +76,43 @@ export const fetchPostApi = async function (uri: string, args: object) {
   });
   let responseJson = await response.json();
   setToken(responseJson);
-  return responseJson;
+  if (responseJson.new_token) {
+    let response1 = await fetch(servername + uri, {
+      method: 'POST',
+      headers: {
+        ...setHeader(uri, false),
+      },
+      body: JSON.stringify(args)
+    });
+    let responseJson1 = await response1.json();
+    return responseJson1
+  } else {
+    return responseJson;
+  }
 };
 
 // Fetch GET
-export const fetchGetApi = async function (uri: string, ctx?: GetServerSidePropsContext) {
+export const fetchGetApi = async function (uri: string) {
   let response = await fetch(servername + uri, {
     method: 'GET',
     headers: {
-      ...setHeader(uri, false, ctx)
+      ...setHeader(uri, false),
     },
   });
   let responseJson = await response.json();
-  setToken(responseJson, ctx);
-  return responseJson;
+  setToken(responseJson);
+  if (responseJson.new_token) {
+    let response1 = await fetch(servername + uri, {
+      method: 'GET',
+      headers: {
+        ...setHeader(uri, false),
+      },
+    });
+    let responseJson1 = await response1.json();
+    return responseJson1
+  } else {
+    return responseJson;
+  }
 };
 
 // Fetch DELETE
@@ -115,7 +120,16 @@ export const fetchDeleteApi = async function (uri: string) {
   let response = await fetch(servername + uri, {
     method: 'DELETE'
   });
-  return response.status;
+  const responseJson = await response.json()
+  setToken(responseJson);
+  if (responseJson.new_token) {
+    let response1 = await fetch(servername + uri, {
+      method: 'DELETE',
+    });
+    return response1.status
+  } else {
+    return response.status;
+  }
 };
 
 // Fetch PATCH
@@ -129,7 +143,21 @@ export const fetchPatchApi = async function (uri: string, args: { target: string
     body: JSON.stringify(args)
   });
 
-  return response.status;
+  const responseJson = await response.json()
+  setToken(responseJson);
+  if (responseJson.new_token) {
+    let response1 = await fetch(servername + uri, {
+      method: 'PATCH',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(args)
+    });
+    return response1.status
+  } else {
+    return response.status;
+  }
 };
 
 // Fetch POST FILES
@@ -139,7 +167,16 @@ export const fetchFileApi = async function (uri: string, args: FormData) {
     body: args
   });
   let responseJson = await response.json();
-  return responseJson;
+  if (responseJson.new_token) {
+    let response1 = await fetch(servername + uri, {
+      method: 'POST',
+      body: args
+    });
+    let responseJson1 = await response1.json();
+    return responseJson1
+  } else {
+    return responseJson;
+  }
 };
 
 // 사업자 인증 API

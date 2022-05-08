@@ -18,28 +18,23 @@ export default function handler(
   try {
     if (req.method === 'POST') {
       const three_month_later = new Date(new Date().setMonth(new Date().getMonth() + 3));
-
-      if (req.token) {
+      const body = JSON.parse(req.body)
+      const token = body.token ? body.token : body.new_token
+      console.log(token, 'hih', body)
+      if (token) {
         res.setHeader('Set-Cookie', serialize(`a-token=`, ';', {
           path: '/',
           expires: new Date()
         }))
-        res.setHeader('Set-Cookie', serialize('a-token', `${req.token}`, {
+        res.setHeader('Set-Cookie', serialize('a-token', `${token}`, {
           path: '/',
           expires: three_month_later
         }))
-      } else if (req.new_token) {
-        res.setHeader('Set-Cookie', serialize(`a-token=`, ';', {
-          path: '/',
-          expires: new Date()
-        }))
-        res.setHeader('Set-Cookie', serialize('a-token', `${req.new_token}`, {
-          path: '/',
-          expires: three_month_later
-        }))
+        res.status(200).send({ pass: true })
+      } else {
+        res.status(200).send({ pass: false })
       }
 
-      res.status(200).send({ pass: true })
     } else {
       res.status(200).send({ pass: false })
     }

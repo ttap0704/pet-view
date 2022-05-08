@@ -13,7 +13,7 @@ import Table from '../../../src/components/table/Table';
 import { TableContext } from '../../../src/provider/TableProvider';
 import { ModalContext } from '../../../src/provider/ModalProvider';
 
-const ManageAccommodationRooms = (props: { list: AccommodationRoomsListType; style: { [key: string]: string } }) => {
+const ManageAccommodationRooms = () => {
   const { data } = useContext(TableContext);
   const { modal_confirm, modal_edit, modal_alert, modal_upload, modal_image_detail } = useContext(ModalContext);
 
@@ -47,7 +47,7 @@ const ManageAccommodationRooms = (props: { list: AccommodationRoomsListType; sty
   }, [data.per_page]);
 
   useEffect(() => {
-    getTableItems(props.list);
+    getTableItems();
     setFirst(true);
   }, []);
 
@@ -309,20 +309,13 @@ const ManageAccommodationRooms = (props: { list: AccommodationRoomsListType; sty
     }
   };
 
-  const getTableItems = async (list?: AccommodationRoomsListType) => {
-    let count = 0;
-    let rows = [];
-    if (list) {
-      count = list.count;
-      rows = list.rows;
-    } else {
-      const accommodation: AccommodationRoomsListType = await fetchGetApi(
-        `/manager/1/accommodation/rooms?page=${data.per_page}`,
-      );
+  const getTableItems = async () => {
+    const accommodation: AccommodationRoomsListType = await fetchGetApi(
+      `/manager/1/accommodation/rooms?page=${data.per_page}`,
+    );
 
-      count = accommodation.count;
-      rows = accommodation.rows;
-    }
+    const count = accommodation.count;
+    const rows = accommodation.rows;
 
     let tmp_table_items = [];
     for (let x of rows) {
@@ -376,16 +369,6 @@ const ManageAccommodationRooms = (props: { list: AccommodationRoomsListType; sty
       />
     </>
   );
-};
-
-export const getServerSideProps: GetServerSideProps = async () => {
-  const data: AccommodationRoomsListType = await fetchGetApi(`/manager/1/accommodation/rooms`);
-
-  return {
-    props: {
-      list: data,
-    },
-  };
 };
 
 export default ManageAccommodationRooms;

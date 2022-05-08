@@ -19,16 +19,12 @@ interface EntireMenuModalContentsType {
   category: AddEntireMenuContentsType[];
 }
 
-const ManageAccommodationCategory = (props: { list: EntireMenuCategoryListType; style: { [key: string]: string } }) => {
+const ManageAccommodationCategory = () => {
   const { data } = useContext(TableContext);
   const { modal_confirm, modal_edit, modal_alert, modal_upload } = useContext(ModalContext);
 
   const [firstUpdate, setFirstUpdate] = useState(false);
   const [curOrderModalType, setCurOrderModalType] = useState('');
-  const [exposureMenuContents, setExposureMenuContents] = useState({
-    visible: false,
-    cur_num: 0,
-  });
   const [entireMenuContents, setEntireMenuContents] = useState<EntireMenuModalContentsType>({
     visible: false,
     type: '',
@@ -49,7 +45,7 @@ const ManageAccommodationCategory = (props: { list: EntireMenuCategoryListType; 
   }, [data.per_page]);
 
   useEffect(() => {
-    getTableItems(props.list);
+    getTableItems();
     setFirstUpdate(true);
   }, []);
 
@@ -166,20 +162,13 @@ const ManageAccommodationCategory = (props: { list: EntireMenuCategoryListType; 
     }
   };
 
-  const getTableItems = async (list?: EntireMenuCategoryListType) => {
-    let count = 0;
-    let rows = [];
-    if (list) {
-      count = list.count;
-      rows = list.rows;
-    } else {
-      const category: EntireMenuCategoryListType = await fetchGetApi(
-        `/manager/1/restaurant/category?page=${data.per_page}`,
-      );
+  const getTableItems = async () => {
+    const category: EntireMenuCategoryListType = await fetchGetApi(
+      `/manager/1/restaurant/category?page=${data.per_page}`,
+    );
 
-      count = category.count;
-      rows = category.rows;
-    }
+    const count = category.count;
+    const rows = category.rows;
 
     let tmp_table_items = [];
     for (let x of rows) {
@@ -253,16 +242,6 @@ const ManageAccommodationCategory = (props: { list: EntireMenuCategoryListType; 
       />
     </>
   );
-};
-
-export const getServerSideProps: GetServerSideProps = async () => {
-  const data: EntireMenuCategoryListType = await fetchGetApi(`/manager/1/restaurant/category`);
-
-  return {
-    props: {
-      list: data,
-    },
-  };
 };
 
 export default ManageAccommodationCategory;

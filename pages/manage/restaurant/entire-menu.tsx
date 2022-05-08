@@ -17,7 +17,7 @@ interface RadioModalContentsDataType {
   contents: { label: string; id: number | string }[];
 }
 
-const ManageRestaurantEntireMenu = (props: { list: EntireMenuListType; style: { [key: string]: string } }) => {
+const ManageRestaurantEntireMenu = () => {
   const { data } = useContext(TableContext);
   const { modal_confirm, modal_edit, modal_alert } = useContext(ModalContext);
 
@@ -36,7 +36,7 @@ const ManageRestaurantEntireMenu = (props: { list: EntireMenuListType; style: { 
   }, [data.per_page]);
 
   useEffect(() => {
-    getTableItems(props.list);
+    getTableItems();
     setFirstUpdate(true);
   }, []);
 
@@ -146,20 +146,11 @@ const ManageRestaurantEntireMenu = (props: { list: EntireMenuListType; style: { 
     }
   };
 
-  const getTableItems = async (list?: EntireMenuListType) => {
-    let count = 0;
-    let rows = [];
-    if (list) {
-      count = list.count;
-      rows = list.rows;
-    } else {
-      const restaurant: EntireMenuListType = await fetchGetApi(
-        `/manager/1/restaurant/entire_menu?page=${data.per_page}`,
-      );
+  const getTableItems = async () => {
+    const restaurant: EntireMenuListType = await fetchGetApi(`/manager/1/restaurant/entire_menu?page=${data.per_page}`);
 
-      count = restaurant.count;
-      rows = restaurant.rows;
-    }
+    const count = restaurant.count;
+    const rows = restaurant.rows;
 
     let tmp_table_items = [];
     for (let x of rows) {
@@ -194,16 +185,6 @@ const ManageRestaurantEntireMenu = (props: { list: EntireMenuListType; style: { 
       />
     </>
   );
-};
-
-export const getServerSideProps: GetServerSideProps = async () => {
-  const data: EntireMenuListType = await fetchGetApi(`/manager/1/restaurant/entire_menu`);
-
-  return {
-    props: {
-      list: data,
-    },
-  };
 };
 
 export default ManageRestaurantEntireMenu;

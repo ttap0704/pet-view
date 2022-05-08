@@ -5,7 +5,6 @@ import { useRouter } from 'next/router';
 import { useEffect, useState, useContext, forwardRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { styled } from '@mui/material/styles';
-import { SET_USER } from '../../../src/store/models/user';
 import { setUser } from '../../../src/store/slices/user';
 
 import { MdAttachEmail } from 'react-icons/md';
@@ -19,6 +18,7 @@ import UtilBox from '../../../src/components/common/UtilBox';
 import { ModalContext } from '../../../src/provider/ModalProvider';
 import { fetchPostApi } from '../../../src/utils/api';
 import { RootState } from '../../../src/store';
+import wrapper from '../../../src/store/configureStore';
 
 const LoginWrap = styled(Box)(({ theme }) => ({
   width: '100%',
@@ -158,5 +158,12 @@ const LoginIndex = () => {
     </LoginWrap>
   );
 };
+
+// export const getServerSideProps = wrapper.getServerSideProps(store => async ({ params }) => {
+//   console.log(store.getState().userReducer, 'loginPage');
+//   const { dispatch } = store;
+//   dispatch(setUser({ uid: 100, unick: '', profile_path: '' }));
+//   return { props: {} };
+// });
 
 export default LoginIndex;

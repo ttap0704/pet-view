@@ -17,7 +17,7 @@ interface UpdateExposureMenuImageContentsType {
   origin_image_list: ImageListType[];
 }
 
-const ManageRestaurantExposureMenu = (props: { list: ExposureMenuListType; style: { [key: string]: string } }) => {
+const ManageRestaurantExposureMenu = () => {
   const { data } = useContext(TableContext);
   const { modal_confirm, modal_edit, modal_alert, modal_upload, modal_image_detail } = useContext(ModalContext);
 
@@ -33,7 +33,7 @@ const ManageRestaurantExposureMenu = (props: { list: ExposureMenuListType; style
   }, [data.per_page]);
 
   useEffect(() => {
-    getTableItems(props.list);
+    getTableItems();
     setFirstUpdate(true);
   }, []);
 
@@ -162,7 +162,6 @@ const ManageRestaurantExposureMenu = (props: { list: ExposureMenuListType; style
   const setModalEdit = () => {
     const index = data.clicked_dropdown_idx;
     const target = data.table_items.find(item => item.checked);
-    console.log(target);
 
     let value = '';
     let title = '';
@@ -210,20 +209,13 @@ const ManageRestaurantExposureMenu = (props: { list: ExposureMenuListType; style
     }
   };
 
-  const getTableItems = async (list?: ExposureMenuListType) => {
-    let count = 0;
-    let rows = [];
-    if (list) {
-      count = list.count;
-      rows = list.rows;
-    } else {
-      const accommodation: ExposureMenuListType = await fetchGetApi(
-        `/manager/1/restaurant/exposure_menu?page=${data.per_page}`,
-      );
+  const getTableItems = async () => {
+    const accommodation: ExposureMenuListType = await fetchGetApi(
+      `/manager/1/restaurant/exposure_menu?page=${data.per_page}`,
+    );
 
-      count = accommodation.count;
-      rows = accommodation.rows;
-    }
+    const count = accommodation.count;
+    const rows = accommodation.rows;
 
     let tmp_table_items = [];
     for (let x of rows) {
@@ -259,16 +251,6 @@ const ManageRestaurantExposureMenu = (props: { list: ExposureMenuListType; style
       />
     </>
   );
-};
-
-export const getServerSideProps: GetServerSideProps = async () => {
-  const data: ExposureMenuListType = await fetchGetApi(`/manager/1/restaurant/exposure_menu`);
-
-  return {
-    props: {
-      list: data,
-    },
-  };
 };
 
 export default ManageRestaurantExposureMenu;

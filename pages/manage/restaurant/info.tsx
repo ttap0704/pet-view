@@ -1,4 +1,4 @@
-import { GetServerSideProps, GetStaticProps, NextPageContext } from 'next';
+import { GetServerSideProps, GetServerSidePropsContext, GetStaticProps, NextPageContext } from 'next';
 import { useEffect, useState, useContext } from 'react';
 
 import { fetchGetApi, fetchPatchApi, fetchDeleteApi, fetchFileApi, fetchPostApi } from '../../../src/utils/api';
@@ -20,7 +20,7 @@ import { Context } from 'next-redux-wrapper';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../src/store';
 
-const ManageRestaurantInfo = (props: { list: RestaurantListType; style: { [key: string]: string } }) => {
+const ManageRestaurantInfo = () => {
   const user = useSelector((state: RootState) => state.userReducer);
   const { data } = useContext(TableContext);
   const { modal_confirm, modal_edit, modal_alert, modal_upload, modal_image_detail } = useContext(ModalContext);
@@ -61,13 +61,12 @@ const ManageRestaurantInfo = (props: { list: RestaurantListType; style: { [key: 
   }, [data.per_page]);
 
   useEffect(() => {
-    console.log(user);
-    if (!props.list.rows) {
+    console.log(firstUpdate);
+    if (!firstUpdate) {
+      console.log('useEffect null');
       getTableItems();
-    } else {
-      getTableItems(props.list);
+      setFirstUpdate(true);
     }
-    setFirstUpdate(true);
   }, []);
 
   useEffect(() => {
@@ -359,18 +358,12 @@ const ManageRestaurantInfo = (props: { list: RestaurantListType; style: { [key: 
     }
   };
 
-  const getTableItems = async (list?: RestaurantListType) => {
-    let count = 0;
-    let rows = [];
-    if (list) {
-      count = list.count;
-      rows = list.rows;
-    } else {
-      const restaurant: RestaurantListType = await fetchGetApi(`/manager/1/restaurant?page=${data.per_page}`);
+  const getTableItems = async () => {
+    console.log('getTableItems');
+    const restaurant: RestaurantListType = await fetchGetApi(`/manager/1/restaurant?page=${data.per_page}`);
 
-      count = restaurant.count;
-      rows = restaurant.rows;
-    }
+    const count = restaurant.count;
+    const rows = restaurant.rows;
 
     let tmp_table_items = [];
     for (let x of rows) {
@@ -548,26 +541,5 @@ const ManageRestaurantInfo = (props: { list: RestaurantListType; style: { [key: 
     </>
   );
 };
-
-// export const getServerSideProps: GetServerSideProps = async ctx => {
-//   const data: RestaurantListType = await fetchGetApi(`/manager/1/restaurant`, ctx);
-
-//   return {
-//     props: {
-//       list: data,
-//     },
-//   };
-// };
-
-export const getServerSideProps = wrapper.getServerSideProps(store => async (context: Context) => {
-  console.log(store);
-  const data: RestaurantListType = await fetchGetApi(`/manager/1/restaurant`);
-
-  return {
-    props: {
-      list: data,
-    },
-  };
-});
 
 export default ManageRestaurantInfo;

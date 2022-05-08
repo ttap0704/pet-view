@@ -28,7 +28,7 @@ interface PeakSeasonModalContentsType {
   mode: string;
 }
 
-const ManageAccommodationInfo = (props: { list: AccommodationListType; style: { [key: string]: string } }) => {
+const ManageAccommodationInfo = () => {
   const { data } = useContext(TableContext);
   const { modal_confirm, modal_edit, modal_alert, modal_upload, modal_image_detail } = useContext(ModalContext);
 
@@ -67,7 +67,7 @@ const ManageAccommodationInfo = (props: { list: AccommodationListType; style: { 
   }, [data.per_page]);
 
   useEffect(() => {
-    getTableItems(props.list);
+    getTableItems();
     setFirst(true);
   }, []);
 
@@ -386,18 +386,11 @@ const ManageAccommodationInfo = (props: { list: AccommodationListType; style: { 
     }
   };
 
-  const getTableItems = async (list?: AccommodationListType) => {
-    let count = 0;
-    let rows = [];
-    if (list) {
-      count = list.count;
-      rows = list.rows;
-    } else {
-      const accommodation: AccommodationListType = await fetchGetApi(`/manager/1/accommodation?page=${data.per_page}`);
+  const getTableItems = async () => {
+    const accommodation: AccommodationListType = await fetchGetApi(`/manager/1/accommodation?page=${data.per_page}`);
 
-      count = accommodation.count;
-      rows = accommodation.rows;
-    }
+    const count = accommodation.count;
+    const rows = accommodation.rows;
 
     let tmp_table_items = [];
     for (let x of rows) {
@@ -516,16 +509,6 @@ const ManageAccommodationInfo = (props: { list: AccommodationListType; style: { 
       />
     </>
   );
-};
-
-export const getServerSideProps: GetServerSideProps = async () => {
-  const data: AccommodationListType = await fetchGetApi(`/manager/1/accommodation`);
-
-  return {
-    props: {
-      list: data,
-    },
-  };
 };
 
 export default ManageAccommodationInfo;

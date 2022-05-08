@@ -9,8 +9,6 @@ export interface IState {
 // models
 
 const rootReducer = (state: IState, action: AnyAction): CombinedState<IState> => {
-	console.log(action.type, userReducer);
-	console.log(state, 'istate');
 	switch (action.type) {
 		case HYDRATE:
 			return action.payload;

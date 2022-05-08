@@ -17,12 +17,13 @@ export default function handler(
 ) {
   try {
     if (req.method === 'POST') {
-      const type = req.type;
+      const type = req.body.type;
       let token = '';
-      console.log(req.headers)
       if (req.headers.cookie) {
         token = req.cookies[type]
       }
+
+      console.log(document.cookie, req.headers, token, 'get-cookies')
       res.status(200).send({ pass: true, token: token })
     } else {
       res.status(200).send({ pass: false, token: '' })
