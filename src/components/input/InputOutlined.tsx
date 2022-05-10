@@ -11,6 +11,7 @@ interface InputOutlinedProps extends OutlinedInputProps {
   align?: 'center' | 'right';
   bottom?: boolean;
   format?: string;
+  max?: number;
 }
 
 const StyledInput = styled(OutlinedInput)(({ theme }) => ({
@@ -58,6 +59,7 @@ const StyledInput = styled(OutlinedInput)(({ theme }) => ({
 
 const CustomInput = (props: InputOutlinedProps) => {
   const value = props.value;
+  const max = props.max;
   const placeholder = props.placeholder;
   const start_adornment = props.startAdornment;
   const end_adornment = props.endAdornment;
@@ -112,6 +114,7 @@ const CustomInput = (props: InputOutlinedProps) => {
   const handleInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     const input_value = e.target.value;
     const cur_value = input_value.replace(/[\,]/gi, '');
+    if (max && max < cur_value.length) return;
     if (typeof input_value == 'string') {
       if (format == 'price') {
         if (isNaN(Number(cur_value))) return;

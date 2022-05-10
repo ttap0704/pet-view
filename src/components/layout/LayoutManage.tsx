@@ -7,7 +7,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../store';
 import { setUser } from '../../store/slices/user';
 
-const excepted_path = ['/manage/join', '/manage/login', '/manage/join/success'];
+const excepted_path = ['/manage/join', '/manage/login', '/manage/join/success', '/manage/join/certification/[id]'];
 
 interface LayoutManageProps {
   children: React.ReactNode;
