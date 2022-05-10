@@ -1,8 +1,20 @@
 interface UserType {
-  uid: number | null,
-  unick: string,
-  profile_path: string
+  id: number;
+  login_id: string;
+  name: string;
+  phone: string;
+  wrong_num: number;
+  nickname: string;
+  profile_path: string;
+  type: number;
+  certification: number;
 }
+
+
+interface StoreUserType extends UserType {
+  uid: number
+}
+
 
 interface ImageListType {
   new: boolean;

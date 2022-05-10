@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import * as React from 'react';
+import { useState, useEffect } from 'react';
 import { styled } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import TreeView from '@mui/lab/TreeView';
@@ -10,12 +11,18 @@ import Typography from '@mui/material/Typography';
 import { FaChevronDown, FaChevronRight } from 'react-icons/fa';
 import { SvgIconProps } from '@mui/material/SvgIcon';
 import { Divider } from '@mui/material';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../store';
 
 declare module 'react' {
   interface CSSProperties {
     '--tree-view-color'?: string;
     '--tree-view-bg-color'?: string;
   }
+}
+
+interface SideMenuType {
+  [key: string]: { label: string; children: { label: string; path: string }[]; path: string | null };
 }
 
 const MenuBox = styled(Box)(({ theme }) => ({
@@ -53,10 +60,10 @@ const CustomTreeItem = styled(TreeItem)(({ theme }) => ({
 
 const ManageSideMenu = () => {
   const router = useRouter();
+  const user = useSelector((state: RootState) => state.userReducer);
 
-  const side_menu_items: {
-    [key: string]: { label: string; children: { label: string; path: string }[]; path: string | null };
-  } = {
+  const [currentSideMenu, setCurrentSideMenu] = useState<SideMenuType>({});
+  const side_menu_items: SideMenuType = {
     index: {
       label: '관리자 메인',
       children: [],
@@ -113,11 +120,20 @@ const ManageSideMenu = () => {
     },
   };
 
+  useEffect(() => {
+    if (user.type == 1) {
+      delete side_menu_items.accommodation;
+    } else if (user.type == 2) {
+      delete side_menu_items.restaurant;
+    }
+    setCurrentSideMenu({ ...side_menu_items });
+  }, []);
+
   const setTreeItems = () => {
-    return Object.keys(side_menu_items).map((key, idx) => {
+    return Object.keys(currentSideMenu).map((key, idx) => {
       let contents: React.ReactNode | null = null;
-      if (side_menu_items[key].children) {
-        contents = side_menu_items[key].children.map((item2, idx2) => {
+      if (currentSideMenu[key].children) {
+        contents = currentSideMenu[key].children.map((item2, idx2) => {
           return (
             <CustomTreeItem
               key={`tree_items_${idx}_children_${idx2}`}
@@ -132,8 +148,8 @@ const ManageSideMenu = () => {
         <CustomTreeItem
           key={`tree_items_${idx}`}
           nodeId={`tree_items_${idx}`}
-          label={side_menu_items[key].label}
-          onClick={() => (side_menu_items[key].path ? router.push(`${side_menu_items[key].path}`) : false)}
+          label={currentSideMenu[key].label}
+          onClick={() => (currentSideMenu[key].path ? router.push(`${currentSideMenu[key].path}`) : false)}
         >
           {contents}
         </CustomTreeItem>

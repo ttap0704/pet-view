@@ -42,7 +42,7 @@ const JoinSuccess = () => {
       <Typography variant='h4'>회원가입 성공</Typography>
       <Divider sx={{ width: '50%', margin: '0.5rem auto' }} />
       <CertificationBox>
-        가입해주신 이메일로 <b>인증번호</b>와 <b>링크</b>가 발송되었습니다.
+        가입해주신 이메일로 <b>인증번호</b>와 <b>인증 링크</b>가 발송되었습니다.
         <br />
         <br />
         인증이 완료되면 정상적으로 서비스를 사용하실 수 있습니다.

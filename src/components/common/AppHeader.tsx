@@ -75,7 +75,6 @@ function AppHeader() {
   const router = useRouter();
 
   useEffect(() => {
-    console.log(user);
     window.addEventListener('scroll', isSticky);
     return () => {
       window.removeEventListener('scroll', isSticky);

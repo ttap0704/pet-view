@@ -70,7 +70,6 @@ function FormPeakSeason(props: FormPeakSeasonProps) {
 
   useEffect(() => {
     if (data.length > 0) {
-      console.log(data);
       let tmp_arr = data.map(item => {
         return [
           ...item.map(item2 => {

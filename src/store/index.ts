@@ -4,7 +4,7 @@ import { HYDRATE } from 'next-redux-wrapper'
 import userReducer from './slices/user'
 
 export interface IState {
-	userReducer: UserType
+	userReducer: StoreUserType
 }
 // models
 

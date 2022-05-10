@@ -150,16 +150,18 @@ const LoginIndex = () => {
 
     if (create_res.pass) {
       modal_notice.openModalNotice('회원가입이 완료되었습니다.', () => {
-        router.push('/manage/login');
+        router.push('/manage/join/success');
       });
     } else {
       let message = '';
       if (create_res.message == 'Duplicate Email') {
-        message = '중복된 이메일이 있습니다.';
+        message = '중복된 이메일이 있습니다.\r\n확인해주세요.';
+      } else if (create_res.message == 'Not Target') {
+        message = '숙박업소 또는 음식점 운영자만\r\n회원가입이 가능합니다.';
       } else {
-        message = '중복된 닉네임 있습니다.';
+        message = '중복된 닉네임 있습니다.\r\n확인해주세요.';
       }
-      modal_alert.openModalAlert(`${message}\r\n확인해주세요.`, true);
+      modal_alert.openModalAlert(`${message}`, true);
     }
   };
 
@@ -184,7 +186,11 @@ const LoginIndex = () => {
         setCertificationData({ ...cert_data });
       });
     } else {
-      modal_alert.openModalAlert('인증에 실패하였습니다.\r\n다시 시도해주세요.', true);
+      if ((cert_res.message = 'Not Target')) {
+        modal_alert.openModalAlert('숙박업소 또는 음식점 운영자만\r\n회원가입이 가능합니다.', true);
+      } else {
+        modal_alert.openModalAlert('인증에 실패하였습니다.\r\n다시 시도해주세요.', true);
+      }
     }
   };
 

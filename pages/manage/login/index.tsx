@@ -99,20 +99,26 @@ const LoginIndex = () => {
       return;
     }
 
-    const user = await fetchPostApi('/user/login', login_data);
-    if (user.pass) {
+    const login_res = await fetchPostApi('/user/login', login_data);
+    if (login_res.pass) {
+      const user: UserType = login_res.user;
       const saved_user = {
-        uid: user.uid,
-        unick: user.nickname,
-        profile_path: user.profile_path,
+        uid: user.id,
+        ...user,
       };
       sessionStorage.setItem('user', JSON.stringify({ ...saved_user }));
       dispatch(setUser({ ...saved_user }));
-      modal_notice.openModalNotice(user.message, () => {
+      modal_notice.openModalNotice(`${user.nickname}님 환영합니다!`, () => {
         router.push('/manage');
       });
     } else {
-      modal_alert.openModalAlert(user.message, true);
+      let message = '';
+      if ((login_res.message = 'Before Certification')) {
+        message = '이메일 인증 완료 후\r\n로그인 해주세요.';
+      } else {
+        message = '아이디 또는 비밀번호가 틀렸습니다.';
+      }
+      modal_alert.openModalAlert(message, true);
     }
   };
 
