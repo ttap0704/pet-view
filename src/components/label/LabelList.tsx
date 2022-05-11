@@ -10,29 +10,24 @@ interface LabelListProps {
 }
 
 const LabelBox = styled(Box)(({ theme }) => ({
-  width: '100%',
-  height: '3.5rem',
-  paddingRight: '1rem',
-  marginTop: '1rem',
+  width: '35%',
+  height: '4.5rem',
   display: 'flex',
   alignItems: 'flex-end',
   justifyContent: 'center',
   flexDirection: 'column',
-  position: 'relative',
+  position: 'absolute',
+  paddingRight: '1rem',
+  bottom: '1rem',
+  right: 0,
+  color: theme.palette.white.main,
   '.title': {
-    fontSize: '1.3rem',
+    fontSize: '1.4rem',
+    fontWeight: 'bold',
   },
   '.subtitle': {
-    fontSize: '1.05rem',
+    fontSize: '1.1rem',
   },
-}));
-
-const DecoBox = styled(Box)(({ theme }) => ({
-  position: 'absolute',
-  right: 0,
-  height: '100%',
-  width: '0.5rem',
-  backgroundColor: theme.palette.yellow.main,
 }));
 
 const LabelList = (props: LabelListProps) => {
@@ -42,13 +37,8 @@ const LabelList = (props: LabelListProps) => {
   return (
     <>
       <LabelBox>
-        <Typography className='title' component='h3'>
-          {title}
-        </Typography>
-        <Typography className='subtitle' component='h4'>
-          {subtitle}
-        </Typography>
-        <DecoBox />
+        <Typography className='title'>{title}</Typography>
+        <Typography className='subtitle'>{subtitle}</Typography>
       </LabelBox>
     </>
   );

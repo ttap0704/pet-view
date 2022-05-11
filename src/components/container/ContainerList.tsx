@@ -3,7 +3,7 @@ import * as React from 'react';
 import { Box } from '@mui/material';
 import { styled } from '@mui/material/styles';
 
-interface ConatinerListProps {
+interface ContainerListProps {
   children: React.ReactNode;
 }
 
@@ -12,6 +12,7 @@ const CustomContainer = styled(Box)(({ theme }) => ({
   maxWidth: '42rem',
   display: 'flex',
   flexDirection: 'column',
+  position: 'relative',
   '& > div': {
     width: '100%',
     '&:not(:last-of-type)': {
@@ -20,10 +21,10 @@ const CustomContainer = styled(Box)(({ theme }) => ({
   },
 }));
 
-function ConatinerList(props: ConatinerListProps) {
+function ContainerList(props: ContainerListProps) {
   const children = props.children;
 
   return <CustomContainer>{children}</CustomContainer>;
 }
 
-export default ConatinerList;
+export default ContainerList;

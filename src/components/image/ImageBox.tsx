@@ -14,6 +14,7 @@ interface ImageBoxProps extends BoxProps {
   count?: boolean;
   emptyText?: string;
   useDetail?: boolean;
+  list?: boolean;
 }
 
 const CustomBox = styled(Box)(({ theme }) => ({
@@ -21,7 +22,9 @@ const CustomBox = styled(Box)(({ theme }) => ({
   alignItems: 'center',
   overflow: 'hidden',
   position: 'relative',
-  boxShadow: '2px 4px 4px 0 rgba(0, 0, 0, 0.4)',
+  border: 'thin solid',
+  borderColor: theme.palette.gray_5.main,
+  borderRadius: 6,
 
   '&:hover': {
     '& > .image-slider': {
@@ -46,6 +49,16 @@ const ImageWrap = styled(Box)(({ theme }) => ({
     position: 'absolute',
     width: '100%',
     minWidth: '23rem',
+  },
+
+  '.linear_bg': {
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    position: 'absolute',
+    width: '100%',
+    height: '100%',
+    background: 'linear-gradient(to bottom, rgba(0, 0, 0, 0) 0%,rgba(0, 0, 0, 0.1) 100%)',
   },
 
   '&.exposure_menu': {
@@ -73,6 +86,7 @@ const ImageBox = (props: ImageBoxProps) => {
   const count = props.count;
   const empty_text = props.emptyText;
   const use_detail = props.useDetail;
+  const list = props.list;
 
   const [curNum, setCurNum] = useState(0);
   const [isSlide, setIsSlide] = useState(false);
@@ -167,12 +181,15 @@ const ImageBox = (props: ImageBoxProps) => {
               ) : null}
               {image_list.map((image, image_idx) => {
                 return (
-                  <img
-                    key={`image_box_img_${image_idx}`}
-                    src={setImageSrc(image_idx)}
-                    alt='미리보기 이미지'
-                    style={curNum != image_idx ? { display: 'none' } : {}}
-                  />
+                  <>
+                    <img
+                      key={`image_box_img_${image_idx}`}
+                      src={setImageSrc(image_idx)}
+                      alt='미리보기 이미지'
+                      style={curNum != image_idx ? { display: 'none' } : {}}
+                    />
+                    {list ? <Box className='linear_bg' /> : null}
+                  </>
                 );
               })}
             </>

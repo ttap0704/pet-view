@@ -11,6 +11,8 @@ import ImageBox from '../../src/components/image/ImageBox';
 import LabelList from '../../src/components/label/LabelList';
 import ContainerList from '../../src/components/container/ContainerList';
 import SideSearchBox from '../../src/components/common/SideSearchBox';
+import CardEmpty from '../../src/components/card/CardEmpty';
+
 interface RestaurantList {
   restaurant_images: { file_name: string }[];
   bname: string;
@@ -53,14 +55,18 @@ const RestaurantIndex = (props: { list: RestaurantList[]; style: { [key: string]
   return (
     <RestaurantContainer>
       <ContainerList>
-        {list.map((item, index) => {
-          return (
-            <ListBox key={`restaurant_list_${index}`} onClick={() => moveDetailPage(item)}>
-              <ImageBox imageList={item.image_list} type='restaurant' slide={false} />
-              <LabelList title={item.label} subtitle={item.bname} />
-            </ListBox>
-          );
-        })}
+        {list.length > 0 ? (
+          list.map((item, index) => {
+            return (
+              <ListBox key={`restaurant_list_${index}`} onClick={() => moveDetailPage(item)}>
+                <ImageBox imageList={item.image_list} type='restaurant' slide={false} />
+                <LabelList title={item.label} subtitle={item.bname} />
+              </ListBox>
+            );
+          })
+        ) : (
+          <CardEmpty />
+        )}
       </ContainerList>
       <SideSearchBox onDateChange={test} type='restaurant' />
     </RestaurantContainer>
