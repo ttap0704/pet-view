@@ -5,6 +5,16 @@ export default {
 
     return res;
   },
+  type: (payload: { value: string, type: number }): boolean => {
+    let res = true;
+
+    const value = payload.value;
+    const type = payload.type
+    if (value.length == 0 || type < 1) {
+      res = false;
+    }
+    return res;
+  },
   room: (room: AddRoomContentsType): boolean => {
     let res = true;
     const check_number = /^[0-9]+$/;

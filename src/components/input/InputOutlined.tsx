@@ -66,6 +66,7 @@ const CustomInput = (props: InputOutlinedProps) => {
   const type = props.type;
   const read_only = props.readOnly;
   const onChange = props.onChange;
+  const onClick = props.onClick;
   const onBlur = props.onBlur;
   const class_name = props.className;
   const onKeyDownEnter = props.onKeyDownEnter;
@@ -146,10 +147,11 @@ const CustomInput = (props: InputOutlinedProps) => {
         }
         endAdornment={currentFormat}
         type={type}
-        readOnly={read_only}
+        readOnly={read_only || onClick ? true : false}
         onKeyDown={handleKeyDown}
         onBlur={onBlur}
-        sx={{ ...setStyle() }}
+        onClick={onClick}
+        sx={{ ...setStyle(), cursor: onClick ? 'pointer' : 'inherit' }}
         inputProps={{ style: { textAlign: align ? align : 'left' } }}
       />
     </>

@@ -13,6 +13,7 @@ const CustomContainer = styled(Box)(({ theme }) => ({
   display: 'flex',
   flexDirection: 'column',
   position: 'relative',
+
   '& > div': {
     width: '100%',
     '&:not(:last-of-type)': {

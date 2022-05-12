@@ -10,7 +10,7 @@ interface LabelListProps {
 }
 
 const LabelBox = styled(Box)(({ theme }) => ({
-  width: '35%',
+  width: '100%',
   height: '4.5rem',
   display: 'flex',
   alignItems: 'flex-end',
@@ -33,6 +33,7 @@ const LabelBox = styled(Box)(({ theme }) => ({
 const LabelList = (props: LabelListProps) => {
   const title = props.title;
   const subtitle = props.subtitle;
+  console.log(title, subtitle);
 
   return (
     <>

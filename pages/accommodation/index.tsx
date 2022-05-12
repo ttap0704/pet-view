@@ -1,6 +1,6 @@
 import { GetStaticPaths, GetStaticProps } from 'next';
 
-import { Box } from '@mui/material';
+import { Box, useMediaQuery, useTheme } from '@mui/material';
 import { useEffect, useState, Fragment } from 'react';
 import { useRouter } from 'next/router';
 import { styled } from '@mui/material/styles';
@@ -11,6 +11,7 @@ import ImageBox from '../../src/components/image/ImageBox';
 import LabelList from '../../src/components/label/LabelList';
 import ContainerList from '../../src/components/container/ContainerList';
 import SideSearchBox from '../../src/components/common/SideSearchBox';
+import TopSearchBox from '../../src/components/common/TopSearchBox';
 import CardEmpty from '../../src/components/card/CardEmpty';
 
 interface AccommodationList {
@@ -19,6 +20,7 @@ interface AccommodationList {
   id: number;
   label: string;
   sigungu: string;
+  sido: string;
   image_list: ImageListType[];
 }
 
@@ -26,6 +28,12 @@ const AccommodationContainer = styled(Box)(({ theme }) => ({
   width: '100%',
   height: 'auto',
   position: 'relative',
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '1rem',
+  [theme.breakpoints.down('md')]: {
+    alignItems: 'center',
+  },
 }));
 
 const ListBox = styled(Box)(({ theme }) => ({
@@ -33,13 +41,17 @@ const ListBox = styled(Box)(({ theme }) => ({
   maxWidth: '42rem',
   height: 'auto',
   cursor: 'pointer',
+  position: 'relative',
 }));
 
 const AccommodationIndex = (props: { list: AccommodationList[]; style: { [key: string]: string } }) => {
   const [list, setList] = useState<AccommodationList[]>([]);
   const router = useRouter();
+  const theme = useTheme();
+  const is_down_md = useMediaQuery(theme.breakpoints.down('md'));
 
   useEffect(() => {
+    console.log(props.list);
     setList(props.list);
   }, []);
 
@@ -53,13 +65,18 @@ const AccommodationIndex = (props: { list: AccommodationList[]; style: { [key: s
 
   return (
     <AccommodationContainer>
+      {is_down_md ? (
+        <TopSearchBox onDateChange={test} type='accommodation' />
+      ) : (
+        <SideSearchBox onDateChange={test} type='accommodation' />
+      )}
       <ContainerList>
         {list.length > 0 ? (
           list.map((item, index) => {
             return (
               <ListBox key={`accommodation_list_${index}`} onClick={() => moveDetailPage(item)}>
                 <ImageBox imageList={item.image_list} type='accommodation' slide={false} list={true} />
-                <LabelList title={item.label} subtitle={`${item.sigungu} ${item.bname}`} />
+                <LabelList title={item.label} subtitle={`${item.sido} ${item.sigungu} ${item.bname}`} />
               </ListBox>
             );
           })
@@ -67,7 +84,6 @@ const AccommodationIndex = (props: { list: AccommodationList[]; style: { [key: s
           <CardEmpty />
         )}
       </ContainerList>
-      <SideSearchBox onDateChange={test} type='accommodation' />
     </AccommodationContainer>
   );
 };

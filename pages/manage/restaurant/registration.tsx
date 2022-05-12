@@ -26,6 +26,7 @@ import ModalUpload from '../../../src/components/modal/ModalUpload';
 import validation from '../../../src/utils/validation';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../src/store';
+import ModalRadio from '../../../src/components/modal/ModalRadio';
 
 const ManageRestaurantRegistration = () => {
   const user = useSelector((state: RootState) => state.userReducer);
@@ -50,8 +51,36 @@ const ManageRestaurantRegistration = () => {
     building_name: '',
     detail_address: '',
   });
+  const [radioContents, setRadioContents] = useState<RadioModalContentsDataType>({
+    visible: false,
+    title: '음식점 타입',
+    contents: [
+      {
+        label: '음식점',
+        id: 1,
+      },
+      {
+        label: '카페',
+        id: 2,
+      },
+      {
+        label: '주점/술집',
+        id: 3,
+      },
+
+      {
+        label: '기타',
+        id: 4,
+      },
+    ],
+  });
 
   const [restaurantLabel, setRestaurantLabel] = useState('');
+  const [restaurantType, setRestaurantType] = useState({
+    type: 0,
+    value: '',
+  });
+
   const [introduction, setIntroduction] = useState('');
   const [exposureMenuClickIdx, setExposureMenuClickIdx] = useState(0);
   const [exposureMenu, setExposureMenu] = useState<AddExposureMenuContentsType[]>([
@@ -224,6 +253,14 @@ const ManageRestaurantRegistration = () => {
     });
   };
 
+  const setType = async (item: { label: string; id: number | string }) => {
+    setRestaurantType({
+      value: item.label,
+      type: Number(item.id),
+    });
+    setRadioContents({ ...radioContents, visible: false });
+  };
+
   const validateCreateData = () => {
     let alert_message = '';
 
@@ -239,6 +276,7 @@ const ManageRestaurantRegistration = () => {
     if (!introduction_vali) {
       alert_message = '1자 이상의 음식점 소개를 입력해주세요.';
     }
+
     const address_vali = validation.address(address);
     if (!address_vali) {
       alert_message = '올바른 주소를 등록해주세요.';
@@ -264,6 +302,10 @@ const ManageRestaurantRegistration = () => {
     const service_info_concact_vali = validation.number(serviceInfo.contact);
     if (!service_info_concact_vali && serviceInfo.contact.length > 0) {
       alert_message = '문의 전화번호는 숫자로만 입력해주세요.';
+    }
+    const type_vali = validation.type(restaurantType);
+    if (!type_vali) {
+      alert_message = '1자 이상의 음식점 소개를 입력해주세요.';
     }
     const title_vali = validation.label(restaurantLabel);
     if (!title_vali) {
@@ -323,6 +365,7 @@ const ManageRestaurantRegistration = () => {
       ...tmp_address,
       ...tmp_service_info,
       label: restaurantLabel,
+      type: restaurantType.type,
       introduction,
       manager: 1,
       exposureMenu: tmp_exposure_menu,
@@ -386,6 +429,15 @@ const ManageRestaurantRegistration = () => {
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
             console.log(e);
             setRestaurantLabel(e.target.value);
+          }}
+        />
+      </ContainerRegistrationItem>
+      <ContainerRegistrationItem title='음식점 타입'>
+        <InputOutlined
+          placeholder='클릭하여 타입을 선택해주세요.'
+          value={restaurantType.value}
+          onClick={() => {
+            setRadioContents({ ...radioContents, visible: true });
           }}
         />
       </ContainerRegistrationItem>
@@ -463,6 +515,13 @@ const ManageRestaurantRegistration = () => {
       </UtilBox>
 
       <ModalUpload onUpload={setPreviewImages} />
+      <ModalRadio
+        visible={radioContents.visible}
+        title={radioContents.title}
+        contents={radioContents.contents}
+        onClose={() => setRadioContents({ ...radioContents, visible: false })}
+        onCompleteUpdate={setType}
+      />
     </>
   );
 };

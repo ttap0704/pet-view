@@ -13,12 +13,6 @@ import { ModalContext } from '../../../src/provider/ModalProvider';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../src/store';
 
-interface RadioModalContentsDataType {
-  visible: boolean;
-  title: string;
-  contents: { label: string; id: number | string }[];
-}
-
 const ManageRestaurantEntireMenu = () => {
   const user = useSelector((state: RootState) => state.userReducer);
   const { data } = useContext(TableContext);

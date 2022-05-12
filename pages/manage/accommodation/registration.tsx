@@ -27,6 +27,7 @@ import ModalRoomPrice from '../../../src/components/modal/ModalRoomPrice';
 import ModalRoomTime from '../../../src/components/modal/ModalRoomTime';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../src/store';
+import ModalRadio from '../../../src/components/modal/ModalRadio';
 
 const ManageAccommodationRegistration = () => {
   const user = useSelector((state: RootState) => state.userReducer);
@@ -47,8 +48,34 @@ const ManageAccommodationRegistration = () => {
     building_name: '',
     detail_address: '',
   });
+  const [radioContents, setRadioContents] = useState<RadioModalContentsDataType>({
+    visible: false,
+    title: '숙박업소 타입',
+    contents: [
+      {
+        label: '펜션',
+        id: 1,
+      },
+      {
+        label: '호텔/리조트',
+        id: 2,
+      },
+      {
+        label: '캠핑/글램핑',
+        id: 3,
+      },
+      {
+        label: '기타',
+        id: 4,
+      },
+    ],
+  });
 
   const [accommodationLabel, setAccommodationLabel] = useState('');
+  const [accommodationType, setAccommodationType] = useState({
+    type: 0,
+    value: '',
+  });
   const [introduction, setIntroduction] = useState('');
   const [serviceInfo, setServiceInfo] = useState<ServiceInfoType>({
     contact: '',
@@ -245,6 +272,14 @@ const ManageAccommodationRegistration = () => {
     setPeakSeason([...peakSeason, [today, today]]);
   };
 
+  const setType = async (item: { label: string; id: number | string }) => {
+    setAccommodationType({
+      value: item.label,
+      type: Number(item.id),
+    });
+    setRadioContents({ ...radioContents, visible: false });
+  };
+
   const clearSeason = () => {
     setPeakSeason([
       ['07-15', '08-24'],
@@ -316,6 +351,10 @@ const ManageAccommodationRegistration = () => {
     }
 
     return { pass: alert_message.length == 0, message: alert_message };
+  };
+
+  const handleAccommodationType = () => {
+    setRadioContents({ ...radioContents, visible: true });
   };
 
   const createAccommodation = async () => {
@@ -414,9 +453,16 @@ const ManageAccommodationRegistration = () => {
       </ContainerRegistrationItem>
       <ContainerRegistrationItem title='숙박업소 이름'>
         <InputOutlined
-          placeholder='숙박업소명을 작성해주세요..'
+          placeholder='숙박업소명을 작성해주세요.'
           value={accommodationLabel}
           onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setAccommodationLabel(e.target.value)}
+        />
+      </ContainerRegistrationItem>
+      <ContainerRegistrationItem title='숙박업소 타입'>
+        <InputOutlined
+          placeholder='클릭하여 타입을 선택해주세요.'
+          value={accommodationType.value}
+          onClick={handleAccommodationType}
         />
       </ContainerRegistrationItem>
       <ContainerRegistrationItem title='주소 등록'>
@@ -494,6 +540,13 @@ const ManageAccommodationRegistration = () => {
         contents={roomTimeContents.contents}
         onClose={() => clearRoomTimeModal()}
         onUpdateTime={setRoomTime}
+      />
+      <ModalRadio
+        visible={radioContents.visible}
+        title={radioContents.title}
+        contents={radioContents.contents}
+        onClose={() => setRadioContents({ ...radioContents, visible: false })}
+        onCompleteUpdate={setType}
       />
     </>
   );

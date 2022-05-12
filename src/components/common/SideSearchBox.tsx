@@ -71,18 +71,7 @@ const SideSearchBox = (props: SideSearchBoxProps) => {
         </ItemBox>
 
         {type == 'accommodation' ? (
-          <>
-            <Divider />
-            <ItemBox>
-              <Typography component='h4'>입실</Typography>
-              <DatePicker onDateChange={(date: Date) => onDateChange(date, 'first')} />
-            </ItemBox>
-
-            <ItemBox>
-              <Typography component='h4'>퇴실</Typography>
-              <DatePicker onDateChange={(date: Date) => onDateChange(date, 'last')} />
-            </ItemBox>
-          </>
+          <></>
         ) : (
           <>
             <Divider />

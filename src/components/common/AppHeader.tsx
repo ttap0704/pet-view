@@ -49,7 +49,7 @@ const MenuBox = styled(Box)(({ theme }) => ({
   alignItems: 'center',
   'a, button': {
     width: 'auto',
-    padding: '0.75rem 1.5rem',
+    padding: '0.75rem 1rem',
     color: theme.palette.white.main,
     backgroundColor: 'transparent',
 

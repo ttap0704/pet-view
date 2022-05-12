@@ -15,6 +15,7 @@ interface ImageBoxProps extends BoxProps {
   emptyText?: string;
   useDetail?: boolean;
   list?: boolean;
+  empty?: boolean;
 }
 
 const CustomBox = styled(Box)(({ theme }) => ({
@@ -35,6 +36,16 @@ const CustomBox = styled(Box)(({ theme }) => ({
       display: 'block',
     },
   },
+
+  '.linear_bg': {
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    position: 'absolute',
+    width: '100%',
+    height: '100%',
+    background: 'linear-gradient(to bottom, rgba(0, 0, 0, 0) 0%,rgba(0, 0, 0, 0.3) 100%)',
+  },
 }));
 
 const ImageWrap = styled(Box)(({ theme }) => ({
@@ -49,16 +60,6 @@ const ImageWrap = styled(Box)(({ theme }) => ({
     position: 'absolute',
     width: '100%',
     minWidth: '23rem',
-  },
-
-  '.linear_bg': {
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
-    position: 'absolute',
-    width: '100%',
-    height: '100%',
-    background: 'linear-gradient(to bottom, rgba(0, 0, 0, 0) 0%,rgba(0, 0, 0, 0.1) 100%)',
   },
 
   '&.exposure_menu': {
@@ -87,6 +88,7 @@ const ImageBox = (props: ImageBoxProps) => {
   const empty_text = props.emptyText;
   const use_detail = props.useDetail;
   const list = props.list;
+  const empty = props.empty;
 
   const [curNum, setCurNum] = useState(0);
   const [isSlide, setIsSlide] = useState(false);
@@ -181,20 +183,17 @@ const ImageBox = (props: ImageBoxProps) => {
               ) : null}
               {image_list.map((image, image_idx) => {
                 return (
-                  <>
-                    <img
-                      key={`image_box_img_${image_idx}`}
-                      src={setImageSrc(image_idx)}
-                      alt='미리보기 이미지'
-                      style={curNum != image_idx ? { display: 'none' } : {}}
-                    />
-                    {list ? <Box className='linear_bg' /> : null}
-                  </>
+                  <img
+                    key={`image_box_img_${image_idx}`}
+                    src={setImageSrc(image_idx)}
+                    alt='미리보기 이미지'
+                    style={curNum != image_idx ? { display: 'none' } : {}}
+                  />
                 );
               })}
             </>
           </ImageWrap>
-        ) : (
+        ) : empty === false ? null : (
           <ContainerFullAbsolute>
             <Typography component='h5'>{empty_text ? empty_text : '이미지를 등록해주세요.'}</Typography>
           </ContainerFullAbsolute>
@@ -202,6 +201,7 @@ const ImageBox = (props: ImageBoxProps) => {
         {isSlide || use_detail ? (
           <ImageSlider onSlide={handleSlider} onClickDetail={openDetailModal} useDetail={true} useSlider={slide} />
         ) : null}
+        {list ? <Box className='linear_bg' /> : null}
       </CustomBox>
     </>
   );

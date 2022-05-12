@@ -1,6 +1,6 @@
 import { GetStaticPaths, GetStaticProps } from 'next';
 
-import { Box } from '@mui/material';
+import { Box, useMediaQuery, useTheme } from '@mui/material';
 import { useEffect, useState, Fragment } from 'react';
 import { useRouter } from 'next/router';
 import { styled } from '@mui/material/styles';
@@ -12,6 +12,7 @@ import LabelList from '../../src/components/label/LabelList';
 import ContainerList from '../../src/components/container/ContainerList';
 import SideSearchBox from '../../src/components/common/SideSearchBox';
 import CardEmpty from '../../src/components/card/CardEmpty';
+import TopSearchBox from '../../src/components/common/TopSearchBox';
 
 interface RestaurantList {
   restaurant_images: { file_name: string }[];
@@ -25,8 +26,13 @@ interface RestaurantList {
 const RestaurantContainer = styled(Box)(({ theme }) => ({
   width: '100%',
   height: 'auto',
-  display: 'block',
   position: 'relative',
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '1rem',
+  [theme.breakpoints.down('md')]: {
+    alignItems: 'center',
+  },
 }));
 
 const ListBox = styled(Box)(({ theme }) => ({
@@ -38,6 +44,8 @@ const ListBox = styled(Box)(({ theme }) => ({
 const RestaurantIndex = (props: { list: RestaurantList[]; style: { [key: string]: string } }) => {
   const [list, setList] = useState<RestaurantList[]>([]);
   const router = useRouter();
+  const theme = useTheme();
+  const is_down_md = useMediaQuery(theme.breakpoints.down('md'));
 
   useEffect(() => {
     console.log(props.list);
@@ -54,12 +62,17 @@ const RestaurantIndex = (props: { list: RestaurantList[]; style: { [key: string]
 
   return (
     <RestaurantContainer>
+      {is_down_md ? (
+        <TopSearchBox onDateChange={test} type='restaurant' />
+      ) : (
+        <SideSearchBox onDateChange={test} type='restaurant' />
+      )}
       <ContainerList>
         {list.length > 0 ? (
           list.map((item, index) => {
             return (
               <ListBox key={`restaurant_list_${index}`} onClick={() => moveDetailPage(item)}>
-                <ImageBox imageList={item.image_list} type='restaurant' slide={false} />
+                <ImageBox imageList={item.image_list} type='restaurant' slide={false} list={true} empty={false} />
                 <LabelList title={item.label} subtitle={item.bname} />
               </ListBox>
             );
@@ -68,7 +81,6 @@ const RestaurantIndex = (props: { list: RestaurantList[]; style: { [key: string]
           <CardEmpty />
         )}
       </ContainerList>
-      <SideSearchBox onDateChange={test} type='restaurant' />
     </RestaurantContainer>
   );
 };

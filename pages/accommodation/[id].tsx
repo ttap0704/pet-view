@@ -228,7 +228,7 @@ const AccommodationDetail = (props: { detail: AccommodationResponse; style: { [k
       <ContainerRegistrationItem title=''>
         <Box sx={{ width: '100%', display: 'flex', gap: '1rem' }}>
           <Box sx={{ width: '100%' }}>
-            <ImageBox slide={true} type='accommodation' imageList={exposureImages} count={true} />
+            <ImageBox slide={true} type='accommodation' imageList={exposureImages} count={true} empty={false} />
             <LabelDetailTitle title={accommodationLabel} address={address} />
           </Box>
           <InfoCardBox>

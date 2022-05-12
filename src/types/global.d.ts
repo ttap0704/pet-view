@@ -15,6 +15,11 @@ interface StoreUserType extends UserType {
   uid: number
 }
 
+interface RadioModalContentsDataType {
+  visible: boolean;
+  title: string;
+  contents: { label: string; id: number | string }[];
+}
 
 interface ImageListType {
   new: boolean;
