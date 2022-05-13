@@ -8,6 +8,10 @@ import InputOutlined from '../input/InputOutlined';
 import { FaSearchLocation } from 'react-icons/fa';
 import Button from '../button/Button';
 
+import FormGroup from '@mui/material/FormGroup';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Checkbox from '@mui/material/Checkbox';
+
 interface SideSearchBoxProps {
   onDateChange: (date: Date, type: string) => void;
   type: string;
@@ -52,9 +56,87 @@ const SideSearchBox = (props: SideSearchBoxProps) => {
     console.log(location);
   };
 
+  const [curType, setCurType] = useState<SearchItemTypes[]>([]);
+
+  const type_list: { [key: string]: SearchItemTypes[] } = {
+    accommodation: [
+      {
+        label: '펜션',
+        type: 1,
+        checked: false,
+      },
+      {
+        label: '호텔/리조트',
+        type: 2,
+        checked: false,
+      },
+      {
+        label: '캠핑/글램핑',
+        type: 3,
+        checked: false,
+      },
+      {
+        label: '기타',
+        type: 4,
+        checked: false,
+      },
+    ],
+    restaurant: [
+      {
+        label: '음식점',
+        type: 1,
+        checked: false,
+      },
+      {
+        label: '카페',
+        type: 2,
+        checked: false,
+      },
+      {
+        label: '주점/술집',
+        type: 3,
+        checked: false,
+      },
+      {
+        label: '기타',
+        type: 4,
+        checked: false,
+      },
+    ],
+  };
+
+  useEffect(() => {
+    setCurType(type_list[type]);
+  }, [type]);
+
+  const handleCheckBox = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const tmp_cur_type = [...curType];
+    tmp_cur_type[Number(event.target.name) - 1].checked = event.target.checked;
+    setCurType([...tmp_cur_type]);
+  };
+
   return (
     <>
       <SideBox>
+        <ItemBox>
+          <Typography component='h4'>상세조건</Typography>
+          <FormGroup>
+            {curType.map((type, type_idx) => {
+              return (
+                <FormControlLabel
+                  control={<Checkbox checked={type.checked} onChange={handleCheckBox} name={`${type.type}`} />}
+                  label={type.label}
+                />
+              );
+            })}
+          </FormGroup>
+          <Button variant='outlined' color='orange' disableRipple={true}>
+            적용
+          </Button>
+        </ItemBox>
+
+        <Divider />
+
         <ItemBox>
           <Typography component='h4'>장소 검색</Typography>
           <InputOutlined

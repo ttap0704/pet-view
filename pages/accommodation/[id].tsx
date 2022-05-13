@@ -38,6 +38,16 @@ interface AccommodationInfoDetailType {
   };
 }
 
+const ExposureBox = styled(Box)(({ theme }) => ({
+  width: '100%',
+  display: 'flex',
+  gap: '1rem',
+  [theme.breakpoints.down('md')]: {
+    alignItems: 'center',
+    flexDirection: 'column',
+  },
+}));
+
 const AccommodationContainer = styled(Box)(({ theme }) => ({
   width: '100%',
   height: 'auto',
@@ -56,6 +66,12 @@ const InfoCardBox = styled(Box)(({ theme }) => ({
     ul: {
       height: '100%',
     },
+  },
+
+  [theme.breakpoints.down('md')]: {
+    width: '100%',
+    maxWidth: '42rem',
+    height: 'auto',
   },
 }));
 
@@ -226,15 +242,23 @@ const AccommodationDetail = (props: { detail: AccommodationResponse; style: { [k
   return (
     <AccommodationContainer>
       <ContainerRegistrationItem title=''>
-        <Box sx={{ width: '100%', display: 'flex', gap: '1rem' }}>
-          <Box sx={{ width: '100%' }}>
+        <ExposureBox>
+          <Box
+            sx={{
+              width: '100%',
+              maxWidth: '42rem',
+              height: 'auto',
+              cursor: 'pointer',
+              position: 'relative',
+            }}
+          >
             <ImageBox slide={true} type='accommodation' imageList={exposureImages} count={true} empty={false} />
             <LabelDetailTitle title={accommodationLabel} address={address} />
           </Box>
           <InfoCardBox>
             <CardNotice contents={noticeContents} />
           </InfoCardBox>
-        </Box>
+        </ExposureBox>
       </ContainerRegistrationItem>
       <Tabs
         contents={['객실/위치 정보', '숙소 정보']}

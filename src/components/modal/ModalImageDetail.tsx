@@ -1,10 +1,11 @@
 import { useEffect, useState, useContext } from 'react';
 import ModalDefault from './ModalDefault';
 import { styled } from '@mui/material/styles';
-import { Box, IconButton, Typography } from '@mui/material';
+import { Box, IconButton, Typography, useMediaQuery, useTheme } from '@mui/material';
 import { ModalContext } from '../../provider/ModalProvider';
 import ImageSlider from '../image/ImageSlider';
 import { RiCloseCircleFill } from 'react-icons/ri';
+import { FaChevronRight, FaChevronLeft } from 'react-icons/fa';
 
 const DetailWrap = styled(Box)(({ theme }) => ({
   width: '90vw',
@@ -26,6 +27,10 @@ const ImageWrap = styled(Box)(({ theme }) => ({
   width: '45rem',
   height: '45rem',
 
+  [theme.breakpoints.down('md')]: {
+    height: '50%',
+  },
+
   img: {
     top: '50%',
     left: '50%',
@@ -36,18 +41,38 @@ const ImageWrap = styled(Box)(({ theme }) => ({
   },
 }));
 
-const CustomIconButton = styled(IconButton)(({ theme }) => ({
-  position: 'absolute',
-  bottom: '3.5rem',
-  left: '50%',
-  transform: 'translateX(-50%)',
+interface CustomIconButtonProps {
+  position: string;
+}
+const CustomIconButton = styled(IconButton)<CustomIconButtonProps>(({ theme, position }) => {
+  let left = '';
+  let transform = '';
+  let right = '';
 
-  svg: {
-    width: '3rem',
-    height: '3rem',
-    color: theme.palette.white.main,
-  },
-}));
+  if (position == 'center') {
+    left = '50%';
+    transform = 'translateX(-50%)';
+  } else if (position == 'left') {
+    left = '50%';
+    transform = 'translateX(-200%)';
+  } else if (position == 'right') {
+    right = '50%';
+    transform = 'translateX(200%)';
+  }
+  return {
+    position: 'absolute',
+    bottom: '3.5rem',
+    left,
+    transform,
+    right,
+
+    svg: {
+      width: '3rem',
+      height: '3rem',
+      color: theme.palette.white.main,
+    },
+  };
+});
 
 const CountTypography = styled(Typography)(({ theme }) => ({
   position: 'absolute',
@@ -67,6 +92,8 @@ const CountTypography = styled(Typography)(({ theme }) => ({
 const ModalImageDetail = () => {
   const { modal_image_detail } = useContext(ModalContext);
   const [curNum, setCurNum] = useState(0);
+  const theme = useTheme();
+  const is_down_lg = useMediaQuery(theme.breakpoints.down('lg'));
 
   useEffect(() => {
     if (!modal_image_detail.data.visible) {
@@ -132,8 +159,20 @@ const ModalImageDetail = () => {
               );
             })}
           </ImageWrap>
-          {modal_image_detail.data.image_list.length > 1 ? <ImageSlider onSlide={handleSlider} fill={true} /> : null}
-          <CustomIconButton onClick={modal_image_detail.closeModalImageDetail}>
+          {modal_image_detail.data.image_list.length > 1 && !is_down_lg ? (
+            <ImageSlider onSlide={handleSlider} fill={true} />
+          ) : (
+            <>
+              <CustomIconButton onClick={() => handleSlider('left')} position='left'>
+                <FaChevronLeft />
+              </CustomIconButton>
+              <CustomIconButton onClick={() => handleSlider('right')} position='right'>
+                <FaChevronRight />
+              </CustomIconButton>
+            </>
+          )}
+
+          <CustomIconButton onClick={modal_image_detail.closeModalImageDetail} position='center'>
             <RiCloseCircleFill />
           </CustomIconButton>
         </DetailWrap>

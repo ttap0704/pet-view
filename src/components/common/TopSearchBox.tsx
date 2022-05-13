@@ -1,12 +1,16 @@
 import Box, { BoxProps } from '@mui/material/Box';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { styled } from '@mui/material/styles';
 import InputOutlined from '../input/InputOutlined';
 import { FaSearchLocation } from 'react-icons/fa';
 import Button from '../button/Button';
 import { HiChevronDown, HiChevronUp } from 'react-icons/hi';
 import { Typography } from '@mui/material';
+
+import FormGroup from '@mui/material/FormGroup';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Checkbox from '@mui/material/Checkbox';
 
 interface TopSearchBoxProps {
   onDateChange: (date: Date, type: string) => void;
@@ -65,10 +69,67 @@ const TopSearchBox = (props: TopSearchBoxProps) => {
   const [open, setOpen] = useState(false);
   const onDateChange = props.onDateChange;
   const type = props.type;
+  const [curType, setCurType] = useState<SearchItemTypes[]>([]);
 
   const searchLocation = () => {
     setLocation('');
-    console.log(location);
+  };
+
+  const type_list: { [key: string]: SearchItemTypes[] } = {
+    accommodation: [
+      {
+        label: '펜션',
+        type: 1,
+        checked: false,
+      },
+      {
+        label: '호텔/리조트',
+        type: 2,
+        checked: false,
+      },
+      {
+        label: '캠핑/글램핑',
+        type: 3,
+        checked: false,
+      },
+      {
+        label: '기타',
+        type: 4,
+        checked: false,
+      },
+    ],
+    restaurant: [
+      {
+        label: '음식점',
+        type: 1,
+        checked: false,
+      },
+      {
+        label: '카페',
+        type: 2,
+        checked: false,
+      },
+      {
+        label: '주점/술집',
+        type: 3,
+        checked: false,
+      },
+      {
+        label: '기타',
+        type: 4,
+        checked: false,
+      },
+    ],
+  };
+
+  useEffect(() => {
+    setCurType(type_list[type]);
+  }, [type]);
+
+  const handleCheckBox = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const tmp_cur_type = [...curType];
+    tmp_cur_type[Number(event.target.name) - 1].checked = event.target.checked;
+    setCurType([...tmp_cur_type]);
   };
 
   return (
@@ -80,6 +141,21 @@ const TopSearchBox = (props: TopSearchBoxProps) => {
         </TitleBox>
         {open ? (
           <>
+            <ItemBox sx={{ justifyContent: 'space-between', alignItems: 'center' }}>
+              <FormGroup sx={{ flexDirection: 'row' }}>
+                {curType.map((type, type_idx) => {
+                  return (
+                    <FormControlLabel
+                      control={<Checkbox checked={type.checked} onChange={handleCheckBox} name={`${type.type}`} />}
+                      label={type.label}
+                    />
+                  );
+                })}
+              </FormGroup>
+              <Button sx={{ maxHeight: '3rem' }} variant='outlined' color='orange' disableRipple={true}>
+                적용
+              </Button>
+            </ItemBox>
             <ItemBox>
               <InputOutlined
                 className='search-bar'

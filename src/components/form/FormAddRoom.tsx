@@ -53,7 +53,13 @@ const FormContainer = styled(Box)(({ theme }) => ({
   },
 
   '&.view': {
+    width: '100%',
     height: '19rem',
+    [theme.breakpoints.down('sm')]: {
+      flexDirection: 'column',
+      flexWrap: 'initial',
+      height: '27rem',
+    },
   },
 }));
 
@@ -65,7 +71,10 @@ const RoomImageContainer = styled(Box)(({ theme }) => ({
   justifyContent: 'center',
 }));
 
-const FormItemContainer = styled(Box)((props: { mode: string }) => ({
+interface FormItemContainerProps {
+  mode: string;
+}
+const FormItemContainer = styled(Box)<FormItemContainerProps>(({ mode, theme }) => ({
   width: 'calc(100% - 25rem)',
   height: 'auto',
   display: 'flex',
@@ -74,7 +83,12 @@ const FormItemContainer = styled(Box)((props: { mode: string }) => ({
   justifyContent: 'space-between',
   gap: '1rem',
   position: 'relative',
-  padding: props.mode == 'edit' ? '0 3rem 0 0' : '0',
+  padding: mode == 'edit' ? '0 3rem 0 0' : '0',
+
+  [theme.breakpoints.down('sm')]: {
+    width: '100%',
+    maxWidth: '23rem',
+  },
 }));
 
 const FormItem = styled(Box)(({ theme }) => ({

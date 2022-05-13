@@ -19,6 +19,7 @@ interface RestaurantList {
   bname: string;
   id: number;
   label: string;
+  sido: string;
   sigungu: string;
   image_list: ImageListType[];
 }
@@ -73,7 +74,7 @@ const RestaurantIndex = (props: { list: RestaurantList[]; style: { [key: string]
             return (
               <ListBox key={`restaurant_list_${index}`} onClick={() => moveDetailPage(item)}>
                 <ImageBox imageList={item.image_list} type='restaurant' slide={false} list={true} empty={false} />
-                <LabelList title={item.label} subtitle={item.bname} />
+                <LabelList title={item.label} subtitle={`${item.sido} ${item.sigungu} ${item.bname}`} />
               </ListBox>
             );
           })

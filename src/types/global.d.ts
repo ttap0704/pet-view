@@ -21,6 +21,12 @@ interface RadioModalContentsDataType {
   contents: { label: string; id: number | string }[];
 }
 
+interface SearchItemTypes {
+  label: string;
+  type: number;
+  checked: boolean;
+}
+
 interface ImageListType {
   new: boolean;
   src: string;

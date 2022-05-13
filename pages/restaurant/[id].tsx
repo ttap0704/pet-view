@@ -11,8 +11,8 @@ import LabelDetailTitle from '../../src/components/label/LabelDetailTitle';
 import ContainerRegistrationItem from '../../src/components/container/ContainerRegistrationItem';
 import CardNotice from '../../src/components/card/CardNotice';
 import ImageExposureMenuList from '../../src/components/image/ImageExposureMenuList';
-import ListEntireMenu from '../../src/components/list/ListEntireMenu';
 import KakaoMap from '../../src/components/common/KakaoMap';
+import ListEntireMenuView from '../../src/components/list/ListEntireMenuView';
 
 type Props = {
   detail: RestaurantResponse;
@@ -20,11 +20,6 @@ type Props = {
 
 interface Params extends ParsedUrlQuery {
   id: string;
-}
-
-interface MenuDetailsType {
-  category: EntireMenuCategoryType[];
-  exposure_menu: ExposureMenuType[];
 }
 
 const RestaurantContainer = styled(Box)(({ theme }) => ({
@@ -46,11 +41,22 @@ const InfoCardBox = styled(Box)(({ theme }) => ({
       height: '100%',
     },
   },
+
+  [theme.breakpoints.down('md')]: {
+    width: '100%',
+    maxWidth: '42rem',
+    height: 'auto',
+  },
 }));
 
-const InfoMapBox = styled(Box)(({ theme }) => ({
-  width: '60%',
-  height: 'auto',
+const ExposureBox = styled(Box)(({ theme }) => ({
+  width: '100%',
+  display: 'flex',
+  gap: '1rem',
+  [theme.breakpoints.down('md')]: {
+    alignItems: 'center',
+    flexDirection: 'column',
+  },
 }));
 
 const RestaurantDetail = (props: { detail: RestaurantResponse; style: { [key: string]: string } }) => {
@@ -134,22 +140,30 @@ const RestaurantDetail = (props: { detail: RestaurantResponse; style: { [key: st
   return (
     <RestaurantContainer>
       <ContainerRegistrationItem title=''>
-        <Box sx={{ width: '100%', display: 'flex', gap: '1rem' }}>
-          <Box sx={{ width: '100%' }}>
+        <ExposureBox>
+          <Box
+            sx={{
+              width: '100%',
+              maxWidth: '42rem',
+              height: 'auto',
+              cursor: 'pointer',
+              position: 'relative',
+            }}
+          >
             <ImageBox slide={true} type='restaurant' imageList={exposureImages} count={true} />
             <LabelDetailTitle title={restaurantLabel} address={address} />
           </Box>
           <InfoCardBox>
             <CardNotice contents={noticeContents} />
           </InfoCardBox>
-        </Box>
+        </ExposureBox>
       </ContainerRegistrationItem>
       <Divider sx={{ width: '100%', borderWidth: '1px', marginBottom: '3rem' }} />
       <ContainerRegistrationItem title='대표 메뉴'>
         <ImageExposureMenuList contents={exposureMenu} />
       </ContainerRegistrationItem>
       <ContainerRegistrationItem title='전체 메뉴'>
-        <ListEntireMenu entireMenu={entireMenu} type='category' mode='view' />
+        <ListEntireMenuView entireMenu={entireMenu} />
       </ContainerRegistrationItem>
       <KakaoMap address={roadAddress} label={restaurantLabel} />
     </RestaurantContainer>

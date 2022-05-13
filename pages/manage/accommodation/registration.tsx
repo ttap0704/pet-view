@@ -341,6 +341,10 @@ const ManageAccommodationRegistration = () => {
     if (!address_vali) {
       alert_message = '올바른 주소를 등록해주세요.';
     }
+    const type_vali = validation.type(accommodationType);
+    if (!type_vali) {
+      alert_message = '음식점 타입을 설정해주세요.';
+    }
     const title_vali = validation.label(accommodationLabel);
     if (!title_vali) {
       alert_message = '숙박업소명을 입력해주세요.';
@@ -395,6 +399,7 @@ const ManageAccommodationRegistration = () => {
       ...tmp_address,
       ...tmp_service_info,
       label: accommodationLabel,
+      type: accommodationType.type,
       introduction,
       manager: 1,
       peak_season: peakSeason,

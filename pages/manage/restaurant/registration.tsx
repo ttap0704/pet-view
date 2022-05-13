@@ -305,7 +305,7 @@ const ManageRestaurantRegistration = () => {
     }
     const type_vali = validation.type(restaurantType);
     if (!type_vali) {
-      alert_message = '1자 이상의 음식점 소개를 입력해주세요.';
+      alert_message = '음식점 타입을 설정해주세요.';
     }
     const title_vali = validation.label(restaurantLabel);
     if (!title_vali) {

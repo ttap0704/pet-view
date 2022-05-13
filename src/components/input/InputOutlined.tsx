@@ -140,7 +140,10 @@ const CustomInput = (props: InputOutlinedProps) => {
         onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleInput(e)}
         startAdornment={
           start_adornment ? (
-            <Typography variant='inherit' sx={{ width: '20%', textAlign: 'center' }}>
+            <Typography
+              variant='inherit'
+              sx={{ width: '20%', height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}
+            >
               {start_adornment}
             </Typography>
           ) : null
