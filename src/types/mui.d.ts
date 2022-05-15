@@ -63,3 +63,16 @@ declare module '@mui/material/Button' {
     black: true;
   }
 }
+
+declare module '@mui/material/styles' {
+  interface BreakpointOverrides {
+    xs: true;
+    xxxsm: true;
+    xxsm: true;
+    xsm: true;
+    sm: true;
+    md: true;
+    lg: true;
+    xl: true;
+  }
+}

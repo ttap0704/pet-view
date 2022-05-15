@@ -3,7 +3,7 @@ import { styled } from '@mui/material/styles';
 import { ModalContext } from '../../provider/ModalProvider';
 
 import Box, { BoxProps } from '@mui/material/Box';
-import { Typography } from '@mui/material';
+import { Typography, useMediaQuery, useTheme } from '@mui/material';
 import ImageSlider from './ImageSlider';
 import ContainerFullAbsolute from '../container/ContainerFullAbsolute';
 
@@ -18,41 +18,97 @@ interface ImageBoxProps extends BoxProps {
   empty?: boolean;
 }
 
-const CustomBox = styled(Box)(({ theme }) => ({
-  display: 'flex',
-  alignItems: 'center',
-  overflow: 'hidden',
-  position: 'relative',
-  border: 'thin solid',
-  borderColor: theme.palette.gray_5.main,
-  borderRadius: 6,
+const CustomBox = styled(Box)(({ theme }) => {
+  return {
+    display: 'flex',
+    alignItems: 'center',
+    overflow: 'hidden',
+    position: 'relative',
+    border: 'thin solid',
+    borderColor: theme.palette.gray_5.main,
+    borderRadius: 6,
 
-  '&:hover': {
-    '& > .image-slider': {
-      display: 'block',
+    '&.accommodation, &.restaurant': {
+      width: '100%',
+      maxWidth: '42rem',
+      height: '23rem',
+
+      [theme.breakpoints.down('xsm')]: {
+        height: '18rem',
+      },
+      [theme.breakpoints.down('xxsm')]: {
+        height: '16rem',
+      },
+      [theme.breakpoints.down('xxsm')]: {
+        height: '13rem',
+      },
+    },
+    '&.rooms': {
+      width: '100%',
+      maxWidth: '23rem',
+      height: '15rem',
+
+      [theme.breakpoints.down('xxsm')]: {
+        maxWidth: 'calc(23rem * 0.9)',
+        height: 'calc(15rem * 0.9)',
+      },
+      [theme.breakpoints.down('xxxsm')]: {
+        maxWidth: 'calc(23rem * 0.8)',
+        height: 'calc(15rem * 0.8)',
+      },
+    },
+    '&.exposure_menu': {
+      width: '100%',
+      maxWidth: '18rem',
+      height: '18rem',
+
+      [theme.breakpoints.down('xsm')]: {
+        maxWidth: '15rem',
+        height: '15rem',
+      },
+      [theme.breakpoints.down('xxsm')]: {
+        maxWidth: '13rem',
+        height: '13rem',
+      },
+      [theme.breakpoints.down('xxsm')]: {
+        maxWidth: '12rem',
+        height: '12rem',
+      },
+
+      img: {
+        width: 'auto',
+        height: '100%',
+      },
     },
 
-    '.image_count': {
-      display: 'block',
-    },
-  },
+    '&:hover': {
+      '& > .image-slider': {
+        display: 'block',
+      },
 
-  '.linear_bg': {
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
-    position: 'absolute',
-    width: '100%',
-    height: '100%',
-    background: 'linear-gradient(to bottom, rgba(0, 0, 0, 0) 0%,rgba(0, 0, 0, 0.3) 100%)',
-  },
-}));
+      '.image_count': {
+        display: 'block',
+      },
+    },
+
+    '.linear_bg': {
+      top: '50%',
+      left: '50%',
+      transform: 'translate(-50%, -50%)',
+      position: 'absolute',
+      width: '100%',
+      height: '100%',
+      background: 'linear-gradient(to bottom, rgba(0, 0, 0, 0) 0%,rgba(0, 0, 0, 0.3) 100%)',
+    },
+  };
+});
 
 const ImageWrap = styled(Box)(({ theme }) => ({
   width: '100%',
   height: '100%',
 
   position: 'relative',
+
   img: {
     top: '50%',
     left: '50%',
@@ -60,13 +116,6 @@ const ImageWrap = styled(Box)(({ theme }) => ({
     position: 'absolute',
     width: '100%',
     minWidth: '23rem',
-  },
-
-  '&.exposure_menu': {
-    img: {
-      width: 'auto',
-      height: '100%',
-    },
   },
 }));
 
@@ -80,6 +129,7 @@ const CountTypography = styled(Typography)(({ theme }) => ({
 
 const ImageBox = (props: ImageBoxProps) => {
   const { modal_image_detail } = useContext(ModalContext);
+  const theme = useTheme();
 
   const image_list = props.imageList;
   const type = props.type;
@@ -92,36 +142,8 @@ const ImageBox = (props: ImageBoxProps) => {
 
   const [curNum, setCurNum] = useState(0);
   const [isSlide, setIsSlide] = useState(false);
-  const [boxStyle, setBoxStyle] = useState({
-    width: '',
-    maxWidth: '',
-    height: '',
-  });
 
   useEffect(() => {
-    if (['accommodation', 'restaurant'].includes(type)) {
-      setBoxStyle({
-        width: '100%',
-        maxWidth: '42rem',
-        height: '21rem',
-      });
-    } else if (type == 'rooms') {
-      setBoxStyle({
-        width: '100%',
-        maxWidth: '23rem',
-        height: '15rem',
-      });
-    } else if (type == 'exposure_menu') {
-      setBoxStyle({
-        width: '100%',
-        maxWidth: '18rem',
-        height: '18rem',
-      });
-    }
-  }, []);
-
-  useEffect(() => {
-    console.log(image_list);
     if (slide == true && image_list) {
       if (image_list.length > 1) {
         setIsSlide(true);
@@ -175,7 +197,7 @@ const ImageBox = (props: ImageBoxProps) => {
 
   return (
     <>
-      <CustomBox sx={{ ...boxStyle }}>
+      <CustomBox className={type ? `${type}` : ''}>
         {image_list && image_list.length > 0 ? (
           <ImageWrap className={type ? `${type}` : ''}>
             <>

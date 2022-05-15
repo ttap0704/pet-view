@@ -69,6 +69,16 @@ const RoomImageContainer = styled(Box)(({ theme }) => ({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
+
+  [theme.breakpoints.down('xxsm')]: {
+    width: 'calc(23rem * 0.9)',
+    height: 'calc(15rem * 0.9)',
+  },
+
+  [theme.breakpoints.down('xxxsm')]: {
+    width: 'calc(23rem * 0.8)',
+    height: 'calc(15rem * 0.8)',
+  },
 }));
 
 interface FormItemContainerProps {

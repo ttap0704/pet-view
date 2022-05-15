@@ -25,6 +25,19 @@ const MenuImageContainer = styled(Box)(({ theme }) => ({
   minHeight: '18rem',
   position: 'relative',
 
+  [theme.breakpoints.down('xsm')]: {
+    minWidth: '15rem',
+    minHeight: '15rem',
+  },
+  [theme.breakpoints.down('xxsm')]: {
+    minWidth: '13rem',
+    minHeight: '13rem',
+  },
+  [theme.breakpoints.down('xxsm')]: {
+    minWidth: '12rem',
+    minHeight: '12rem',
+  },
+
   '&:hover': {
     '& > .menu_label_box': {
       opacity: 1,
@@ -40,10 +53,10 @@ const LabelBox = styled(Box)(({ theme }) => ({
   alignItems: 'flex-end',
   justifyContent: 'flex-end',
   position: 'absolute',
-  padding: '1rem',
   top: 0,
   left: 0,
   opacity: 0,
+  padding: '1rem',
   backgroundColor: 'rgba(0, 0, 0, 0.4)',
   color: theme.palette.gray_6.main,
   zIndex: 0,

@@ -51,6 +51,18 @@ const theme = createTheme({
       main: "#000"
     },
   },
-});
+  breakpoints: {
+    values: {
+      xs: 0,
+      xxxsm: 300,
+      xxsm: 400,
+      xsm: 500,
+      sm: 600,
+      md: 900,
+      lg: 1200,
+      xl: 1536,
+    },
+  }
+})
 
 export default theme;
