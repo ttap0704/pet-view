@@ -121,6 +121,7 @@ const ImageBox = (props: ImageBoxProps) => {
   }, []);
 
   useEffect(() => {
+    console.log(image_list);
     if (slide == true && image_list) {
       if (image_list.length > 1) {
         setIsSlide(true);

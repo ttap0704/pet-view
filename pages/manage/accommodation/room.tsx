@@ -195,7 +195,7 @@ const ManageAccommodationRooms = () => {
 
   const deleteRoom = async (accommodation_id: number, id: number) => {
     const response = await fetchDeleteApi(`/manager/${user.uid}/accommodation/${accommodation_id}/rooms/${id}`);
-    if (response == 200) {
+    if (response == 200 || response == 204) {
       modal_alert.openModalAlert('삭제가 완료되었습니다.');
     } else {
       modal_alert.openModalAlert('오류로 인해 삭제가 실패되었습니다.');
@@ -241,7 +241,7 @@ const ManageAccommodationRooms = () => {
 
       console.log(delete_res);
       console.log(upload_res);
-      if (delete_res == 200 && upload_res.length > 0) {
+      if ((delete_res == 200 || delete_res == 204) && upload_res.length > 0) {
         modal_alert.openModalAlert('객실 이미지 수정이 완료되었습니다.');
       } else {
         modal_alert.openModalAlert('오류로 인해 수정이 실패되었습니다.');

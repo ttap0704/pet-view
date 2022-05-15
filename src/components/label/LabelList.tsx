@@ -33,7 +33,6 @@ const LabelBox = styled(Box)(({ theme }) => ({
 const LabelList = (props: LabelListProps) => {
   const title = props.title;
   const subtitle = props.subtitle;
-  console.log(title, subtitle);
 
   return (
     <>

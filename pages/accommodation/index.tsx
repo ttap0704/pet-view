@@ -5,13 +5,12 @@ import { useEffect, useState, Fragment } from 'react';
 import { useRouter } from 'next/router';
 import { styled } from '@mui/material/styles';
 import { fetchGetApi } from '../../src/utils/api';
-import { setImageArray } from '../../src/utils/tools';
+import { setImageArray, setSearchQuery } from '../../src/utils/tools';
 
 import ImageBox from '../../src/components/image/ImageBox';
 import LabelList from '../../src/components/label/LabelList';
 import ContainerList from '../../src/components/container/ContainerList';
-import SideSearchBox from '../../src/components/common/SideSearchBox';
-import TopSearchBox from '../../src/components/common/TopSearchBox';
+import SearchBox from '../../src/components/common/SearchBox';
 import CardEmpty from '../../src/components/card/CardEmpty';
 
 interface AccommodationList {
@@ -51,25 +50,30 @@ const AccommodationIndex = (props: { list: AccommodationList[]; style: { [key: s
   const is_down_md = useMediaQuery(theme.breakpoints.down('md'));
 
   useEffect(() => {
-    console.log(props.list);
     setList(props.list);
   }, []);
-
-  const test = (date: Date, type: string) => {
-    console.log(date, type);
-  };
 
   const moveDetailPage = (item: AccommodationList) => {
     router.push(`/accommodation/${item.id}`);
   };
 
+  const searchList = async (data: SearchItems) => {
+    const url = `/accommodation${setSearchQuery(data)}`;
+    const search_res: AccommodationList[] = await fetchGetApi(url);
+    const list: AccommodationList[] = [];
+    for await (const item of search_res) {
+      list.push({
+        ...item,
+        image_list: await setImageArray(item.accommodation_images),
+      });
+    }
+
+    setList(list);
+  };
+
   return (
     <AccommodationContainer>
-      {is_down_md ? (
-        <TopSearchBox onDateChange={test} type='accommodation' />
-      ) : (
-        <SideSearchBox onDateChange={test} type='accommodation' />
-      )}
+      <SearchBox onSubmit={searchList} type='accommodation' />
       <ContainerList>
         {list.length > 0 ? (
           list.map((item, index) => {

@@ -72,7 +72,7 @@ const ManageRestaurantEntireMenu = () => {
 
   const deleteEntireMenu = async (restaurant_id: number, id: number) => {
     const response = await fetchDeleteApi(`/manager/${user.uid}/restaurant/${restaurant_id}/entire_menu/${id}`);
-    if (response == 200) {
+    if (response == 200 || response == 204) {
       modal_alert.openModalAlert('삭제가 완료되었습니다.');
     } else {
       modal_alert.openModalAlert('오류로 인해 삭제가 실패되었습니다.');

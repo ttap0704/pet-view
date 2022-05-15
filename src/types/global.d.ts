@@ -27,6 +27,12 @@ interface SearchItemTypes {
   checked: boolean;
 }
 
+interface SearchItems {
+  location: string;
+  types: string[];
+  menu: string;
+}
+
 interface ImageListType {
   new: boolean;
   src: string;

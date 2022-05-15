@@ -217,3 +217,23 @@ export function getNoticeContents(details: ServiceInfoType): (string | React.Rea
 
   return tmp_contents;
 }
+
+export const setSearchQuery = (items: SearchItems): string => {
+  let cnt = 0;
+  let query = '';
+
+  for (const [key, val] of Object.entries(items)) {
+    if (val.length > 0) {
+      if (cnt == 0) {
+        query += '?';
+      } else {
+        query += '&';
+      }
+
+      query += `${key}=${val.toString()}`;
+      cnt++;
+    }
+  }
+
+  return query;
+};

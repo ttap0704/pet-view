@@ -120,16 +120,7 @@ export const fetchDeleteApi = async function (uri: string) {
   let response = await fetch(servername + uri, {
     method: 'DELETE'
   });
-  const responseJson = await response.json()
-  setToken(responseJson);
-  if (responseJson.new_token) {
-    let response1 = await fetch(servername + uri, {
-      method: 'DELETE',
-    });
-    return response1.status
-  } else {
-    return response.status;
-  }
+  return response.status;
 };
 
 // Fetch PATCH
@@ -143,9 +134,10 @@ export const fetchPatchApi = async function (uri: string, args: { target: string
     body: JSON.stringify(args)
   });
 
-  const responseJson = await response.json()
-  setToken(responseJson);
-  if (responseJson.new_token) {
+  if (await response.json()) {
+    const responseJson = await response.json()
+    setToken(responseJson);
+
     let response1 = await fetch(servername + uri, {
       method: 'PATCH',
       headers: {
