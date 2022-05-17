@@ -11,6 +11,7 @@ import FormGroup from '@mui/material/FormGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
 import { HiChevronDown, HiChevronUp } from 'react-icons/hi';
+import { RiCloseFill } from 'react-icons/ri';
 
 interface SideSearchBoxProps {
   type: string;
@@ -91,6 +92,20 @@ const TitleBox = styled(Box)(({ theme }) => ({
   },
 }));
 
+const SearchItem = styled(Box)(({ theme }) => ({
+  display: 'flex',
+  width: 'auto',
+  maxWidth: '100%',
+  padding: '0.25rem 0.5rem',
+  borderRadius: 10,
+  backgroundColor: theme.palette.blue.main,
+  color: theme.palette.white.main,
+}));
+
+const SearchItemTypography = styled('span')(({ theme }) => ({
+  fontSize: '0.85rem',
+}));
+
 const SideSearchBox = (props: SideSearchBoxProps) => {
   const theme = useTheme();
   const is_down_md = useMediaQuery(theme.breakpoints.down('md'));
@@ -100,6 +115,7 @@ const SideSearchBox = (props: SideSearchBoxProps) => {
 
   const [curType, setCurType] = useState<SearchItemTypes[]>([]);
   const [open, setOpen] = useState(false);
+  const [curLocation, setCurLocation] = useState('');
   const [searchItems, setSearchItems] = useState<SearchItems>({
     location: '',
     types: [],
@@ -181,6 +197,7 @@ const SideSearchBox = (props: SideSearchBoxProps) => {
   };
 
   const search = () => {
+    setCurLocation(searchItems.location);
     onSubmit(searchItems);
   };
 
@@ -226,6 +243,14 @@ const SideSearchBox = (props: SideSearchBoxProps) => {
                 onKeyDownEnter={search}
                 placeholder='장소를 입력해주세요.'
               />
+              {curLocation.length > 0 ? (
+                <Box>
+                  <SearchItem>
+                    <SearchItemTypography>{curLocation}</SearchItemTypography>
+                    <RiCloseFill />
+                  </SearchItem>
+                </Box>
+              ) : null}
               <Button variant='outlined' color='orange' disableRipple={true} onClick={search}>
                 검색
               </Button>

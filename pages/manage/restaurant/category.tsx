@@ -2,7 +2,6 @@ import { GetServerSideProps } from 'next';
 import { useEffect, useState, useContext } from 'react';
 
 import { fetchGetApi, fetchPatchApi, fetchDeleteApi, fetchFileApi, fetchPostApi } from '../../../src/utils/api';
-import { setImageArray, setImageFormData } from '../../../src/utils/tools';
 import { restaurant_category } from '../../../src/utils/manage_items';
 
 import ModalEdit from '../../../src/components/modal/ModalEdit';

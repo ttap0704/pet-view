@@ -118,7 +118,10 @@ export const fetchGetApi = async function (uri: string) {
 // Fetch DELETE
 export const fetchDeleteApi = async function (uri: string) {
   let response = await fetch(servername + uri, {
-    method: 'DELETE'
+    method: 'DELETE',
+    headers: {
+      ...setHeader(uri, false),
+    },
   });
   return response.status;
 };
@@ -128,8 +131,7 @@ export const fetchPatchApi = async function (uri: string, args: { target: string
   let response = await fetch(servername + uri, {
     method: 'PATCH',
     headers: {
-      Accept: 'application/json',
-      'Content-Type': 'application/json',
+      ...setHeader(uri, false),
     },
     body: JSON.stringify(args)
   });
@@ -141,8 +143,7 @@ export const fetchPatchApi = async function (uri: string, args: { target: string
     let response1 = await fetch(servername + uri, {
       method: 'PATCH',
       headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
+        ...setHeader(uri, false),
       },
       body: JSON.stringify(args)
     });
