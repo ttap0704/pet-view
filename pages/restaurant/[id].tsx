@@ -3,7 +3,7 @@ import { ParsedUrlQuery } from 'querystring';
 import { Box, Divider, Typography } from '@mui/material';
 import React, { useEffect, useState, useContext } from 'react';
 import { styled } from '@mui/material/styles';
-import { setImageArray, getNoticeContents } from '../../src/utils/tools';
+import { setImageArray, getNoticeContents, setLookedUpList } from '../../src/utils/tools';
 import { fetchGetApi } from '../../src/utils/api';
 
 import ImageBox from '../../src/components/image/ImageBox';
@@ -72,6 +72,7 @@ const RestaurantDetail = (props: { detail: RestaurantResponse; style: { [key: st
 
   useEffect(() => {
     if (!isMounted) {
+      setLookedUpList('restaurant', props.detail.id);
       setRestaurantDetail(props.detail);
       setRoadAddress(props.detail.road_address);
     }

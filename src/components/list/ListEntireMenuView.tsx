@@ -93,7 +93,7 @@ const ListEntireMenuView = (props: ListEntireMenuViewProps) => {
                 <Typography component='span'>{category.category}</Typography>
                 {category.menu.map((menu, menu_idx) => {
                   return (
-                    <ListLi>
+                    <ListLi key={`category_${category_idx}_menu_${menu_idx}`}>
                       <Typography>
                         {menu_idx + 1}. {menu.label}
                       </Typography>

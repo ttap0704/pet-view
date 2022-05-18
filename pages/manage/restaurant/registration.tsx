@@ -5,7 +5,7 @@ import { useState, useContext, useEffect } from 'react';
 import { useRouter } from 'next/router';
 
 import { ModalContext } from '../../../src/provider/ModalProvider';
-import { setFileArray, setFileToImage, setImageFormData } from '../../../src/utils/tools';
+import { setFileToImage, setImageFormData } from '../../../src/utils/tools';
 import { fetchFileApi, fetchPostApi } from '../../../src/utils/api';
 
 import ContainerRegistrationItem from '../../../src/components/container/ContainerRegistrationItem';
@@ -107,7 +107,6 @@ const ManageRestaurantRegistration = () => {
   const handleExposureMenuInput = (e: React.ChangeEvent<HTMLInputElement>, type: string, idx: number) => {
     const cur_value = e.target.value.replace(/[\,]/gi, '');
     const value = cur_value;
-    console.log(value);
     setExposureMenu(state => {
       return [
         ...state.map((menu, menu_idx) => {
@@ -235,7 +234,6 @@ const ManageRestaurantRegistration = () => {
 
   const setExposureMenuImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const tmp_image_list = await setFileToImage(e.target.files, [2]);
-    console.log(exposureMenuClickIdx);
 
     setExposureMenu(state => {
       return [

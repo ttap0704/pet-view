@@ -1,5 +1,6 @@
 import { Typography } from '@mui/material';
 import Link from 'next/link';
+import { fetchPostApi } from './api';
 
 export async function setImageArray(data: { file_name: string }[], set_file?: boolean, type?: string) {
   let image_arr = [];
@@ -236,4 +237,21 @@ export const setSearchQuery = (items: SearchItems): string => {
   }
 
   return query;
+};
+
+export const setLookedUpList = (type: string, id: number) => {
+  const session = window.sessionStorage;
+
+  const cur_item = session.getItem(type);
+  if (cur_item) {
+    const item_json: { list: number[] } = JSON.parse(cur_item);
+
+    if (!item_json.list.includes(id)) {
+      const postdate = getDate(`${new Date()}`);
+      item_json.list.push(id);
+
+      session.setItem(type, JSON.stringify(item_json));
+      fetchPostApi(`/${type}/${id}/count`, { id, postdate });
+    }
+  }
 };

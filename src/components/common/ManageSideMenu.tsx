@@ -65,7 +65,7 @@ const ManageSideMenu = () => {
   const [currentSideMenu, setCurrentSideMenu] = useState<SideMenuType>({});
   const side_menu_items: SideMenuType = {
     index: {
-      label: '관리자 메인',
+      label: '홈',
       children: [],
       path: '/manage',
     },
@@ -121,13 +121,13 @@ const ManageSideMenu = () => {
   };
 
   useEffect(() => {
-    if (user.type == 1) {
-      delete side_menu_items.accommodation;
+    if (user && user.type == 1) {
+      // delete side_menu_items.accommodation;
     } else if (user.type == 2) {
       delete side_menu_items.restaurant;
     }
     setCurrentSideMenu({ ...side_menu_items });
-  }, []);
+  }, [user]);
 
   const setTreeItems = () => {
     return Object.keys(currentSideMenu).map((key, idx) => {

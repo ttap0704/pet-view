@@ -50,9 +50,11 @@ const ManageAccommodationRooms = () => {
   }, [data.per_page]);
 
   useEffect(() => {
-    getTableItems();
-    setFirst(true);
-  }, []);
+    if (user.uid > 0) {
+      getTableItems();
+      setFirst(true);
+    }
+  }, [user]);
 
   useEffect(() => {
     const dropdown_idx = data.clicked_dropdown_idx;

@@ -23,6 +23,10 @@ const _APP = ({ Component, pageProps }: AppProps) => {
   useEffect(() => {
     const root_path = router.pathname.split('/')[1];
     setRootPath(root_path);
+
+    const session = window.sessionStorage;
+    if (!session.getItem('restaurant')) session.setItem('restaurant', JSON.stringify({ list: [] }));
+    if (!session.getItem('accommodation')) session.setItem('accommodation', JSON.stringify({ list: [] }));
   }, [router.pathname]);
 
   const Layout = () => {

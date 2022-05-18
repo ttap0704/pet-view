@@ -3,7 +3,7 @@ import { ParsedUrlQuery } from 'querystring';
 import { Box } from '@mui/material';
 import { useEffect, useState, useContext } from 'react';
 import { styled } from '@mui/material/styles';
-import { setImageArray, getSeasonPriceKey, getNoticeContents } from '../../src/utils/tools';
+import { setImageArray, getSeasonPriceKey, getNoticeContents, setLookedUpList } from '../../src/utils/tools';
 import { fetchGetApi } from '../../src/utils/api';
 import { ModalContext } from '../../src/provider/ModalProvider';
 import { season_notice } from '../../src/utils/notice_contents';
@@ -161,6 +161,7 @@ const AccommodationDetail = (props: { detail: AccommodationResponse; style: { [k
 
       const tmp_contents: (string | React.ReactElement)[] = getNoticeContents(tmp_info_details);
 
+      setLookedUpList('accommodation', props.detail.id);
       setNoticeContents([...tmp_contents]);
       setCurPriceKey(today_key);
       setAccommodationDetail(props.detail, today_key);

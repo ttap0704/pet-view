@@ -36,9 +36,11 @@ const ManageRestaurantExposureMenu = () => {
   }, [data.per_page]);
 
   useEffect(() => {
-    getTableItems();
-    setFirstUpdate(true);
-  }, []);
+    if (user.uid > 0) {
+      getTableItems();
+      setFirstUpdate(true);
+    }
+  }, [user]);
 
   useEffect(() => {
     const target_idx = data.clicked_dropdown_idx;

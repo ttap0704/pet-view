@@ -145,7 +145,6 @@ const KakaoMap = (props: { address: string; label: string }) => {
         geocoder.addressSearch(address, function (result: any, status: any) {
           const result_x = Number(result[0].x);
           const result_y = Number(result[0].y);
-          console.log(result);
 
           const container = document.getElementById('kakao_map');
           const options = {
@@ -191,7 +190,6 @@ const KakaoMap = (props: { address: string; label: string }) => {
           }
 
           function onClickCategory(el: Element) {
-            console.log(el);
             let id = el.id,
               className = el.className;
 

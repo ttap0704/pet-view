@@ -16,6 +16,7 @@ interface DropdownProps {
   buttonDisabled: boolean;
   onClick: (idx: number) => void;
   title?: string;
+  variant?: ButtonProps['variant'];
 }
 
 const StyledMenu = styled((props: MenuProps) => (
@@ -63,10 +64,11 @@ const CustomDropdown = (props: DropdownProps) => {
   const items: string[] = props.items;
   const disabled = props.buttonDisabled;
   const title = props.title;
+  const variant = props.variant;
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [menuButtonProps, setMenuButtonProps] = useState<MenuButtonPropsStateType>({
-    variant: 'contained',
+    variant: variant ?? 'contained',
     color: 'blue',
   });
   const open = Boolean(anchorEl);

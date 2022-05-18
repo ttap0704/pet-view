@@ -61,13 +61,11 @@ const ManageRestaurantInfo = () => {
   }, [data.per_page]);
 
   useEffect(() => {
-    console.log(firstUpdate);
-    if (!firstUpdate) {
-      console.log('useEffect null');
+    if (user.uid > 0 && !firstUpdate) {
       getTableItems();
       setFirstUpdate(true);
     }
-  }, []);
+  }, [user]);
 
   useEffect(() => {
     const target_idx = data.clicked_dropdown_idx;
