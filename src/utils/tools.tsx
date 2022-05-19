@@ -255,3 +255,26 @@ export const setLookedUpList = (type: string, id: number) => {
     }
   }
 };
+
+export const setMonthKorDropdownItems = (min_date: Date) => {
+  const min_year = min_date.getFullYear();
+  const min_month = min_date.getMonth() + 1;
+
+  const today_year = new Date().getFullYear();
+  const today_month = new Date().getMonth() + 1;
+
+  const dropdown_items: string[] = [];
+  for (let i = today_year, leng = min_year; i >= leng; i--) {
+    for (let y = 12, yleng = 1; y >= yleng; y--) {
+      if (i == today_year && y > today_month) {
+        continue;
+      }
+      if (i == min_year && y < min_month) {
+        break;
+      }
+      dropdown_items.push(`${i}년 ${y < 10 ? `0${y}` : y}월`);
+    }
+  }
+
+  return dropdown_items;
+};
