@@ -99,7 +99,7 @@ const LoginIndex = () => {
       return;
     }
 
-    const login_res = await fetchPostApi('/user/login', login_data);
+    const login_res = await fetchPostApi('/users/login', login_data);
     if (login_res.pass) {
       const user: UserType = login_res.user;
       const saved_user = {

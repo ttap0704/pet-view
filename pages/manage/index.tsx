@@ -43,6 +43,7 @@ const ManageIndex = () => {
       `/manager/${user.uid}/chart/views?type=${user.type}&year=${selected_year}&month=${selected_month}`,
     );
   };
+  
 
   return (
     <>

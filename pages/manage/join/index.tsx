@@ -143,7 +143,7 @@ const LoginIndex = () => {
       modal_alert.openModalAlert('비밀번호가 일치하지 않습니다.', true);
     }
 
-    const create_res = await fetchPostApi('/user/join', {
+    const create_res = await fetchPostApi('/users/join', {
       join_data,
       business_data: certificationData,
     });
@@ -177,7 +177,7 @@ const LoginIndex = () => {
       corp_no: '',
     };
 
-    const cert_res = await fetchPostApi('/user/certification', cert_data);
+    const cert_res = await fetchPostApi('/users/certification', cert_data);
 
     if (cert_res.pass) {
       modal_alert.openModalAlert('인증에 성공하였습니다', true, () => {

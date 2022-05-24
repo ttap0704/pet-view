@@ -50,7 +50,7 @@ const JoinSuccess = () => {
   }, []);
 
   const certUser = async () => {
-    const cert_res = await fetchPostApi(`/user/join/certification`, { id: curId, cert_num: certNum });
+    const cert_res = await fetchPostApi(`/users/join/certification`, { id: curId, cert_num: certNum });
 
     if (cert_res.pass) {
       modal_alert.openModalAlert('인증에 성공하였습니다.', true, () => {
