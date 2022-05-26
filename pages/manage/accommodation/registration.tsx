@@ -407,7 +407,7 @@ const ManageAccommodationRegistration = () => {
     };
 
     const accommodation: CreateAccommodationResponse = await fetchPostApi(
-      `/manager/${user.uid}/accommodation`,
+      `/admin/${user.uid}/accommodation`,
       accom_data,
     );
     const accommodation_id = accommodation.accommodation_id;

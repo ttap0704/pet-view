@@ -112,7 +112,7 @@ const ManageRestaurantExposureMenu = () => {
   };
 
   const deleteExposureMenu = async (restaurant_id: number, id: number) => {
-    const response = await fetchDeleteApi(`/manager/${user.uid}/restaurant/${restaurant_id}/exposure_menu/${id}`);
+    const response = await fetchDeleteApi(`/admin/${user.uid}/restaurant/${restaurant_id}/exposure_menu/${id}`);
     if (response == 200 || response == 204) {
       modal_alert.openModalAlert('삭제가 완료되었습니다.');
     } else {
@@ -201,7 +201,7 @@ const ManageRestaurantExposureMenu = () => {
     const target_string = modal_edit.data.target;
 
     if (target) {
-      let url = `/manager/${user.uid}/restaurant/${target.restaurant_id}/exposure_menu/${target.id}`;
+      let url = `/admin/${user.uid}/restaurant/${target.restaurant_id}/exposure_menu/${target.id}`;
 
       const status = await fetchPatchApi(url, { target: target_string, value });
 
@@ -216,7 +216,7 @@ const ManageRestaurantExposureMenu = () => {
 
   const getTableItems = async () => {
     const accommodation: ExposureMenuListType = await fetchGetApi(
-      `/manager/${user.uid}/restaurant/exposure_menu?page=${data.per_page}`,
+      `/admin/${user.uid}/restaurant/exposure_menu?page=${data.per_page}`,
     );
 
     const count = accommodation.count;

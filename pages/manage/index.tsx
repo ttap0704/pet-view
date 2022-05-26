@@ -40,10 +40,9 @@ const ManageIndex = () => {
     const selected_year = cur_dropdown_items[selectedDropdownIdx].slice(0, 4);
     const selected_month = cur_dropdown_items[selectedDropdownIdx].slice(6, 8);
     const chart_res = await fetchGetApi(
-      `/manager/${user.uid}/chart/views?type=${user.type}&year=${selected_year}&month=${selected_month}`,
+      `/admin/${user.uid}/chart/views?type=${user.type}&year=${selected_year}&month=${selected_month}`,
     );
   };
-  
 
   return (
     <>

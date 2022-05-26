@@ -90,11 +90,11 @@ const LoginIndex = () => {
 
   const userLogin = async () => {
     const login_data = {
-      id: loginInfo[0].value,
+      login_id: loginInfo[0].value,
       password: loginInfo[1].value,
     };
 
-    if (login_data.id.length == 0 || login_data.password.length == 0) {
+    if (login_data.login_id.length == 0 || login_data.password.length == 0) {
       modal_alert.openModalAlert('모든 정보를 입력해주세요.');
       return;
     }

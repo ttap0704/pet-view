@@ -170,7 +170,7 @@ const ManageAccommodationRooms = () => {
       const accommodation_id = target.accommodation_id;
       const id = target.id;
       const update_res = await fetchPostApi(
-        `/manager/${user.uid}/accommodation/${accommodation_id}/rooms/${id}/info`,
+        `/admin/${user.uid}/accommodation/${accommodation_id}/rooms/${id}/info`,
         price,
       );
 
@@ -196,7 +196,7 @@ const ManageAccommodationRooms = () => {
   };
 
   const deleteRoom = async (accommodation_id: number, id: number) => {
-    const response = await fetchDeleteApi(`/manager/${user.uid}/accommodation/${accommodation_id}/rooms/${id}`);
+    const response = await fetchDeleteApi(`/admin/${user.uid}/accommodation/${accommodation_id}/rooms/${id}`);
     if (response == 200 || response == 204) {
       modal_alert.openModalAlert('삭제가 완료되었습니다.');
     } else {
@@ -301,7 +301,7 @@ const ManageAccommodationRooms = () => {
 
     if (target) {
       const accommodation_id = target.accommodation_id;
-      let url = `/manager/${user.uid}/accommodation/${accommodation_id}/rooms/${target.id}`;
+      let url = `/admin/${user.uid}/accommodation/${accommodation_id}/rooms/${target.id}`;
       if (target_string == 'price') {
         value = `${value}`.replace(/\,/g, '');
       }
@@ -319,7 +319,7 @@ const ManageAccommodationRooms = () => {
 
   const getTableItems = async () => {
     const accommodation: AccommodationRoomsListType = await fetchGetApi(
-      `/manager/${user.uid}/accommodation/rooms?page=${data.per_page}`,
+      `/admin/${user.uid}/accommodation/rooms?page=${data.per_page}`,
     );
 
     const count = accommodation.count;

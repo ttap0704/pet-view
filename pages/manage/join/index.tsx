@@ -12,7 +12,7 @@ import InputOutlined from '../../../src/components/input/InputOutlined';
 import Button from '../../../src/components/button/Button';
 import UtilBox from '../../../src/components/common/UtilBox';
 
-import { fetchPostApi } from '../../../src/utils/api';
+import { fetchGetApi, fetchPostApi } from '../../../src/utils/api';
 
 import { ModalContext } from '../../../src/provider/ModalProvider';
 
@@ -124,7 +124,7 @@ const LoginIndex = () => {
 
   const joinUser = async () => {
     const join_data = {
-      id: joinInfo[0].value,
+      login_id: joinInfo[0].value,
       password: joinInfo[1].value,
       password_check: joinInfo[2].value,
       name: joinInfo[3].value,
@@ -132,7 +132,7 @@ const LoginIndex = () => {
     };
 
     if (
-      join_data.id.length == 0 ||
+      join_data.login_id.length == 0 ||
       join_data.password.length == 0 ||
       join_data.password_check.length == 0 ||
       join_data.name.length == 0 ||
@@ -143,7 +143,7 @@ const LoginIndex = () => {
       modal_alert.openModalAlert('비밀번호가 일치하지 않습니다.', true);
     }
 
-    const create_res = await fetchPostApi('/users/join', {
+    const create_res = await fetchPostApi('/admin/join', {
       join_data,
       business_data: certificationData,
     });
@@ -177,7 +177,7 @@ const LoginIndex = () => {
       corp_no: '',
     };
 
-    const cert_res = await fetchPostApi('/users/certification', cert_data);
+    const cert_res = await fetchPostApi('/business/certification', cert_data);
 
     if (cert_res.pass) {
       modal_alert.openModalAlert('인증에 성공하였습니다', true, () => {
@@ -186,8 +186,10 @@ const LoginIndex = () => {
         setCertificationData({ ...cert_data });
       });
     } else {
-      if ((cert_res.message = 'Not Target')) {
+      if (cert_res.message == 'Not Target') {
         modal_alert.openModalAlert('숙박업소 또는 음식점 운영자만\r\n회원가입이 가능합니다.', true);
+      } else if (cert_res.message == 'Already Join') {
+        modal_alert.openModalAlert('이미 등록된 사업자입니다.', true);
       } else {
         modal_alert.openModalAlert('인증에 실패하였습니다.\r\n다시 시도해주세요.', true);
       }

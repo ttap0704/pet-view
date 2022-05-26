@@ -154,7 +154,7 @@ const ManageRestaurantInfo = () => {
   };
 
   const deleteRestaurant = async (id: number) => {
-    const response = await fetchDeleteApi(`/manager/${user.uid}/restaurant/${id}`);
+    const response = await fetchDeleteApi(`/admin/${user.uid}/restaurant/${id}`);
     if (response == 200 || response == 204) {
       modal_alert.openModalAlert('삭제가 완료되었습니다.');
     } else {
@@ -178,7 +178,7 @@ const ManageRestaurantInfo = () => {
       const restaurant_id = target.id;
 
       const res_exposure_menu: ExposureMenuType[] = await fetchPostApi(
-        `/manager/${user.uid}/restaurant/${restaurant_id}/exposure_menu`,
+        `/admin/${user.uid}/restaurant/${restaurant_id}/exposure_menu`,
         payload,
       );
 
@@ -218,7 +218,7 @@ const ManageRestaurantInfo = () => {
     const target = data.table_items.find(item => item.checked);
 
     if (target) {
-      const res = await fetchPostApi(`/manager/${user.uid}/restaurant/${target.id}/category`, category);
+      const res = await fetchPostApi(`/admin/${user.uid}/restaurant/${target.id}/category`, category);
 
       if (res) {
         modal_alert.openModalAlert('카테고리 등록이 완료되었습니다.');
@@ -343,7 +343,7 @@ const ManageRestaurantInfo = () => {
     const target_string = modal_edit.data.target;
 
     if (target) {
-      let url = `/manager/${user.uid}/restaurant/${target.id}`;
+      let url = `/admin/${user.uid}/restaurant/${target.id}`;
 
       const status = await fetchPatchApi(url, { target: target_string, value });
 
@@ -358,7 +358,7 @@ const ManageRestaurantInfo = () => {
 
   const getTableItems = async () => {
     console.log('getTableItems');
-    const restaurant: RestaurantListType = await fetchGetApi(`/manager/${user.uid}/restaurant?page=${data.per_page}`);
+    const restaurant: RestaurantListType = await fetchGetApi(`/admin/${user.uid}/restaurant?page=${data.per_page}`);
 
     const count = restaurant.count;
     const rows = restaurant.rows;
@@ -428,7 +428,7 @@ const ManageRestaurantInfo = () => {
       }
 
       const response = await fetchPostApi(
-        `/manager/${user.uid}/restaurant/${target.id}/${curOrderModalType}/order`,
+        `/admin/${user.uid}/restaurant/${target.id}/${curOrderModalType}/order`,
         change_data,
       );
       if (response) {
@@ -474,7 +474,7 @@ const ManageRestaurantInfo = () => {
   const updateAddress = async (address: ResponsePostcodeDataType) => {
     const target = data.table_items.find(item => item.checked);
     if (target) {
-      const update_res = await await fetchPostApi(`/manager/${user.uid}/restaurant/${target.id}/address`, { address });
+      const update_res = await await fetchPostApi(`/admin/${user.uid}/restaurant/${target.id}/address`, { address });
       if (update_res) {
         getTableItems();
         setPostcodeVisible(false);
@@ -488,7 +488,7 @@ const ManageRestaurantInfo = () => {
   const updateServiceInfo = async (service_info: ServiceInfoType) => {
     const target = data.table_items.find(item => item.checked);
     if (target) {
-      const update_res = await fetchPostApi(`/manager/${user.uid}/restaurant/${target.id}/service`, {
+      const update_res = await fetchPostApi(`/admin/${user.uid}/restaurant/${target.id}/service`, {
         service_info,
       });
       if (update_res) {

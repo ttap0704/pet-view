@@ -143,7 +143,7 @@ const ManageAccommodationInfo = () => {
   };
 
   const deleteAccommodation = async (id: number) => {
-    const response = await fetchDeleteApi(`/manager/${user.uid}/accommodation/${id}`);
+    const response = await fetchDeleteApi(`/admin/${user.uid}/accommodation/${id}`);
     if (response == 200 || response == 204) {
       modal_alert.openModalAlert('삭제가 완료되었습니다.');
     } else {
@@ -176,7 +176,7 @@ const ManageAccommodationInfo = () => {
   const updatePeakSeason = async (season_data: { start: string; end: string }[]) => {
     const target = data.table_items.find(item => item.checked);
     if (target) {
-      const update_res = await fetchPostApi(`/manager/${user.uid}/accommodation/${target.id}/season`, {
+      const update_res = await fetchPostApi(`/admin/${user.uid}/accommodation/${target.id}/season`, {
         season: season_data,
       });
       if (update_res) {
@@ -192,7 +192,7 @@ const ManageAccommodationInfo = () => {
   const updateServiceInfo = async (service_info: ServiceInfoType) => {
     const target = data.table_items.find(item => item.checked);
     if (target) {
-      const update_res = await fetchPostApi(`/manager/${user.uid}/accommodation/${target.id}/service`, {
+      const update_res = await fetchPostApi(`/admin/${user.uid}/accommodation/${target.id}/service`, {
         service_info,
       });
       if (update_res) {
@@ -332,7 +332,7 @@ const ManageAccommodationInfo = () => {
     const target_string = modal_edit.data.target;
 
     if (target) {
-      let url = `/manager/${user.uid}/accommodation/${target.id}`;
+      let url = `/admin/${user.uid}/accommodation/${target.id}`;
 
       const status = await fetchPatchApi(url, { target: target_string, value });
 
@@ -364,7 +364,7 @@ const ManageAccommodationInfo = () => {
 
       let rooms_payload = [];
       const res_rooms: RoomType[] = await fetchPostApi(
-        `/manager/${user.uid}/accommodation/${target.id}/rooms`,
+        `/admin/${user.uid}/accommodation/${target.id}/rooms`,
         add_room_data,
       );
       for (const room of rooms) {
@@ -396,7 +396,7 @@ const ManageAccommodationInfo = () => {
 
   const getTableItems = async () => {
     const accommodation: AccommodationListType = await fetchGetApi(
-      `/manager/${user.uid}/accommodation?page=${data.per_page}`,
+      `/admin/${user.uid}/accommodation?page=${data.per_page}`,
     );
 
     const count = accommodation.count;
@@ -450,7 +450,7 @@ const ManageAccommodationInfo = () => {
         }
       }
 
-      const response = await fetchPostApi(`/manager/${user.uid}/accommodation/${target.id}/rooms/order`, change_data);
+      const response = await fetchPostApi(`/admin/${user.uid}/accommodation/${target.id}/rooms/order`, change_data);
       if (response) {
         getTableItems();
         setOrderContents({ visible: false, title: '', list: [] });
@@ -466,7 +466,7 @@ const ManageAccommodationInfo = () => {
   const updateAddress = async (address: ResponsePostcodeDataType) => {
     const target = data.table_items.find(item => item.checked);
     if (target) {
-      const update_res = await fetchPostApi(`/manager/${user.uid}/accommodation/${target.id}/address`, {
+      const update_res = await fetchPostApi(`/admin/${user.uid}/accommodation/${target.id}/address`, {
         address,
       });
       if (update_res) {

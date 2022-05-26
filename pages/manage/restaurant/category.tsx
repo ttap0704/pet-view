@@ -101,7 +101,7 @@ const ManageAccommodationCategory = () => {
   };
 
   const deleteCategory = async (restaurant_id: number, id: number) => {
-    const response = await fetchDeleteApi(`/manager/${user.uid}/restaurant/${restaurant_id}/category/${id}`);
+    const response = await fetchDeleteApi(`/admin/${user.uid}/restaurant/${restaurant_id}/category/${id}`);
     if (response == 200 || response == 204) {
       modal_alert.openModalAlert('삭제가 완료되었습니다.');
     } else {
@@ -116,7 +116,7 @@ const ManageAccommodationCategory = () => {
     if (target) {
       const menu = [...category[0].menu];
       const res = await fetchPostApi(
-        `/manager/${user.uid}/restaurant/${target.restaurant_id}/category/${target.id}/menu`,
+        `/admin/${user.uid}/restaurant/${target.restaurant_id}/category/${target.id}/menu`,
         {
           menu,
         },
@@ -157,7 +157,7 @@ const ManageAccommodationCategory = () => {
     const target_string = modal_edit.data.target;
 
     if (target) {
-      let url = `/manager/${user.uid}/restaurant/${target.restaurant_id}/category/${target.id}`;
+      let url = `/admin/${user.uid}/restaurant/${target.restaurant_id}/category/${target.id}`;
       const status = await fetchPatchApi(url, { target: target_string, value });
 
       if (status == 200) {
@@ -171,7 +171,7 @@ const ManageAccommodationCategory = () => {
 
   const getTableItems = async () => {
     const category: EntireMenuCategoryListType = await fetchGetApi(
-      `/manager/${user.uid}/restaurant/category?page=${data.per_page}`,
+      `/admin/${user.uid}/restaurant/category?page=${data.per_page}`,
     );
 
     const count = category.count;
@@ -213,7 +213,7 @@ const ManageAccommodationCategory = () => {
         }
       }
       const response = await fetchPostApi(
-        `/manager/${user.uid}/restaurant/${target.restaurant_id}/entire_menu/order`,
+        `/admin/${user.uid}/restaurant/${target.restaurant_id}/entire_menu/order`,
         change_data,
       );
       if (response) {
