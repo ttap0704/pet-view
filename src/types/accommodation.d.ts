@@ -38,7 +38,7 @@ interface AccommodationResponse extends ServiceInfoType {
   id: number;
   introduction: string;
   label: string;
-  manager: number;
+  admin: number;
   sido: string;
   sigungu: string;
   updatedAt: string;

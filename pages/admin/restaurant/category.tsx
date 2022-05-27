@@ -2,7 +2,7 @@ import { GetServerSideProps } from 'next';
 import { useEffect, useState, useContext } from 'react';
 
 import { fetchGetApi, fetchPatchApi, fetchDeleteApi, fetchFileApi, fetchPostApi } from '../../../src/utils/api';
-import { restaurant_category } from '../../../src/utils/manage_items';
+import { restaurant_category } from '../../../src/utils/admin_items';
 
 import ModalEdit from '../../../src/components/modal/ModalEdit';
 import ModalAddEntireMenu from '../../../src/components/modal/ModalAddEntireMenu';
@@ -20,7 +20,7 @@ interface EntireMenuModalContentsType {
   category: AddEntireMenuContentsType[];
 }
 
-const ManageAccommodationCategory = () => {
+const AdminAccommodationCategory = () => {
   const user = useSelector((state: RootState) => state.userReducer);
   const { data } = useContext(TableContext);
   const { modal_confirm, modal_edit, modal_alert, modal_upload } = useContext(ModalContext);
@@ -251,4 +251,4 @@ const ManageAccommodationCategory = () => {
   );
 };
 
-export default ManageAccommodationCategory;
+export default AdminAccommodationCategory;

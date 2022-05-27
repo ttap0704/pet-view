@@ -42,7 +42,7 @@ function getCookie(type: string, ctx?: GetServerSidePropsContext) {
 function setHeader(uri: string, no_content_type?: boolean, ctx?: GetServerSidePropsContext) {
   const root_path = uri.split('/')[1];
   const children_path = uri.split('/')[2];
-  const check_arr = ['manage', 'manager'];
+  const check_arr = ['admin'];
   const excepted_path = ['login', 'join']
   const cookie: string | null = getCookie('a-token', ctx) ? getCookie('a-token', ctx) : null;
 

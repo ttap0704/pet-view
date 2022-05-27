@@ -150,7 +150,7 @@ const LoginIndex = () => {
 
     if (create_res.pass) {
       modal_notice.openModalNotice('회원가입이 완료되었습니다.', () => {
-        router.push('/manage/join/success');
+        router.push('/admin/join/success');
       });
     } else {
       let message = '';

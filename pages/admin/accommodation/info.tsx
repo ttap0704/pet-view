@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux';
 
 import { fetchGetApi, fetchPatchApi, fetchDeleteApi, fetchFileApi, fetchPostApi } from '../../../src/utils/api';
 import { getDate, setImageArray, setImageFormData } from '../../../src/utils/tools';
-import { accommodation_info } from '../../../src/utils/manage_items';
+import { accommodation_info } from '../../../src/utils/admin_items';
 
 import ModalEdit from '../../../src/components/modal/ModalEdit';
 import ModalUpload from '../../../src/components/modal/ModalUpload';
@@ -30,7 +30,7 @@ interface PeakSeasonModalContentsType {
   mode: string;
 }
 
-const ManageAccommodationInfo = () => {
+const AdminAccommodationInfo = () => {
   const user = useSelector((state: RootState) => state.userReducer);
   const { data } = useContext(TableContext);
   const { modal_confirm, modal_edit, modal_alert, modal_upload, modal_image_detail } = useContext(ModalContext);
@@ -523,4 +523,4 @@ const ManageAccommodationInfo = () => {
   );
 };
 
-export default ManageAccommodationInfo;
+export default AdminAccommodationInfo;

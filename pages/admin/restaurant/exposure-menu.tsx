@@ -3,7 +3,7 @@ import { useEffect, useState, useContext } from 'react';
 
 import { fetchGetApi, fetchPatchApi, fetchDeleteApi, fetchFileApi, fetchPostApi } from '../../../src/utils/api';
 import { getDate, setImageArray, setImageFormData } from '../../../src/utils/tools';
-import { restaurant_exposure_menu } from '../../../src/utils/manage_items';
+import { restaurant_exposure_menu } from '../../../src/utils/admin_items';
 
 import ModalEdit from '../../../src/components/modal/ModalEdit';
 import ModalUpload from '../../../src/components/modal/ModalUpload';
@@ -19,7 +19,7 @@ interface UpdateExposureMenuImageContentsType {
   origin_image_list: ImageListType[];
 }
 
-const ManageRestaurantExposureMenu = () => {
+const AdminRestaurantExposureMenu = () => {
   const user = useSelector((state: RootState) => state.userReducer);
   const { data } = useContext(TableContext);
   const { modal_confirm, modal_edit, modal_alert, modal_upload, modal_image_detail } = useContext(ModalContext);
@@ -258,4 +258,4 @@ const ManageRestaurantExposureMenu = () => {
   );
 };
 
-export default ManageRestaurantExposureMenu;
+export default AdminRestaurantExposureMenu;

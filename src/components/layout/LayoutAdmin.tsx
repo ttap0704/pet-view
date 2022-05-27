@@ -1,4 +1,4 @@
-import ManageSideMenu from '../common/ManageSideMenu';
+import AdminSideMenu from '../common/AdminSideMenu';
 import Box from '@mui/material/Box';
 import { styled } from '@mui/material/styles';
 import { useRouter } from 'next/router';
@@ -7,13 +7,13 @@ import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../store';
 import { setUser } from '../../store/slices/user';
 
-const excepted_path = ['/manage/join', '/manage/login', '/manage/join/success', '/manage/join/certification/[id]'];
+const excepted_path = ['/admin/join', '/admin/login', '/admin/join/success', '/admin/join/certification/[id]'];
 
-interface LayoutManageProps {
+interface LayoutAdminProps {
   children: React.ReactNode;
 }
 
-const LayoutManageBox = styled(Box)(({ theme }) => ({
+const LayoutAdminBox = styled(Box)(({ theme }) => ({
   width: '100vw',
   height: '100vh',
   display: 'flex',
@@ -44,7 +44,7 @@ const LayoutChildrenBox = styled(Box)(({ theme }) => ({
   margin: '0 auto',
 }));
 
-const LayoutManage = (props: LayoutManageProps) => {
+const LayoutAdmin = (props: LayoutAdminProps) => {
   const user = useSelector((state: RootState) => state.userReducer);
   const router = useRouter();
   const dispatch = useDispatch();
@@ -58,19 +58,19 @@ const LayoutManage = (props: LayoutManageProps) => {
         const session: UserType = JSON.parse(user);
         dispatch(setUser(session));
       } else {
-        router.push('/manage/login');
+        router.push('/admin/login');
       }
     }
   }, []);
 
   return (
-    <LayoutManageBox>
-      {excepted_path.includes(router.pathname) ? null : <ManageSideMenu />}
+    <LayoutAdminBox>
+      {excepted_path.includes(router.pathname) ? null : <AdminSideMenu />}
       <LayoutChildrenWarp path={router.pathname}>
         <LayoutChildrenBox>{children}</LayoutChildrenBox>
       </LayoutChildrenWarp>
-    </LayoutManageBox>
+    </LayoutAdminBox>
   );
 };
 
-export default LayoutManage;
+export default LayoutAdmin;

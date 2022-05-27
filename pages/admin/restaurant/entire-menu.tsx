@@ -2,7 +2,7 @@ import { GetServerSideProps, GetStaticProps } from 'next';
 import { useEffect, useState, useContext } from 'react';
 
 import { fetchGetApi, fetchPatchApi, fetchDeleteApi, fetchFileApi, fetchPostApi } from '../../../src/utils/api';
-import { restaurant_entire_menu } from '../../../src/utils/manage_items';
+import { restaurant_entire_menu } from '../../../src/utils/admin_items';
 
 import ModalEdit from '../../../src/components/modal/ModalEdit';
 import ModalRadio from '../../../src/components/modal/ModalRadio';
@@ -12,7 +12,7 @@ import { ModalContext } from '../../../src/provider/ModalProvider';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../src/store';
 
-const ManageRestaurantEntireMenu = () => {
+const AdminRestaurantEntireMenu = () => {
   const user = useSelector((state: RootState) => state.userReducer);
   const { data } = useContext(TableContext);
   const { modal_confirm, modal_edit, modal_alert } = useContext(ModalContext);
@@ -187,4 +187,4 @@ const ManageRestaurantEntireMenu = () => {
   );
 };
 
-export default ManageRestaurantEntireMenu;
+export default AdminRestaurantEntireMenu;

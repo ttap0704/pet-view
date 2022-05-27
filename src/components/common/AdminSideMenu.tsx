@@ -58,7 +58,7 @@ const CustomTreeItem = styled(TreeItem)(({ theme }) => ({
   },
 }));
 
-const ManageSideMenu = () => {
+const AdminSideMenu = () => {
   const router = useRouter();
   const user = useSelector((state: RootState) => state.userReducer);
 
@@ -67,22 +67,22 @@ const ManageSideMenu = () => {
     index: {
       label: '홈',
       children: [],
-      path: '/manage',
+      path: '/admin',
     },
     accommodation: {
       label: '매장 관리',
       children: [
         {
           label: '숙박업소 등록',
-          path: '/manage/accommodation/registration',
+          path: '/admin/accommodation/registration',
         },
         {
           label: '숙박업소 관리',
-          path: '/manage/accommodation/info',
+          path: '/admin/accommodation/info',
         },
         {
           label: '객실 관리',
-          path: '/manage/accommodation/room',
+          path: '/admin/accommodation/room',
         },
       ],
       path: null,
@@ -92,23 +92,23 @@ const ManageSideMenu = () => {
       children: [
         {
           label: '음식점 등록',
-          path: '/manage/restaurant/registration',
+          path: '/admin/restaurant/registration',
         },
         {
           label: '음식점 관리',
-          path: '/manage/restaurant/info',
+          path: '/admin/restaurant/info',
         },
         {
           label: '대표메뉴 관리',
-          path: '/manage/restaurant/exposure-menu',
+          path: '/admin/restaurant/exposure-menu',
         },
         {
           label: '카테고리 관리',
-          path: '/manage/restaurant/category',
+          path: '/admin/restaurant/category',
         },
         {
           label: '전체메뉴 관리',
-          path: '/manage/restaurant/entire-menu',
+          path: '/admin/restaurant/entire-menu',
         },
       ],
       path: null,
@@ -167,4 +167,4 @@ const ManageSideMenu = () => {
   );
 };
 
-export default ManageSideMenu;
+export default AdminSideMenu;

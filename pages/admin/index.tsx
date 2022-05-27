@@ -15,7 +15,7 @@ const ChartBox = styled(Box)(({ theme }) => ({
   height: '20rem',
 }));
 
-const ManageIndex = () => {
+const AdminIndex = () => {
   const user = useSelector((state: RootState) => state.userReducer);
   const [monthDropdownItems, setMonthDropdownItems] = useState<string[]>([]);
   const [selectedDropdownIdx, setSelectedDropdownIdx] = useState(0);
@@ -63,4 +63,4 @@ const ManageIndex = () => {
   );
 };
 
-export default ManageIndex;
+export default AdminIndex;

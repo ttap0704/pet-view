@@ -33,7 +33,7 @@ function getCookie(type: string) {
 function setHeader(uri: string, no_content_type?: boolean) {
   const root_path = uri.split('/')[1];
   const children_path = uri.split('/')[2];
-  const check_arr = ['manage', 'manager'];
+  const check_arr = ['admin'];
   const excepted_path = ['login', 'join']
   const cookie: string | null = getCookie('a-token') ? getCookie('a-token') : null;
 

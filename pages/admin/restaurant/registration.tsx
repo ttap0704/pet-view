@@ -28,7 +28,7 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../../../src/store';
 import ModalRadio from '../../../src/components/modal/ModalRadio';
 
-const ManageRestaurantRegistration = () => {
+const AdminRestaurantRegistration = () => {
   const user = useSelector((state: RootState) => state.userReducer);
   const router = useRouter();
   const { modal_upload, modal_confirm, modal_alert, modal_notice } = useContext(ModalContext);
@@ -365,7 +365,7 @@ const ManageRestaurantRegistration = () => {
       label: restaurantLabel,
       type: restaurantType.type,
       introduction,
-      manager: 1,
+      admin: 1,
       exposureMenu: tmp_exposure_menu,
       entireMenu: tmp_entire_menu,
     };
@@ -404,7 +404,7 @@ const ManageRestaurantRegistration = () => {
 
     if (upload_exposure_response.length > 0 && upload_exposure_menu_response.length > 0) {
       modal_notice.openModalNotice('음식점이 성공적으로 등록되었습니다.\r\n관리 페이지로 이동합니다.', () => {
-        router.push(`/manage/restaurant/info`);
+        router.push(`/admin/restaurant/info`);
       });
     }
   };
@@ -524,4 +524,4 @@ const ManageRestaurantRegistration = () => {
   );
 };
 
-export default ManageRestaurantRegistration;
+export default AdminRestaurantRegistration;

@@ -32,7 +32,7 @@ interface RestaurantResponse {
   id: number;
   introduction: string;
   label: string;
-  manager: number;
+  admin: number;
   sido: string;
   sigungu: string;
   road_address: string;

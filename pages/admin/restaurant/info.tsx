@@ -3,7 +3,7 @@ import { useEffect, useState, useContext } from 'react';
 
 import { fetchGetApi, fetchPatchApi, fetchDeleteApi, fetchFileApi, fetchPostApi } from '../../../src/utils/api';
 import { getDate, setImageArray, setImageFormData } from '../../../src/utils/tools';
-import { restaurant_info } from '../../../src/utils/manage_items';
+import { restaurant_info } from '../../../src/utils/admin_items';
 
 import ModalEdit from '../../../src/components/modal/ModalEdit';
 import ModalUpload from '../../../src/components/modal/ModalUpload';
@@ -20,7 +20,7 @@ import { Context } from 'next-redux-wrapper';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../src/store';
 
-const ManageRestaurantInfo = () => {
+const AdminRestaurantInfo = () => {
   const user = useSelector((state: RootState) => state.userReducer);
   const { data } = useContext(TableContext);
   const { modal_confirm, modal_edit, modal_alert, modal_upload, modal_image_detail } = useContext(ModalContext);
@@ -173,7 +173,7 @@ const ManageRestaurantInfo = () => {
         comment: item.comment,
       };
     });
-    // /:manager/restaurant/:id/:menu
+    // /:admin/restaurant/:id/:menu
     if (target) {
       const restaurant_id = target.id;
 
@@ -543,4 +543,4 @@ const ManageRestaurantInfo = () => {
   );
 };
 
-export default ManageRestaurantInfo;
+export default AdminRestaurantInfo;

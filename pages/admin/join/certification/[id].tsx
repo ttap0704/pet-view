@@ -54,7 +54,7 @@ const JoinSuccess = () => {
 
     if (cert_res.pass) {
       modal_alert.openModalAlert('인증에 성공하였습니다.', true, () => {
-        router.push('/manage/login');
+        router.push('/admin/login');
       });
     } else {
       if (cert_res.message == 'Wrong Number') {

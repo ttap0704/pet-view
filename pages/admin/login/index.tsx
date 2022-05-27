@@ -67,7 +67,7 @@ const LoginIndex = () => {
 
   useEffect(() => {
     if (user.uid) {
-      router.push('/manage');
+      router.push('/admin');
     }
   }, []);
 
@@ -109,7 +109,7 @@ const LoginIndex = () => {
       sessionStorage.setItem('user', JSON.stringify({ ...saved_user }));
       dispatch(setUser({ ...saved_user }));
       modal_notice.openModalNotice(`${user.nickname}님 환영합니다!`, () => {
-        router.push('/manage');
+        router.push('/admin');
       });
     } else {
       let message = '';
@@ -144,7 +144,7 @@ const LoginIndex = () => {
       </LoginBox>
       <UtilBox sx={{ paddingX: '1rem' }}>
         <Button color='gray_2'>비밀번호 찾기</Button>
-        <Link href='/manage/join'>
+        <Link href='/admin/join'>
           <Typography component='a'>
             <Button color='gray_2'>사업자 회원가입</Button>
           </Typography>

@@ -3,7 +3,7 @@ import { useEffect, useState, useContext } from 'react';
 
 import { fetchGetApi, fetchPatchApi, fetchDeleteApi, fetchFileApi, fetchPostApi } from '../../../src/utils/api';
 import { getDate, setImageArray, setImageFormData } from '../../../src/utils/tools';
-import { accommodation_rooms } from '../../../src/utils/manage_items';
+import { accommodation_rooms } from '../../../src/utils/admin_items';
 
 import ModalEdit from '../../../src/components/modal/ModalEdit';
 import ModalUpload from '../../../src/components/modal/ModalUpload';
@@ -15,7 +15,7 @@ import { ModalContext } from '../../../src/provider/ModalProvider';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../src/store';
 
-const ManageAccommodationRooms = () => {
+const AdminAccommodationRooms = () => {
   const user = useSelector((state: RootState) => state.userReducer);
   const { data } = useContext(TableContext);
   const { modal_confirm, modal_edit, modal_alert, modal_upload, modal_image_detail } = useContext(ModalContext);
@@ -379,4 +379,4 @@ const ManageAccommodationRooms = () => {
   );
 };
 
-export default ManageAccommodationRooms;
+export default AdminAccommodationRooms;

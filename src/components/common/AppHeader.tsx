@@ -117,9 +117,9 @@ function AppHeader() {
         console.log(idx);
       } else {
         if (user && Number(user.uid) > 0) {
-          router.push('/manage');
+          router.push('/admin');
         } else {
-          router.push('/manage/login');
+          router.push('/admin/login');
         }
       }
     };

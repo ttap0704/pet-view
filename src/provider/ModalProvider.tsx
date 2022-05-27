@@ -20,12 +20,14 @@ interface ModalAlertDataType {
   title: string;
   center: boolean;
   timeout: ReturnType<typeof setTimeout> | undefined;
+  callback: () => void;
 }
 
 interface ModalNoticeDataType {
   visible: boolean;
   title: string;
   timeout: ReturnType<typeof setTimeout> | undefined;
+  callback: () => void;
 }
 
 interface ModalUploadDataType {
@@ -132,6 +134,9 @@ export const ModalContext = createContext<ModalControllerType>({
       center: false,
       title: '',
       timeout: undefined,
+      callback: () => {
+        return;
+      },
     },
     closeModalAlert: () => {
       return;
@@ -145,6 +150,9 @@ export const ModalContext = createContext<ModalControllerType>({
       visible: false,
       title: '',
       timeout: undefined,
+      callback: () => {
+        return;
+      },
     },
     closeModalNotice: () => {
       return;
@@ -238,12 +246,18 @@ function ModalProvider(props: { children: React.ReactNode }) {
     center: false,
     title: '',
     timeout: undefined,
+    callback: () => {
+      return;
+    },
   });
 
   const [modalNoticeData, setModalNoticeData] = useState<ModalNoticeDataType>({
     visible: false,
     title: '',
     timeout: undefined,
+    callback: () => {
+      return;
+    },
   });
 
   const [modalUploadData, setModalUploadData] = useState<ModalUploadDataType>({
@@ -335,10 +349,19 @@ function ModalProvider(props: { children: React.ReactNode }) {
     modal_alert: {
       data: modalAlertData,
       closeModalAlert: () => {
-        setModalAlertData({ visible: false, center: false, title: '', timeout: undefined });
         if (modalAlertData.timeout != undefined) {
           clearTimeout(modalAlertData.timeout);
+          modalAlertData.callback();
         }
+        setModalAlertData({
+          visible: false,
+          center: false,
+          title: '',
+          timeout: undefined,
+          callback: () => {
+            return;
+          },
+        });
       },
       openModalAlert: (title: string, center?: boolean, callback?: () => void) => {
         setModalAlertData(state => {
@@ -350,6 +373,9 @@ function ModalProvider(props: { children: React.ReactNode }) {
               modalController.modal_alert.closeModalAlert();
               if (callback) callback();
             }, 2000),
+            callback: () => {
+              callback ? callback() : false;
+            },
           };
         });
       },
@@ -357,10 +383,18 @@ function ModalProvider(props: { children: React.ReactNode }) {
     modal_notice: {
       data: modalNoticeData,
       closeModalNotice: () => {
-        setModalNoticeData({ visible: false, title: '', timeout: undefined });
         if (modalNoticeData.timeout != undefined) {
           clearTimeout(modalNoticeData.timeout);
+          modalNoticeData.callback();
         }
+        setModalNoticeData({
+          visible: false,
+          title: '',
+          timeout: undefined,
+          callback: () => {
+            return;
+          },
+        });
       },
       openModalNotice: (title: string, callback: () => void) => {
         setModalNoticeData(state => {
@@ -371,6 +405,9 @@ function ModalProvider(props: { children: React.ReactNode }) {
               modalController.modal_notice.closeModalNotice();
               callback();
             }, 2000),
+            callback: () => {
+              callback ? callback() : false;
+            },
           };
         });
       },

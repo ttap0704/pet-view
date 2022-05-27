@@ -9,7 +9,7 @@ import ModalProvider from '../src/provider/ModalProvider';
 import TableProvider from '../src/provider/TableProvider';
 import theme from '../src/utils/theme';
 import LayoutApp from '../src/components/layout/LayoutApp';
-import LayoutManage from '../src/components/layout/LayoutManage';
+import LayoutAdmin from '../src/components/layout/LayoutAdmin';
 import wrapper from '../src/store/configureStore';
 import { setUser } from '../src/store/slices/user';
 
@@ -30,13 +30,13 @@ const _APP = ({ Component, pageProps }: AppProps) => {
   }, [router.pathname]);
 
   const Layout = () => {
-    if (rootPath.indexOf('manage') >= 0) {
+    if (rootPath.indexOf('admin') >= 0) {
       return (
-        <LayoutManage>
+        <LayoutAdmin>
           <TableProvider>
             <Component {...pageProps} />
           </TableProvider>
-        </LayoutManage>
+        </LayoutAdmin>
       );
     } else if (['login', 'join'].includes(rootPath)) {
       return <Component {...pageProps} />;

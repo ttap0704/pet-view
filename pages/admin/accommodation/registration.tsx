@@ -29,7 +29,7 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../../../src/store';
 import ModalRadio from '../../../src/components/modal/ModalRadio';
 
-const ManageAccommodationRegistration = () => {
+const AdminAccommodationRegistration = () => {
   const user = useSelector((state: RootState) => state.userReducer);
   const { modal_upload, modal_confirm, modal_alert, modal_notice } = useContext(ModalContext);
   const router = useRouter();
@@ -401,7 +401,7 @@ const ManageAccommodationRegistration = () => {
       label: accommodationLabel,
       type: accommodationType.type,
       introduction,
-      manager: 1,
+      admin: 1,
       peak_season: peakSeason,
       rooms: [...rooms_data],
     };
@@ -440,7 +440,7 @@ const ManageAccommodationRegistration = () => {
 
     if (upload_exposure_response.length > 0 && upload_rooms_response.length > 0) {
       modal_notice.openModalNotice('숙박업소가 성공적으로 등록되었습니다.\r\n관리 페이지로 이동합니다.', () => {
-        router.push(`/manage/accommodation/info`);
+        router.push(`/admin/accommodation/info`);
       });
     }
   };
@@ -557,4 +557,4 @@ const ManageAccommodationRegistration = () => {
   );
 };
 
-export default ManageAccommodationRegistration;
+export default AdminAccommodationRegistration;
