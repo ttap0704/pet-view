@@ -77,8 +77,15 @@ function ModalRadio(props: ModalRadioProps) {
                 value={value}
                 onChange={setCurValue}
               >
-                {contents.map(item => {
-                  return <FormControlLabel value={item.id} control={<Radio />} label={item.label} />;
+                {contents.map((item, item_idx) => {
+                  return (
+                    <FormControlLabel
+                      key={`radio_contents_${item_idx}`}
+                      value={item.id}
+                      control={<Radio />}
+                      label={item.label}
+                    />
+                  );
                 })}
               </RadioGroup>
             </CustomFormControl>

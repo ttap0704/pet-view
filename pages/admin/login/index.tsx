@@ -113,7 +113,7 @@ const LoginIndex = () => {
       });
     } else {
       let message = '';
-      if ((login_res.message = 'Before Certification')) {
+      if (login_res.message == 'Before Certification') {
         message = '이메일 인증 완료 후\r\n로그인 해주세요.';
       } else {
         message = '아이디 또는 비밀번호가 틀렸습니다.';

@@ -387,62 +387,71 @@ const AdminAccommodationRegistration = () => {
 
     const tmp_address: { [key: string]: string | null } = {};
     for (const [key, val] of Object.entries(address)) {
-      tmp_address[key] = val.length > 0 ? val : null;
+      if (val.length > 0) {
+        tmp_address[key] = val;
+      }
     }
 
     const tmp_service_info: { [key: string]: string | null } = {};
     for (const [key, val] of Object.entries(serviceInfo)) {
-      tmp_service_info[key] = val.length > 0 ? val : null;
+      if (val.length > 0) {
+        tmp_service_info[key] = val;
+      }
     }
 
     const accom_data = {
-      ...tmp_address,
-      ...tmp_service_info,
-      label: accommodationLabel,
-      type: accommodationType.type,
-      introduction,
-      admin: 1,
-      peak_season: peakSeason,
+      peak_season: peakSeason.map(item => ({ start: item[0], end: item[1] })),
       rooms: [...rooms_data],
+      accommodation: {
+        ...tmp_address,
+        ...tmp_service_info,
+        label: accommodationLabel,
+        type: accommodationType.type,
+        introduction,
+      },
     };
+
+    console.log(accom_data);
 
     const accommodation: CreateAccommodationResponse = await fetchPostApi(
       `/admin/${user.uid}/accommodation`,
       accom_data,
     );
-    const accommodation_id = accommodation.accommodation_id;
 
-    let exposure_images = [];
-    for (const item of exposureImages) {
-      if (item.file) exposure_images.push(item.file);
-    }
+    console.log(accommodation);
+    // const accommodation_id = accommodation.accommodation_id;
 
-    let rooms_payload = [];
-    for (const room of rooms) {
-      const res_room = accommodation.rooms.find(room_item => room_item.label == room.label);
-      let room_images = [];
-      for (const room_item of room.image_list) {
-        if (room_item.file) room_images.push(room_item.file);
-      }
-      if (res_room) {
-        rooms_payload.push({ target_id: res_room.id, files: room_images });
-      }
-    }
+    // let exposure_images = [];
+    // for (const item of exposureImages) {
+    //   if (item.file) exposure_images.push(item.file);
+    // }
 
-    const exposure_image_data = await setImageFormData(
-      [{ target_id: accommodation_id, files: exposure_images }],
-      'accommodation',
-    );
-    const rooms_image_data = await setImageFormData(rooms_payload, 'rooms', accommodation_id);
+    // let rooms_payload = [];
+    // for (const room of rooms) {
+    //   const res_room = accommodation.rooms.find(room_item => room_item.label == room.label);
+    //   let room_images = [];
+    //   for (const room_item of room.image_list) {
+    //     if (room_item.file) room_images.push(room_item.file);
+    //   }
+    //   if (res_room) {
+    //     rooms_payload.push({ target_id: res_room.id, files: room_images });
+    //   }
+    // }
 
-    const upload_exposure_response = await fetchFileApi('/upload/image', exposure_image_data);
-    const upload_rooms_response = await fetchFileApi('/upload/image', rooms_image_data);
+    // const exposure_image_data = await setImageFormData(
+    //   [{ target_id: accommodation_id, files: exposure_images }],
+    //   'accommodation',
+    // );
+    // const rooms_image_data = await setImageFormData(rooms_payload, 'rooms', accommodation_id);
 
-    if (upload_exposure_response.length > 0 && upload_rooms_response.length > 0) {
-      modal_notice.openModalNotice('숙박업소가 성공적으로 등록되었습니다.\r\n관리 페이지로 이동합니다.', () => {
-        router.push(`/admin/accommodation/info`);
-      });
-    }
+    // const upload_exposure_response = await fetchFileApi('/upload/image', exposure_image_data);
+    // const upload_rooms_response = await fetchFileApi('/upload/image', rooms_image_data);
+
+    // if (upload_exposure_response.length > 0 && upload_rooms_response.length > 0) {
+    //   modal_notice.openModalNotice('숙박업소가 성공적으로 등록되었습니다.\r\n관리 페이지로 이동합니다.', () => {
+    //     router.push(`/admin/accommodation/info`);
+    //   });
+    // }
   };
 
   return (

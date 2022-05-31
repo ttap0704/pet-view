@@ -39,9 +39,11 @@ const AdminIndex = () => {
 
     const selected_year = cur_dropdown_items[selectedDropdownIdx].slice(0, 4);
     const selected_month = cur_dropdown_items[selectedDropdownIdx].slice(6, 8);
-    const chart_res = await fetchGetApi(
-      `/admin/${user.uid}/chart/views?type=${user.type}&year=${selected_year}&month=${selected_month}`,
-    );
+    // const chart_res = await fetchGetApi(
+    //   `/admin/${user.uid}/chart/views?type=${user.type}&year=${selected_year}&month=${selected_month}`,
+    // );
+    const test = await fetchGetApi(`/admin`);
+    console.log(test);
   };
 
   return (

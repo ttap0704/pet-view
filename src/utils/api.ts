@@ -47,7 +47,7 @@ function setHeader(uri: string, no_content_type?: boolean) {
   }
 
   if (!excepted_path.includes(children_path) && check_arr.includes(root_path) && cookie) {
-    header['Authorization'] = `a-token ${cookie}`;
+    header['Authorization'] = `Bearer ${cookie}`;
   }
 
   return header;
@@ -99,6 +99,7 @@ export const fetchGetApi = async function (uri: string) {
       ...setHeader(uri, false),
     },
   });
+  console.log({ ...setHeader(uri, false) })
   let responseJson = await response.json();
   setToken(responseJson);
   if (responseJson.new_token) {
