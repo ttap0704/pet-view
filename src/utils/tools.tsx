@@ -79,21 +79,22 @@ export async function setImageFormData(data: { target_id: number; files: File[] 
     const files = item.files;
 
     for (let i = 0, leng = files.length; i < leng; i++) {
+      console.log(target_id);
       if (files[i]) {
         const file_name_arr = files[i].name.split('.');
         const file_extention = file_name_arr[file_name_arr.length - 1];
         let file_name = '';
         if (['accommodation', 'restaurant'].includes(type)) {
-          file_name = `${target_id}_${i}_${new Date().getTime()}.${file_extention}`;
+          file_name = `${type}_${target_id}_${i}_${new Date().getTime()}.${file_extention}`;
         } else if (['rooms', 'exposure_menu'].includes(type)) {
-          file_name = `${parent_id}_${target_id}_${i}_${new Date().getTime()}.${file_extention}`;
+          file_name = `${type}_${parent_id}_${target_id}_${i}_${new Date().getTime()}.${file_extention}`;
         }
 
         const new_file = new File([files[i]], file_name, {
           type: 'image/jpeg',
         });
 
-        upload_images.append(`files_${count}`, new_file);
+        upload_images.append(`files`, new_file);
         count++;
       }
     }

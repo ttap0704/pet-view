@@ -411,47 +411,44 @@ const AdminAccommodationRegistration = () => {
       },
     };
 
-    console.log(accom_data);
-
     const accommodation: CreateAccommodationResponse = await fetchPostApi(
       `/admin/${user.uid}/accommodation`,
       accom_data,
     );
 
-    console.log(accommodation);
-    // const accommodation_id = accommodation.accommodation_id;
+    const accommodation_id = accommodation.id;
 
-    // let exposure_images = [];
-    // for (const item of exposureImages) {
-    //   if (item.file) exposure_images.push(item.file);
-    // }
+    let exposure_images = [];
+    for (const item of exposureImages) {
+      if (item.file) exposure_images.push(item.file);
+    }
 
-    // let rooms_payload = [];
-    // for (const room of rooms) {
-    //   const res_room = accommodation.rooms.find(room_item => room_item.label == room.label);
-    //   let room_images = [];
-    //   for (const room_item of room.image_list) {
-    //     if (room_item.file) room_images.push(room_item.file);
-    //   }
-    //   if (res_room) {
-    //     rooms_payload.push({ target_id: res_room.id, files: room_images });
-    //   }
-    // }
+    let rooms_payload = [];
+    for (const room of rooms) {
+      const res_room = accommodation.rooms.find(room_item => room_item.label == room.label);
+      let room_images = [];
+      for (const room_item of room.image_list) {
+        if (room_item.file) room_images.push(room_item.file);
+      }
+      if (res_room) {
+        rooms_payload.push({ target_id: res_room.id, files: room_images });
+      }
+    }
 
-    // const exposure_image_data = await setImageFormData(
-    //   [{ target_id: accommodation_id, files: exposure_images }],
-    //   'accommodation',
-    // );
-    // const rooms_image_data = await setImageFormData(rooms_payload, 'rooms', accommodation_id);
+    const exposure_image_data = await setImageFormData(
+      [{ target_id: accommodation_id, files: exposure_images }],
+      'accommodation',
+    );
+    const rooms_image_data = await setImageFormData(rooms_payload, 'rooms', accommodation_id);
 
-    // const upload_exposure_response = await fetchFileApi('/upload/image', exposure_image_data);
-    // const upload_rooms_response = await fetchFileApi('/upload/image', rooms_image_data);
+    const upload_exposure_response = await fetchFileApi('/upload/image', exposure_image_data);
+    const upload_rooms_response = await fetchFileApi('/upload/image', rooms_image_data);
 
-    // if (upload_exposure_response.length > 0 && upload_rooms_response.length > 0) {
-    //   modal_notice.openModalNotice('숙박업소가 성공적으로 등록되었습니다.\r\n관리 페이지로 이동합니다.', () => {
-    //     router.push(`/admin/accommodation/info`);
-    //   });
-    // }
+    if (upload_exposure_response.length > 0 && upload_rooms_response.length > 0) {
+      modal_notice.openModalNotice('숙박업소가 성공적으로 등록되었습니다.\r\n관리 페이지로 이동합니다.', () => {
+        router.push(`/admin/accommodation/info`);
+      });
+    }
   };
 
   return (

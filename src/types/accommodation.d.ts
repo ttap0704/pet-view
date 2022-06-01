@@ -12,7 +12,7 @@ interface AddRoomContentsType {
 }
 
 interface CreateAccommodationResponse {
-  accommodation_id: number;
+  id: number;
   rooms: RoomType[];
 }
 
