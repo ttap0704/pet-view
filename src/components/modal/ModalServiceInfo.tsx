@@ -113,8 +113,15 @@ function ModalServiceInfo(props: ModalServiceInfoProps) {
       modal_alert.openModalAlert(alert_message, true);
       return;
     } else {
+      const final_servie_info = { ...serviceInfo };
+
+      if (type == 'accommodation') {
+        delete final_servie_info.close;
+        delete final_servie_info.open;
+        delete final_servie_info.last_order;
+      }
       modal_confirm.openModalConfirm('문의 정보를 등록하시겠습니까?', () => {
-        onUpdateInfo(serviceInfo);
+        onUpdateInfo(final_servie_info);
       });
     }
   };

@@ -259,7 +259,7 @@ const AdminRestaurantRegistration = () => {
     setRadioContents({ ...radioContents, visible: false });
   };
 
-  const validateCreateData = () => {
+  const validatecreated_ata = () => {
     let alert_message = '';
 
     const entire_menu_vali = validation.entire_menu(entireMenu);
@@ -318,7 +318,7 @@ const AdminRestaurantRegistration = () => {
   };
 
   const createRestaurant = async () => {
-    const validate = validateCreateData();
+    const validate = validatecreated_ata();
     if (!validate.pass) {
       modal_alert.openModalAlert(validate.message, true);
       return;

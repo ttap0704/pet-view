@@ -305,7 +305,7 @@ const AdminAccommodationRegistration = () => {
     setServiceInfo({ ...tmp_info });
   };
 
-  const validateCreateData = () => {
+  const validatecreated_ata = () => {
     let alert_message = '';
 
     let rooms_vali = true;
@@ -362,7 +362,7 @@ const AdminAccommodationRegistration = () => {
   };
 
   const createAccommodation = async () => {
-    const validate = validateCreateData();
+    const validate = validatecreated_ata();
     if (!validate.pass) {
       modal_alert.openModalAlert(validate.message, true);
       return;

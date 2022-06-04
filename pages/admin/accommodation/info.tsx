@@ -138,6 +138,7 @@ const AdminAccommodationInfo = () => {
         file_name: item.file_name,
       };
     });
+    console.log(tmp_image_list);
     const image_list = await setImageArray(tmp_image_list);
     modal_image_detail.openModalImageDetail('accommodation', image_list);
   };
@@ -359,6 +360,8 @@ const AdminAccommodationInfo = () => {
           peak_price: Number(room.peak_price),
           peak_weekend_price: Number(room.peak_weekend_price),
           accommodation_id: target.id,
+          entrance: room.entrance,
+          leaving: room.leaving,
         };
       });
 
@@ -421,7 +424,7 @@ const AdminAccommodationInfo = () => {
         peak_season: x.accommodation_peak_season,
         rooms: x.accommodation_rooms,
         rooms_num: x.accommodation_rooms.length,
-        created_at: getDate(x.createdAt),
+        created_at: getDate(x.created_at),
         images: x.accommodation_images,
         checked: false,
       });

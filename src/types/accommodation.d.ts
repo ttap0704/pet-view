@@ -32,7 +32,7 @@ interface AccommodationResponse extends ServiceInfoType {
   accommodation_peak_season: PeakSeasonType[];
   bname: string;
   building_name: string;
-  createdAt: string;
+  created_at: string;
   deletedAt: null;
   detail_address: string;
   id: number;
@@ -67,7 +67,7 @@ interface RoomType extends RoomPriceType {
   accommodation_label: string;
   additional_info: null | string;
   amenities: null | string;
-  createdAt: string;
+  created_at: string;
   deletedAt: null | string;
   id: number;
   label: string;

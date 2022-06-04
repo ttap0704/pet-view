@@ -182,7 +182,7 @@ const ImageBox = (props: ImageBoxProps) => {
       if (image_list[idx].new == true) {
         src = image_list[idx].src;
       } else {
-        src = `http://localhost:3080/image/${type}/${image_list[idx].src}`;
+        src = `http://localhost:3080/images/${type}/${image_list[idx].src}`;
       }
     }
 

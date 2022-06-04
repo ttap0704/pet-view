@@ -343,7 +343,7 @@ const AdminAccommodationRooms = () => {
         leaving: x.leaving,
         additional_info: x.additional_info,
         amenities: x.amenities,
-        created_at: getDate(x.createdAt),
+        created_at: getDate(x.created_at),
         checked: false,
       });
     }

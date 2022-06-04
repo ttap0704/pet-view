@@ -131,7 +131,7 @@ const ModalImageDetail = () => {
     if (list.new == true) {
       src = list.src;
     } else {
-      src = `http://localhost:3080/image/${modal_image_detail.data.type}/${list.src}`;
+      src = `http://localhost:3080/images/${modal_image_detail.data.type}/${list.src}`;
     }
 
     return src;

@@ -376,7 +376,7 @@ const AdminRestaurantInfo = () => {
         sido: x.sido,
         sigungu: x.sigungu,
         zonecode: x.zonecode,
-        created_at: getDate(x.createdAt),
+        created_at: getDate(x.created_at),
         images: x.restaurant_images,
         exposure_menu: x.exposure_menu,
         exposure_menu_num: x.exposure_menu.length + '개',

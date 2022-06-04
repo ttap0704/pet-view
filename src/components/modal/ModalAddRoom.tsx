@@ -13,6 +13,8 @@ import { ModalContext } from '../../provider/ModalProvider';
 import Button from '../button/Button';
 import UtilBox from '../common/UtilBox';
 import ModalRoomPrice from './ModalRoomPrice';
+import ModalPeakSeason from './ModalPeakSeason';
+import ModalRoomTime from './ModalRoomTime';
 
 interface ModalAddRoomProps {
   rooms_num: number;
@@ -55,6 +57,23 @@ function ModalAddRoom(props: ModalAddRoomProps) {
     },
     current_room_idx: 0,
   });
+  const [roomTimeContents, setRoomTimeContents] = useState({
+    visible: false,
+    contents: {
+      entrance: '',
+      leaving: '',
+    },
+    current_room_idx: 0,
+  });
+
+  const [savedRoomsTime, setSavedRoomsTime] = useState({
+    all: false,
+    contents: {
+      entrance: '',
+      leaving: '',
+    },
+  });
+
   const [rooms, setRooms] = useState<AddRoomContentsType[]>([
     {
       label: '',
@@ -175,6 +194,40 @@ function ModalAddRoom(props: ModalAddRoomProps) {
     clearRoomPriceModal();
   };
 
+  const setRoomTimeModal = (idx: number) => {
+    const target = rooms[idx];
+    setRoomTimeContents({
+      visible: true,
+      current_room_idx: idx,
+      contents: {
+        entrance: target.entrance,
+        leaving: target.leaving,
+      },
+    });
+  };
+
+  const setRoomTime = (data: { [key: string]: string }, check_all: boolean) => {
+    setSavedRoomsTime({
+      all: check_all,
+      contents: {
+        entrance: check_all ? data.entrance : '',
+        leaving: check_all ? data.leaving : '',
+      },
+    });
+    const tmp_rooms = [...rooms];
+    if (check_all) {
+      for (let i = 0, leng = tmp_rooms.length; i < leng; i++) {
+        tmp_rooms[i].entrance = data.entrance;
+        tmp_rooms[i].leaving = data.leaving;
+      }
+    } else {
+      tmp_rooms[roomPriceContents.current_room_idx] = { ...tmp_rooms[roomPriceContents.current_room_idx], ...data };
+    }
+
+    setRooms([...tmp_rooms]);
+    clearRoomTimeModal();
+  };
+
   const clearRoomPriceModal = () => {
     setRoomPriceContents({
       visible: false,
@@ -184,6 +237,17 @@ function ModalAddRoom(props: ModalAddRoomProps) {
         normal_weekend_price: '',
         peak_price: '',
         peak_weekend_price: '',
+      },
+    });
+  };
+
+  const clearRoomTimeModal = () => {
+    setRoomTimeContents({
+      visible: false,
+      current_room_idx: 0,
+      contents: {
+        entrance: '',
+        leaving: '',
       },
     });
   };
@@ -211,6 +275,7 @@ function ModalAddRoom(props: ModalAddRoomProps) {
                   imageList={room.image_list}
                   mode='edit'
                   onClickPriceButton={() => setRoomPriceModal(room_idx)}
+                  onClickTimeButton={() => setRoomTimeModal(room_idx)}
                   onDelete={deleteRoom}
                 />
               );
@@ -235,6 +300,12 @@ function ModalAddRoom(props: ModalAddRoomProps) {
           contents={roomPriceContents.contents}
           onClose={() => clearRoomPriceModal()}
           onUpdatePrice={setRoomPrice}
+        />
+        <ModalRoomTime
+          visible={roomTimeContents.visible}
+          contents={roomTimeContents.contents}
+          onClose={() => clearRoomTimeModal()}
+          onUpdateTime={setRoomTime}
         />
       </ModalDefault>
     </>

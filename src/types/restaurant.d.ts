@@ -26,7 +26,7 @@ interface RestaurantResponse {
   entire_menu_category: EntireMenuCategoryType[]
   bname: string;
   building_name: string;
-  createdAt: string;
+  created_at: string;
   deletedAt: null;
   detail_address: string;
   id: number;
@@ -54,7 +54,7 @@ interface RestaurantType {
 
 interface EntireMenuCategoryType {
   category: string;
-  createdAt: string;
+  created_at: string;
   deletedAt: null | string;
   id: number;
   restaurant_id: number;
@@ -83,7 +83,7 @@ interface EntireMenuCategoryResponse {
 
 interface ExposureMenuType {
   restaurant_id: number;
-  createdAt: string;
+  created_at: string;
   id: number;
   label: string;
   price: number;
@@ -95,7 +95,7 @@ interface ExposureMenuType {
 
 interface EntireMenuType {
   category_id: number;
-  createdAt: string;
+  created_at: string;
   id: number;
   label: string;
   price: number;

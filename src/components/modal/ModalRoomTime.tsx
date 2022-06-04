@@ -23,6 +23,7 @@ interface ModalRoomTimeProps {
   };
   onClose: () => void;
   onUpdateTime: (data: { [key: string]: string }, check_all: boolean) => void;
+  checkAll?: boolean;
 }
 
 interface TimeContentsType {
@@ -63,6 +64,7 @@ function ModalRoomTime(props: ModalRoomTimeProps) {
   const contents = props.contents;
   const mode = props.mode;
   const type = props.type;
+  const check_all = props.checkAll;
   const onClose = props.onClose;
   const onUpdateTime = props.onUpdateTime;
 
@@ -96,17 +98,21 @@ function ModalRoomTime(props: ModalRoomTimeProps) {
 
     modal_confirm.openModalConfirm('객실 입실/퇴실 시간을 등록하시겠습니까?', () => {
       if (type != 'edit') {
-        setTimeout(() => {
-          modal_confirm.openModalConfirm(
-            '모든 객실에 해당 시간을 적용하시겠습니까?',
-            () => {
-              onUpdateTime(time_data, true);
-            },
-            () => {
-              onUpdateTime(time_data, false);
-            },
-          );
-        }, 200);
+        if (check_all !== false) {
+          setTimeout(() => {
+            modal_confirm.openModalConfirm(
+              '모든 객실에 해당 시간을 적용하시겠습니까?',
+              () => {
+                onUpdateTime(time_data, true);
+              },
+              () => {
+                onUpdateTime(time_data, false);
+              },
+            );
+          }, 200);
+        } else {
+          onUpdateTime(time_data, false);
+        }
       } else {
         onUpdateTime(time_data, false);
       }
