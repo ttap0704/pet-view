@@ -191,7 +191,7 @@ const AdminAccommodationRegistration = () => {
     });
   };
 
-  const setRoomPrice = (data: { [key: string]: string }) => {
+  const setRoomPrice = (data: { [key: string]: number }) => {
     const tmp_rooms = [...rooms];
     tmp_rooms[roomPriceContents.current_room_idx] = { ...tmp_rooms[roomPriceContents.current_room_idx], ...data };
     setRooms([...tmp_rooms]);

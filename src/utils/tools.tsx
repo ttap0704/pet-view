@@ -11,7 +11,7 @@ export async function setImageArray(data: { file_name: string }[], set_file?: bo
     const file_name_splited = x.file_name.split('_');
     const target_path = Math.floor(Number(file_name_splited[0]) / 50) * 50;
     if (set_file && type) {
-      file = await imageToBlob(x.file_name, type);
+      file = await imageToBlob(`${target_path}/${x.file_name}`, type);
     }
 
     image_arr.push({
@@ -28,6 +28,7 @@ export async function setImageArray(data: { file_name: string }[], set_file?: bo
 
 export function imageToBlob(src: string, type: string): Promise<File> {
   return new Promise((resolve, reject) => {
+    console.log(src);
     fetch(`http://localhost:3080/images/${type}/${src}`).then(res => {
       res.blob().then(blob => {
         const file = new File([blob], src, {

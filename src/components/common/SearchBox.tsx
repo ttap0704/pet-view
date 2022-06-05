@@ -94,16 +94,17 @@ const TitleBox = styled(Box)(({ theme }) => ({
 
 const SearchItem = styled(Box)(({ theme }) => ({
   display: 'flex',
+  justifyContent: 'space-between',
   width: 'auto',
-  maxWidth: '100%',
-  padding: '0.25rem 0.5rem',
-  borderRadius: 10,
+  padding: '0.5rem 0.5rem',
+  borderRadius: '1rem',
   backgroundColor: theme.palette.blue.main,
   color: theme.palette.white.main,
 }));
 
 const SearchItemTypography = styled('span')(({ theme }) => ({
   fontSize: '0.85rem',
+  display: 'block',
 }));
 
 const SideSearchBox = (props: SideSearchBoxProps) => {
@@ -244,12 +245,15 @@ const SideSearchBox = (props: SideSearchBoxProps) => {
                 placeholder='장소를 입력해주세요.'
               />
               {curLocation.length > 0 ? (
-                <Box>
-                  <SearchItem>
-                    <SearchItemTypography>{curLocation}</SearchItemTypography>
-                    <RiCloseFill />
-                  </SearchItem>
-                </Box>
+                <SearchItem>
+                  <SearchItemTypography>{curLocation}</SearchItemTypography>
+                  <RiCloseFill
+                    onClick={() => {
+                      setCurLocation('');
+                      setSearchItems({ ...searchItems, location: '' });
+                    }}
+                  />
+                </SearchItem>
               ) : null}
               <Button variant='outlined' color='orange' disableRipple={true} onClick={search}>
                 검색

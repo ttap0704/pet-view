@@ -1,7 +1,7 @@
 import { GetServerSideProps, GetStaticProps } from 'next';
 import { useEffect, useState, useContext } from 'react';
 
-import { fetchGetApi, fetchPatchApi, fetchDeleteApi, fetchFileApi, fetchPostApi } from '../../../src/utils/api';
+import { fetchGetApi, fetchPatchApi, fetchFileApi, fetchPostApi } from '../../../src/utils/api';
 import { getDate, setImageArray, setImageFormData } from '../../../src/utils/tools';
 import { accommodation_rooms } from '../../../src/utils/admin_items';
 
@@ -164,14 +164,14 @@ const AdminAccommodationRooms = () => {
     });
   };
 
-  const updateRoomInfo = async (price: { [key: string]: string }, type: string) => {
+  const updateRoomInfo = async (update_data: { [key: string]: string | number }, type: string) => {
     const target = data.table_items.find(item => item.checked);
     if (target) {
       const accommodation_id = target.accommodation_id;
       const id = target.id;
       const update_res = await fetchPostApi(
         `/admin/${user.uid}/accommodation/${accommodation_id}/rooms/${id}/info`,
-        price,
+        update_data,
       );
 
       if (update_res) {
@@ -196,7 +196,7 @@ const AdminAccommodationRooms = () => {
   };
 
   const deleteRoom = async (accommodation_id: number, id: number) => {
-    const response = await fetchDeleteApi(`/admin/${user.uid}/accommodation/${accommodation_id}/rooms/${id}`);
+    const response = await fetchPostApi(`/admin/${user.uid}/accommodation/${accommodation_id}/rooms/${id}/delete`, {});
     if (response == 200 || response == 204) {
       modal_alert.openModalAlert('삭제가 완료되었습니다.');
     } else {
@@ -227,7 +227,7 @@ const AdminAccommodationRooms = () => {
       const accommodation_id = target.accommodation_id;
       let room_images = [];
 
-      const delete_res = await fetchDeleteApi(`/image/rooms/${target_idx}`);
+      const delete_res = await fetchPostApi(`/images/rooms/${target_idx}/delete`, {});
 
       for (const item of modal_upload.data.image_list) {
         if (item.file) room_images.push(item.file);
@@ -241,9 +241,7 @@ const AdminAccommodationRooms = () => {
 
       const upload_res = await fetchFileApi('/upload/image', room_image_data);
 
-      console.log(delete_res);
-      console.log(upload_res);
-      if ((delete_res == 200 || delete_res == 204) && upload_res.length > 0) {
+      if (upload_res.length > 0) {
         modal_alert.openModalAlert('객실 이미지 수정이 완료되었습니다.');
       } else {
         modal_alert.openModalAlert('오류로 인해 수정이 실패되었습니다.');
@@ -301,14 +299,14 @@ const AdminAccommodationRooms = () => {
 
     if (target) {
       const accommodation_id = target.accommodation_id;
-      let url = `/admin/${user.uid}/accommodation/${accommodation_id}/rooms/${target.id}`;
-      if (target_string == 'price') {
-        value = `${value}`.replace(/\,/g, '');
+      let url = `/admin/${user.uid}/accommodation/${accommodation_id}/rooms/${target.id}/info`;
+      if (['standard_num', 'maximum_num'].includes(target_string)) {
+        value = Number(value);
       }
 
-      const status = await fetchPatchApi(url, { target: target_string, value });
+      const update_res = await fetchPostApi(url, { [target_string]: value });
 
-      if (status == 200) {
+      if (update_res.affected > 0) {
         modal_alert.openModalAlert('수정이 완료되었습니다.');
         getTableItems();
       } else {
@@ -365,7 +363,7 @@ const AdminAccommodationRooms = () => {
         visible={roomPriceContents.visible}
         contents={roomPriceContents.contents}
         onClose={() => clearRoomPriceModal()}
-        onUpdatePrice={(data: { [key: string]: string }) => updateRoomInfo(data, 'price')}
+        onUpdatePrice={(data: { [key: string]: number }) => updateRoomInfo(data, 'price')}
       />
       <ModalRoomTime
         mode={roomTimeContents.mode}

@@ -161,7 +161,7 @@ const AccommodationDetail = (props: { detail: AccommodationResponse; style: { [k
 
       const tmp_contents: (string | React.ReactElement)[] = getNoticeContents(tmp_info_details);
 
-      setLookedUpList('accommodation', props.detail.id);
+      // setLookedUpList('accommodation', props.detail.id);
       setNoticeContents([...tmp_contents]);
       setCurPriceKey(today_key);
       setAccommodationDetail(props.detail, today_key);

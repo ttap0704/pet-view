@@ -157,18 +157,6 @@ function FormAddRoom(props: FormAddRoomProps) {
         value: contents.maximum_num,
         format: 'people',
       },
-      // {
-      //   title: '입실',
-      //   key: 'check_in',
-      //   value: '',
-      //   format: 'people',
-      // },
-      // {
-      //   title: '퇴실',
-      //   key: 'check_out',
-      //   value: '',
-      //   format: 'people',
-      // },
     ];
 
     if (mode == 'edit') {

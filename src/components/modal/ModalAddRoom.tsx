@@ -15,6 +15,7 @@ import UtilBox from '../common/UtilBox';
 import ModalRoomPrice from './ModalRoomPrice';
 import ModalPeakSeason from './ModalPeakSeason';
 import ModalRoomTime from './ModalRoomTime';
+import validation from '../../utils/validation';
 
 interface ModalAddRoomProps {
   rooms_num: number;
@@ -131,6 +132,25 @@ function ModalAddRoom(props: ModalAddRoomProps) {
     setRooms([...tmp_rooms]);
   };
 
+  const checkRooms = () => {
+    let alert_message = '';
+    let rooms_vali = true;
+    for (const room of rooms) {
+      const room_image_vali = validation.image_list(room.image_list);
+      const room_info_vali = validation.room(room);
+
+      if (!room_image_vali || !room_info_vali) {
+        rooms_vali = false;
+        break;
+      }
+    }
+    if (!rooms_vali) {
+      alert_message = '올바른 객실 정보를 입력해주세요.\r\n객실의 모든 정보를 입력해야합니다.';
+    }
+
+    return alert_message;
+  };
+
   const addRoom = () => {
     setRooms([
       ...rooms,
@@ -187,7 +207,7 @@ function ModalAddRoom(props: ModalAddRoomProps) {
     });
   };
 
-  const setRoomPrice = (data: { [key: string]: string }) => {
+  const setRoomPrice = (data: { [key: string]: string | number }) => {
     const tmp_rooms = [...rooms];
     tmp_rooms[roomPriceContents.current_room_idx] = { ...tmp_rooms[roomPriceContents.current_room_idx], ...data };
     setRooms([...tmp_rooms]);
@@ -287,6 +307,12 @@ function ModalAddRoom(props: ModalAddRoomProps) {
               color='orange'
               onClick={() =>
                 modal_confirm.openModalConfirm(`수정을 완료하시겠습니까?`, () => {
+                  const message = checkRooms();
+
+                  if (message.length > 0) {
+                    modal_alert.openModalAlert(message);
+                    return;
+                  }
                   onAddRoom(rooms);
                 })
               }

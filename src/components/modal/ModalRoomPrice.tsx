@@ -22,7 +22,7 @@ interface ModalRoomPriceProps {
   };
   mode?: string;
   onClose: () => void;
-  onUpdatePrice: (data: { [key: string]: string }) => void;
+  onUpdatePrice: (data: { [key: string]: number }) => void;
 }
 
 interface PriceContentsType {
@@ -92,9 +92,9 @@ function ModalRoomPrice(props: ModalRoomPriceProps) {
 
   const confirmUpdate = () => {
     modal_confirm.openModalConfirm('객실 가격을 등록하시겠습니까?', () => {
-      const price_data: { [key: string]: string } = {};
+      const price_data: { [key: string]: number } = {};
       for (const [key, val] of Object.entries(priceContents)) {
-        price_data[key] = priceContents[key].price.replace(/[\,]/gi, '');
+        price_data[key] = Number(priceContents[key].price.replace(/[\,]/gi, ''));
       }
 
       onUpdatePrice(price_data);

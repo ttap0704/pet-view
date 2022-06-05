@@ -2,7 +2,7 @@ import { GetServerSideProps, GetStaticProps } from 'next';
 import { useEffect, useState, useContext } from 'react';
 import { useSelector } from 'react-redux';
 
-import { fetchGetApi, fetchPatchApi, fetchDeleteApi, fetchFileApi, fetchPostApi } from '../../../src/utils/api';
+import { fetchGetApi, fetchFileApi, fetchPostApi } from '../../../src/utils/api';
 import { getDate, setImageArray, setImageFormData } from '../../../src/utils/tools';
 import { accommodation_info } from '../../../src/utils/admin_items';
 
@@ -144,7 +144,7 @@ const AdminAccommodationInfo = () => {
   };
 
   const deleteAccommodation = async (id: number) => {
-    const response = await fetchDeleteApi(`/admin/${user.uid}/accommodation/${id}`);
+    const response = await fetchPostApi(`/admin/${user.uid}/accommodation/${id}/delete`, {});
     if (response == 200 || response == 204) {
       modal_alert.openModalAlert('삭제가 완료되었습니다.');
     } else {
@@ -193,10 +193,10 @@ const AdminAccommodationInfo = () => {
   const updateServiceInfo = async (service_info: ServiceInfoType) => {
     const target = data.table_items.find(item => item.checked);
     if (target) {
-      const update_res = await fetchPostApi(`/admin/${user.uid}/accommodation/${target.id}/service`, {
-        service_info,
+      const update_res = await fetchPostApi(`/admin/${user.uid}/accommodation/${target.id}/info`, {
+        ...service_info,
       });
-      if (update_res) {
+      if (update_res.affected == 1) {
         getTableItems();
         clearServiceInfoModal();
         modal_alert.openModalAlert('문의 정보가 변경되었습니다.');
@@ -272,7 +272,7 @@ const AdminAccommodationInfo = () => {
       if (type == 'accommodation') {
         let exposure_images = [];
 
-        const delete_res = await fetchDeleteApi(`/image/accommodation/${target_idx}`);
+        const delete_res = await fetchPostApi(`/images/accommodation/${target_idx}/delete`, {});
 
         for (const item of modal_upload.data.image_list) {
           if (item.file) exposure_images.push(item.file);
@@ -285,9 +285,7 @@ const AdminAccommodationInfo = () => {
 
         const upload_res = await fetchFileApi('/upload/image', exposure_image_data);
 
-        console.log(delete_res);
-        console.log(upload_res);
-        if ((delete_res == 200 || delete_res == 204) && upload_res.length > 0) {
+        if (upload_res.length > 0) {
           modal_alert.openModalAlert('대표 이미지 수정이 완료되었습니다.');
         } else {
           modal_alert.openModalAlert('오류로 인해 수정이 실패되었습니다.');
@@ -333,11 +331,11 @@ const AdminAccommodationInfo = () => {
     const target_string = modal_edit.data.target;
 
     if (target) {
-      let url = `/admin/${user.uid}/accommodation/${target.id}`;
+      let url = `/admin/${user.uid}/accommodation/${target.id}/info`;
 
-      const status = await fetchPatchApi(url, { target: target_string, value });
+      const update_res = await fetchPostApi(url, { [target_string]: value });
 
-      if (status == 200) {
+      if (update_res.affected == 1) {
         modal_alert.openModalAlert('수정이 완료되었습니다.');
         getTableItems();
       } else {
@@ -469,10 +467,10 @@ const AdminAccommodationInfo = () => {
   const updateAddress = async (address: ResponsePostcodeDataType) => {
     const target = data.table_items.find(item => item.checked);
     if (target) {
-      const update_res = await fetchPostApi(`/admin/${user.uid}/accommodation/${target.id}/address`, {
-        address,
+      const update_res = await fetchPostApi(`/admin/${user.uid}/accommodation/${target.id}/info`, {
+        ...address,
       });
-      if (update_res) {
+      if (update_res.affected == 1) {
         getTableItems();
         setPostcodeVisible(false);
         modal_alert.openModalAlert('주소가 변경되었습니다.');

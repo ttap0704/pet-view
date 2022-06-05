@@ -99,7 +99,6 @@ export const fetchGetApi = async function (uri: string) {
       ...setHeader(uri, false),
     },
   });
-  console.log({ ...setHeader(uri, false) })
   let responseJson = await response.json();
   setToken(responseJson);
   if (responseJson.new_token) {
