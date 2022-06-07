@@ -173,7 +173,7 @@ const AdminRestaurantInfo = () => {
         comment: item.comment,
       };
     });
-    // /:admin/restaurant/:id/:menu
+
     if (target) {
       const restaurant_id = target.id;
 
@@ -260,7 +260,7 @@ const AdminRestaurantInfo = () => {
           });
           break;
       }
-      setOrderContents({ visible: true, list: tmp_list, title: '객실 순서 변경' });
+      setOrderContents({ visible: true, list: tmp_list, title });
     }
   };
 
@@ -285,7 +285,7 @@ const AdminRestaurantInfo = () => {
       if (type == 'restaurant') {
         let exposure_images = [];
 
-        const delete_res = await fetchDeleteApi(`/image/restaurant/${target_idx}`);
+        const delete_res = await fetchPostApi(`/images/restaurant/${target_idx}/delete`, {});
 
         for (const item of modal_upload.data.image_list) {
           if (item.file) exposure_images.push(item.file);
@@ -298,7 +298,7 @@ const AdminRestaurantInfo = () => {
 
         const upload_res = await fetchFileApi('/upload/image', exposure_image_data);
 
-        if ((delete_res == 200 || delete_res == 204) && upload_res.length > 0) {
+        if (upload_res.length > 0) {
           modal_alert.openModalAlert('대표 이미지 수정이 완료되었습니다.');
         } else {
           modal_alert.openModalAlert('오류로 인해 수정이 실패되었습니다.');
@@ -343,11 +343,11 @@ const AdminRestaurantInfo = () => {
     const target_string = modal_edit.data.target;
 
     if (target) {
-      let url = `/admin/${user.uid}/restaurant/${target.id}`;
+      let url = `/admin/${user.uid}/restaurant/${target.id}/info`;
 
-      const status = await fetchPatchApi(url, { target: target_string, value });
+      const update_res = await fetchPostApi(url, { [target_string]: value });
 
-      if (status == 200) {
+      if (update_res.affected == 1) {
         modal_alert.openModalAlert('수정이 완료되었습니다.');
         getTableItems();
       } else {
@@ -357,7 +357,6 @@ const AdminRestaurantInfo = () => {
   };
 
   const getTableItems = async () => {
-    console.log('getTableItems');
     const restaurant: RestaurantListType = await fetchGetApi(`/admin/${user.uid}/restaurant?page=${data.per_page}`);
 
     const count = restaurant.count;
@@ -474,7 +473,7 @@ const AdminRestaurantInfo = () => {
   const updateAddress = async (address: ResponsePostcodeDataType) => {
     const target = data.table_items.find(item => item.checked);
     if (target) {
-      const update_res = await await fetchPostApi(`/admin/${user.uid}/restaurant/${target.id}/address`, { address });
+      const update_res = await await fetchPostApi(`/admin/${user.uid}/restaurant/${target.id}/info`, { ...address });
       if (update_res) {
         getTableItems();
         setPostcodeVisible(false);
@@ -488,8 +487,8 @@ const AdminRestaurantInfo = () => {
   const updateServiceInfo = async (service_info: ServiceInfoType) => {
     const target = data.table_items.find(item => item.checked);
     if (target) {
-      const update_res = await fetchPostApi(`/admin/${user.uid}/restaurant/${target.id}/service`, {
-        service_info,
+      const update_res = await fetchPostApi(`/admin/${user.uid}/restaurant/${target.id}/info`, {
+        ...service_info,
       });
       if (update_res) {
         getTableItems();

@@ -45,8 +45,13 @@ interface RestaurantResponse {
   close: string;
   last_order: string;
 }
+interface CreateRestaurantResponse {
+  id: number;
+  exposure_menu: ExposureMenuType[];
+}
 
 interface RestaurantType {
+  id: number;
   restaurant_id: number;
   exposure_menu: ExposureMenuType[];
   entrie_menu: EntireMenuType[];
@@ -88,7 +93,7 @@ interface ExposureMenuType {
   label: string;
   price: number;
   seq: number;
-  updatedAt: string;
+  updated_at: string;
   comment: string;
   exposure_menu_image: ImageType;
 }

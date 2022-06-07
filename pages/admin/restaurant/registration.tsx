@@ -360,17 +360,19 @@ const AdminRestaurantRegistration = () => {
     }
 
     const restaurant_data = {
-      ...tmp_address,
-      ...tmp_service_info,
-      label: restaurantLabel,
-      type: restaurantType.type,
-      introduction,
-      admin: 1,
-      exposureMenu: tmp_exposure_menu,
-      entireMenu: tmp_entire_menu,
+      restaurant: {
+        ...tmp_address,
+        ...tmp_service_info,
+        label: restaurantLabel,
+        type: restaurantType.type,
+        introduction,
+      },
+      exposure_menu: tmp_exposure_menu,
+      entire_menu: tmp_entire_menu,
     };
-    const restaurant: RestaurantType = await fetchPostApi(`/admin/${user.uid}/restaurant`, restaurant_data);
-    const restaurant_id = restaurant.restaurant_id;
+    console.log(restaurant_data);
+    const restaurant: CreateRestaurantResponse = await fetchPostApi(`/admin/${user.uid}/restaurant`, restaurant_data);
+    const restaurant_id = restaurant.id;
 
     let exposure_images = [];
     for (const item of exposureImages) {
@@ -402,7 +404,7 @@ const AdminRestaurantRegistration = () => {
     const upload_exposure_response = await fetchFileApi('/upload/image', exposure_image_data);
     const upload_exposure_menu_response = await fetchFileApi('/upload/image', exposure_menu_image_data);
 
-    if (upload_exposure_response.length > 0 && upload_exposure_menu_response.length > 0) {
+    if (upload_exposure_menu_response.length > 0) {
       modal_notice.openModalNotice('음식점이 성공적으로 등록되었습니다.\r\n관리 페이지로 이동합니다.', () => {
         router.push(`/admin/restaurant/info`);
       });
@@ -425,7 +427,6 @@ const AdminRestaurantRegistration = () => {
           placeholder='음식점명을 작성해주세요..'
           value={restaurantLabel}
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-            console.log(e);
             setRestaurantLabel(e.target.value);
           }}
         />
