@@ -93,12 +93,9 @@ interface ServiceInfoType {
 }
 
 interface ImageType {
-  accommodation_id: number;
+  target_id: number;
   category: number;
-  exposure_menu_id: null;
   file_name: string;
   id: number;
-  restaurant_id: null;
-  rooms_id: null;
   seq: number;
 }

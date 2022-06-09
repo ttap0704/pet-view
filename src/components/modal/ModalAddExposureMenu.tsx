@@ -113,8 +113,6 @@ function ModalAddExposureEenu(props: ModalAddExposureEenuProps) {
   };
 
   const addExposureMenu = () => {
-    console.log(cur_num + exposureMenu.length >= 5);
-    console.log(cur_num + exposureMenu.length);
     if (Number(cur_num) + exposureMenu.length >= 5) {
       modal_alert.openModalAlert('대표메뉴는 총 5개까지 등록이 가능합니다.');
       return;

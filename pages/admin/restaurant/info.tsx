@@ -1,7 +1,6 @@
-import { GetServerSideProps, GetServerSidePropsContext, GetStaticProps, NextPageContext } from 'next';
 import { useEffect, useState, useContext } from 'react';
 
-import { fetchGetApi, fetchPatchApi, fetchDeleteApi, fetchFileApi, fetchPostApi } from '../../../src/utils/api';
+import { fetchGetApi, fetchFileApi, fetchPostApi } from '../../../src/utils/api';
 import { getDate, setImageArray, setImageFormData } from '../../../src/utils/tools';
 import { restaurant_info } from '../../../src/utils/admin_items';
 
@@ -15,8 +14,6 @@ import ModalPostcodeForm from '../../../src/components/modal/ModalPostcodeForm';
 import Table from '../../../src/components/table/Table';
 import { TableContext } from '../../../src/provider/TableProvider';
 import { ModalContext } from '../../../src/provider/ModalProvider';
-import wrapper from '../../../src/store/configureStore';
-import { Context } from 'next-redux-wrapper';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../src/store';
 
@@ -154,8 +151,8 @@ const AdminRestaurantInfo = () => {
   };
 
   const deleteRestaurant = async (id: number) => {
-    const response = await fetchDeleteApi(`/admin/${user.uid}/restaurant/${id}`);
-    if (response == 200 || response == 204) {
+    const response = await fetchPostApi(`/admin/${user.uid}/restaurant/${id}/delete`, {});
+    if (response) {
       modal_alert.openModalAlert('삭제가 완료되었습니다.');
     } else {
       modal_alert.openModalAlert('오류로 인해 삭제가 실패되었습니다.');
@@ -169,7 +166,7 @@ const AdminRestaurantInfo = () => {
     const payload = exposure_menu.map(item => {
       return {
         label: item.label,
-        price: Number(item.price),
+        price: Number(item.price.replace(/[,]/gi, '')),
         comment: item.comment,
       };
     });
@@ -215,10 +212,20 @@ const AdminRestaurantInfo = () => {
   };
 
   const createCategory = async (category: AddEntireMenuContentsType[]) => {
+    console.log(category);
     const target = data.table_items.find(item => item.checked);
+    const payload = [];
+    for (const item of category) {
+      const tmp_payload = {
+        ...item,
+        menu: item.menu.map(menu_item => ({ ...menu_item, price: Number(`${menu_item.price}`.replace(/[,]/gi, '')) })),
+      };
+
+      payload.push(tmp_payload);
+    }
 
     if (target) {
-      const res = await fetchPostApi(`/admin/${user.uid}/restaurant/${target.id}/category`, category);
+      const res = await fetchPostApi(`/admin/${user.uid}/restaurant/${target.id}/category`, payload);
 
       if (res) {
         modal_alert.openModalAlert('카테고리 등록이 완료되었습니다.');
@@ -404,7 +411,7 @@ const AdminRestaurantInfo = () => {
       let change_data = [];
       if (curOrderModalType == 'exposure_menu') {
         for (const data of list) {
-          const cur_menu = target.exposure_menu.find((item: ExposureMenuType) => item.label == data.label);
+          const cur_menu = target.exposure_menu.find((item: ExposureMenuType) => item.seq == data.origin);
           if (cur_menu) {
             change_data.push({
               id: cur_menu.id,
@@ -413,9 +420,10 @@ const AdminRestaurantInfo = () => {
           }
         }
       } else if (curOrderModalType == 'category') {
+        console.log(list);
         for (const data of list) {
           const cur_category = target.entire_menu_category.find(
-            (item: EntireMenuCategoryType) => item.category == data.label,
+            (item: EntireMenuCategoryType) => item.seq == data.origin,
           );
           if (cur_category) {
             change_data.push({

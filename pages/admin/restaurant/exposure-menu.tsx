@@ -1,7 +1,7 @@
 import { GetServerSideProps } from 'next';
 import { useEffect, useState, useContext } from 'react';
 
-import { fetchGetApi, fetchPatchApi, fetchDeleteApi, fetchFileApi, fetchPostApi } from '../../../src/utils/api';
+import { fetchGetApi, fetchDeleteApi, fetchFileApi, fetchPostApi } from '../../../src/utils/api';
 import { getDate, setImageArray, setImageFormData } from '../../../src/utils/tools';
 import { restaurant_exposure_menu } from '../../../src/utils/admin_items';
 
@@ -201,9 +201,10 @@ const AdminRestaurantExposureMenu = () => {
     const target_string = modal_edit.data.target;
 
     if (target) {
-      let url = `/admin/${user.uid}/restaurant/${target.restaurant_id}/exposure_menu/${target.id}`;
+      let url = `/admin/${user.uid}/restaurant/${target.restaurant_id}/exposure_menu/${target.id}/info`;
+      const cur_value = target_string == 'price' ? Number(`${value}`.replace(/[,]/gi, '')) : value;
 
-      const status = await fetchPatchApi(url, { target: target_string, value });
+      const status = await fetchPostApi(url, { [target_string]: cur_value });
 
       if (status == 200) {
         modal_alert.openModalAlert('수정이 완료되었습니다.');
@@ -227,7 +228,7 @@ const AdminRestaurantExposureMenu = () => {
       tmp_table_items.push({
         id: x.id,
         label: x.label,
-        price: x.price + ' 원',
+        price: Number(x.price).toLocaleString() + ' 원',
         comment: x.comment,
         restaurant_id: x.restaurant_id,
         restaurant_label: x.restaurant_label,

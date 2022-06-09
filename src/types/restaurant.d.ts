@@ -123,5 +123,5 @@ interface AddExposureMenuContentsType {
 
 interface AddEntireMenuContentsType {
   category: string;
-  menu: { label: string, price: string }[],
+  menu: { label: string, price: string | number }[],
 }
