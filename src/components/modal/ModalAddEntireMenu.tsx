@@ -177,6 +177,26 @@ function ModalAddEntireMenu(props: ModalAddEntireMenuProps) {
     setEntireMenu(tmp_entire_menu);
   };
 
+  const confirmComplete = () => {
+    let check = true;
+    for (const category of entireMenu) {
+      for (const menu of category.menu) {
+        if (menu.price == '') {
+          check = false;
+          break;
+        }
+      }
+    }
+
+    if (!check) {
+      modal_alert.openModalAlert('가격을 모두 입력해주세요');
+      return;
+    }
+    modal_confirm.openModalConfirm(`${contents.title}를 등록하시겠습니까?`, () => {
+      onComplete(entireMenu);
+    });
+  };
+
   return (
     <>
       <ModalDefault bottom={false} white={false} visible={visible} onClose={onClose}>
@@ -217,15 +237,7 @@ function ModalAddEntireMenu(props: ModalAddEntireMenuProps) {
           </ModalAddEntireMenuContentsBox>
           {mode == 'add' ? (
             <UtilBox>
-              <Button
-                variant='contained'
-                color='orange'
-                onClick={() =>
-                  modal_confirm.openModalConfirm(`${contents.title}를 등록하시겠습니까?`, () => {
-                    onComplete(entireMenu);
-                  })
-                }
-              >
+              <Button variant='contained' color='orange' onClick={confirmComplete}>
                 등록
               </Button>
             </UtilBox>

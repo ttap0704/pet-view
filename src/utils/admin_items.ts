@@ -298,7 +298,7 @@ export const restaurant_entire_menu = {
     },
     {
       label: "카테고리",
-      key: 'category',
+      key: 'category_label',
       center: false,
     },
     {

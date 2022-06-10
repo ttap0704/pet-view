@@ -1,7 +1,7 @@
 import { GetServerSideProps } from 'next';
 import { useEffect, useState, useContext } from 'react';
 
-import { fetchGetApi, fetchPatchApi, fetchDeleteApi, fetchFileApi, fetchPostApi } from '../../../src/utils/api';
+import { fetchGetApi, fetchPostApi } from '../../../src/utils/api';
 import { restaurant_category } from '../../../src/utils/admin_items';
 
 import ModalEdit from '../../../src/components/modal/ModalEdit';
@@ -101,8 +101,8 @@ const AdminAccommodationCategory = () => {
   };
 
   const deleteCategory = async (restaurant_id: number, id: number) => {
-    const response = await fetchDeleteApi(`/admin/${user.uid}/restaurant/${restaurant_id}/category/${id}`);
-    if (response == 200 || response == 204) {
+    const delete_res = await fetchPostApi(`/admin/${user.uid}/restaurant/${restaurant_id}/category/${id}/delete`, {});
+    if (delete_res.affected == 1) {
       modal_alert.openModalAlert('삭제가 완료되었습니다.');
     } else {
       modal_alert.openModalAlert('오류로 인해 삭제가 실패되었습니다.');
@@ -114,12 +114,15 @@ const AdminAccommodationCategory = () => {
     const target = data.table_items.find(item => item.checked);
 
     if (target) {
-      const menu = [...category[0].menu];
+      const menu = [...category[0].menu].map(item => {
+        return {
+          ...item,
+          price: Number(`${item.price}`.replace(/[,]/gi, '')),
+        };
+      });
       const res = await fetchPostApi(
         `/admin/${user.uid}/restaurant/${target.restaurant_id}/category/${target.id}/menu`,
-        {
-          menu,
-        },
+        [...menu],
       );
 
       if (res) {
@@ -157,10 +160,10 @@ const AdminAccommodationCategory = () => {
     const target_string = modal_edit.data.target;
 
     if (target) {
-      let url = `/admin/${user.uid}/restaurant/${target.restaurant_id}/category/${target.id}`;
-      const status = await fetchPatchApi(url, { target: target_string, value });
+      let url = `/admin/${user.uid}/restaurant/${target.restaurant_id}/category/${target.id}/info`;
+      const update_res = await fetchPostApi(url, { [target_string]: value });
 
-      if (status == 200) {
+      if (update_res.affected == 1) {
         modal_alert.openModalAlert('수정이 완료되었습니다.');
         getTableItems();
       } else {

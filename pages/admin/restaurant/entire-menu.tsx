@@ -1,7 +1,7 @@
 import { GetServerSideProps, GetStaticProps } from 'next';
 import { useEffect, useState, useContext } from 'react';
 
-import { fetchGetApi, fetchPatchApi, fetchDeleteApi, fetchFileApi, fetchPostApi } from '../../../src/utils/api';
+import { fetchGetApi, fetchPatchApi, fetchPostApi } from '../../../src/utils/api';
 import { restaurant_entire_menu } from '../../../src/utils/admin_items';
 
 import ModalEdit from '../../../src/components/modal/ModalEdit';
@@ -72,8 +72,11 @@ const AdminRestaurantEntireMenu = () => {
   };
 
   const deleteEntireMenu = async (restaurant_id: number, id: number) => {
-    const response = await fetchDeleteApi(`/admin/${user.uid}/restaurant/${restaurant_id}/entire_menu/${id}`);
-    if (response == 200 || response == 204) {
+    const delete_res = await fetchPostApi(
+      `/admin/${user.uid}/restaurant/${restaurant_id}/entire_menu/${id}/delete`,
+      {},
+    );
+    if (delete_res) {
       modal_alert.openModalAlert('삭제가 완료되었습니다.');
     } else {
       modal_alert.openModalAlert('오류로 인해 삭제가 실패되었습니다.');
@@ -111,11 +114,11 @@ const AdminRestaurantEntireMenu = () => {
     const target = data.table_items.find(item => item.checked);
 
     if (target) {
-      let url = `/admin/${user.uid}/restaurant/${target.restaurant_id}/entire_menu/${target.id}`;
+      let url = `/admin/${user.uid}/restaurant/${target.restaurant_id}/entire_menu/${target.id}/category`;
 
-      const status = await fetchPatchApi(url, { target: 'category_id', value: item.id });
+      const update_res = await fetchPostApi(url, { category_id: item.id });
 
-      if (status == 200) {
+      if (update_res.affected == 1) {
         modal_alert.openModalAlert('수정이 완료되었습니다.');
         getTableItems();
       } else {
@@ -131,11 +134,11 @@ const AdminRestaurantEntireMenu = () => {
     const target_string = modal_edit.data.target;
 
     if (target) {
-      let url = `/admin/${user.uid}/restaurant/${target.restaurant_id}/entire_menu/${target.id}`;
+      let url = `/admin/${user.uid}/restaurant/${target.restaurant_id}/entire_menu/${target.id}/info`;
+      const cur_value = target_string == 'price' ? Number(`${value}`.replace(/[,]/gi, '')) : value;
+      const update_res = await fetchPostApi(url, { [target_string]: cur_value });
 
-      const status = await fetchPatchApi(url, { target: target_string, value });
-
-      if (status == 200) {
+      if (update_res.affected == 1) {
         modal_alert.openModalAlert('수정이 완료되었습니다.');
         getTableItems();
       } else {
@@ -156,9 +159,9 @@ const AdminRestaurantEntireMenu = () => {
     for (let x of rows) {
       tmp_table_items.push({
         id: x.id,
-        category: x.category,
+        category_label: x.category_label,
         label: x.label,
-        price: x.price + ' 원',
+        price: Number(x.price).toLocaleString() + ' 원',
         restaurant_id: x.restaurant_id,
         restaurant_label: x.restaurant_label,
         checked: false,

@@ -85,10 +85,10 @@ const AdminRestaurantExposureMenu = () => {
       ];
 
       const exposure_menu_image_data = await setImageFormData(update_data, 'exposure_menu', target.restaurant_id);
-      const delete_res = await fetchDeleteApi(`/image/exposure_menu/${target.id}`);
+      const delete_res = await fetchPostApi(`/images/exposure_menu/${target.id}/delete`, {});
 
       const update_res = await fetchFileApi('/upload/image', exposure_menu_image_data);
-      if ((delete_res == 200 || delete_res == 204) && update_res.length > 0) {
+      if (update_res.length > 0) {
         modal_alert.openModalAlert('메뉴 이미지 수정이 완료되었습니다.');
       } else {
         modal_alert.openModalAlert('오류로 인해 수정이 실패되었습니다.');
@@ -112,8 +112,11 @@ const AdminRestaurantExposureMenu = () => {
   };
 
   const deleteExposureMenu = async (restaurant_id: number, id: number) => {
-    const response = await fetchDeleteApi(`/admin/${user.uid}/restaurant/${restaurant_id}/exposure_menu/${id}`);
-    if (response == 200 || response == 204) {
+    const delete_res = await fetchPostApi(
+      `/admin/${user.uid}/restaurant/${restaurant_id}/exposure_menu/${id}/delete`,
+      {},
+    );
+    if (delete_res.affected == 1) {
       modal_alert.openModalAlert('삭제가 완료되었습니다.');
     } else {
       modal_alert.openModalAlert('오류로 인해 삭제가 실패되었습니다.');
@@ -137,10 +140,10 @@ const AdminRestaurantExposureMenu = () => {
     const type = modal_upload.data.type;
 
     if (target_idx != null && target_idx >= 0) {
-      if (type == 'accommodation') {
+      if (type == 'exposure_menu') {
         let exposure_images = [];
 
-        const delete_res = await fetchDeleteApi(`/image/accommodation/${target_idx}`);
+        const delete_res = await fetchDeleteApi(`/images/exposure_menu/${target_idx}/delete`);
 
         for (const item of modal_upload.data.image_list) {
           if (item.file) exposure_images.push(item.file);
@@ -148,12 +151,12 @@ const AdminRestaurantExposureMenu = () => {
 
         const exposure_image_data = await setImageFormData(
           [{ target_id: target_idx, files: exposure_images }],
-          'accommodation',
+          'exposure_menu',
         );
 
         const upload_res = await fetchFileApi('/upload/image', exposure_image_data);
 
-        if ((delete_res == 200 || delete_res == 204) && upload_res.length > 0) {
+        if (upload_res.length > 0) {
           modal_alert.openModalAlert('대표 이미지 수정이 완료되었습니다.');
         } else {
           modal_alert.openModalAlert('오류로 인해 수정이 실패되었습니다.');
@@ -204,9 +207,9 @@ const AdminRestaurantExposureMenu = () => {
       let url = `/admin/${user.uid}/restaurant/${target.restaurant_id}/exposure_menu/${target.id}/info`;
       const cur_value = target_string == 'price' ? Number(`${value}`.replace(/[,]/gi, '')) : value;
 
-      const status = await fetchPostApi(url, { [target_string]: cur_value });
+      const update_res = await fetchPostApi(url, { [target_string]: cur_value });
 
-      if (status == 200) {
+      if (update_res.affected == 1) {
         modal_alert.openModalAlert('수정이 완료되었습니다.');
         getTableItems();
       } else {
