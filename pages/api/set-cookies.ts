@@ -20,7 +20,6 @@ export default function handler(
       const three_month_later = new Date(new Date().setMonth(new Date().getMonth() + 3));
       const body = JSON.parse(req.body)
       const token = body.token ? body.token : body.new_token
-      console.log(token, 'hih', body)
       if (token) {
         res.setHeader('Set-Cookie', serialize(`a-token=`, ';', {
           path: '/',

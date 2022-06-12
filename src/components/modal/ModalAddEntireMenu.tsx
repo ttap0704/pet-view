@@ -82,7 +82,6 @@ function ModalAddEntireMenu(props: ModalAddEntireMenuProps) {
         if (mode == 'read') {
           setEntireMenu([...props_category]);
         } else {
-          console.log(props_category);
           if (type == 'entire_menu') {
             setEntireMenu([...props_category]);
           }

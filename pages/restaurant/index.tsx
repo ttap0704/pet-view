@@ -37,8 +37,10 @@ const RestaurantContainer = styled(Box)(({ theme }) => ({
 
 const ListBox = styled(Box)(({ theme }) => ({
   width: '42rem',
+  maxWidth: '42rem',
   height: 'auto',
   cursor: 'pointer',
+  position: 'relative',
 }));
 
 const RestaurantIndex = (props: { list: RestaurantList[]; style: { [key: string]: string } }) => {
@@ -48,7 +50,6 @@ const RestaurantIndex = (props: { list: RestaurantList[]; style: { [key: string]
   const is_down_md = useMediaQuery(theme.breakpoints.down('md'));
 
   useEffect(() => {
-    console.log(props.list);
     setList(props.list);
   }, []);
 

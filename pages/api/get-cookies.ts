@@ -23,7 +23,6 @@ export default function handler(
         token = req.cookies[type]
       }
 
-      console.log(document.cookie, req.headers, token, 'get-cookies')
       res.status(200).send({ pass: true, token: token })
     } else {
       res.status(200).send({ pass: false, token: '' })

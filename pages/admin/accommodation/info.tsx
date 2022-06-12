@@ -138,7 +138,6 @@ const AdminAccommodationInfo = () => {
         file_name: item.file_name,
       };
     });
-    console.log(tmp_image_list);
     const image_list = await setImageArray(tmp_image_list);
     modal_image_detail.openModalImageDetail('accommodation', image_list);
   };
@@ -428,7 +427,6 @@ const AdminAccommodationInfo = () => {
       });
     }
 
-    console.log(tmp_table_items);
     setInfoContents({
       ...infoContents,
       table_items: tmp_table_items,

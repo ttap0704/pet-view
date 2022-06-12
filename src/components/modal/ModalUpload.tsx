@@ -62,8 +62,6 @@ function ModalUpload(props: ModalUploadProps) {
 
   const deleteList = (origin_idx: number | null | undefined) => {
     if (Number(origin_idx) >= 0) {
-      console.log(origin_idx, 'origin_idx');
-      console.log(modal_upload.data.image_list);
       const image_list = [];
       for (const list of modal_upload.data.image_list) {
         if (list.origin != origin_idx) {

@@ -55,12 +55,9 @@ function ModalPeakSeason(props: ModalPeakSeasonProps) {
   };
 
   const deleteSeason = (parent_idx: number) => {
-    console.log(parent_idx);
     const tmp_season = [...peakSeason];
-    console.log(peakSeason);
     tmp_season.splice(parent_idx, 1);
     setPeakSeason([...tmp_season]);
-    console.log(tmp_season);
   };
 
   const confirmUpdate = () => {

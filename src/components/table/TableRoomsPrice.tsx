@@ -47,10 +47,6 @@ const TableRoomPrice = (props: TableRoomPriceProps) => {
   const total_price = props.priceContents;
   const season = props.seasonContents;
 
-  useEffect(() => {
-    console.log(season);
-  }, []);
-
   return (
     <>
       <TableContainer component={Paper}>

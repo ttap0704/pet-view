@@ -28,7 +28,6 @@ export async function setImageArray(data: { file_name: string }[], set_file?: bo
 
 export function imageToBlob(src: string, type: string): Promise<File> {
   return new Promise((resolve, reject) => {
-    console.log(src);
     fetch(`http://localhost:3080/images/${type}/${src}`).then(res => {
       res.blob().then(blob => {
         const file = new File([blob], src, {
@@ -82,7 +81,6 @@ export async function setImageFormData(data: { target_id: number; files: File[] 
     const files = item.files;
 
     for (let i = 0, leng = files.length; i < leng; i++) {
-      console.log(target_id);
       if (files[i]) {
         const file_name_arr = files[i].name.split('.');
         const file_extention = file_name_arr[file_name_arr.length - 1];
@@ -255,7 +253,7 @@ export const setLookedUpList = (type: string, id: number) => {
       item_json.list.push(id);
 
       session.setItem(type, JSON.stringify(item_json));
-      fetchPostApi(`/${type}/${id}/count`, { id, postdate });
+      fetchPostApi(`/${type}/${id}/count`, {});
     }
   }
 };

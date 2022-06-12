@@ -114,7 +114,6 @@ function AppHeader() {
 
     const moveMorePage = (idx: number) => {
       if (idx == 0) {
-        console.log(idx);
       } else {
         if (user && Number(user.uid) > 0) {
           router.push('/admin');

@@ -212,7 +212,6 @@ const AdminRestaurantInfo = () => {
   };
 
   const createCategory = async (category: AddEntireMenuContentsType[]) => {
-    console.log(category);
     const target = data.table_items.find(item => item.checked);
     const payload = [];
     for (const item of category) {
@@ -420,7 +419,6 @@ const AdminRestaurantInfo = () => {
           }
         }
       } else if (curOrderModalType == 'category') {
-        console.log(list);
         for (const data of list) {
           const cur_category = target.entire_menu_category.find(
             (item: EntireMenuCategoryType) => item.seq == data.origin,

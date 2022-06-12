@@ -45,8 +45,7 @@ const userSlice = createSlice({
   },
   extraReducers: {
     [HYDRATE]: (state, action) => {
-      console.log(state, action, 'HYDRATE...');
-      // state.count = action.payload.counter.count;
+      //
     },
   },
 })

@@ -99,3 +99,8 @@ interface ImageType {
   id: number;
   seq: number;
 }
+
+interface ChartData {
+  name: string;
+  [key: string]: number | string;
+}

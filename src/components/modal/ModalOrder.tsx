@@ -80,7 +80,6 @@ function ModalOrder(props: ModalOrderProps) {
         };
       });
 
-    console.log(tmp_list);
     setTmpList([...tmp_list]);
   };
 

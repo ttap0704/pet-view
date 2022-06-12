@@ -370,7 +370,6 @@ const AdminRestaurantRegistration = () => {
       exposure_menu: tmp_exposure_menu,
       entire_menu: tmp_entire_menu,
     };
-    console.log(restaurant_data);
     const restaurant: CreateRestaurantResponse = await fetchPostApi(`/admin/${user.uid}/restaurant`, restaurant_data);
     const restaurant_id = restaurant.id;
 
