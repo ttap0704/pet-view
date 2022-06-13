@@ -10,6 +10,7 @@ import TableProvider from '../src/provider/TableProvider';
 import theme from '../src/utils/theme';
 import LayoutApp from '../src/components/layout/LayoutApp';
 import LayoutAdmin from '../src/components/layout/LayoutAdmin';
+import LayoutSuper from '../src/components/layout/LayoutSuper';
 import wrapper from '../src/store/configureStore';
 import { setUser } from '../src/store/slices/user';
 
@@ -40,6 +41,14 @@ const _APP = ({ Component, pageProps }: AppProps) => {
       );
     } else if (['login', 'join'].includes(rootPath)) {
       return <Component {...pageProps} />;
+    } else if (rootPath.indexOf('super') >= 0) {
+      return (
+        <LayoutAdmin>
+          <TableProvider>
+            <Component {...pageProps} />
+          </TableProvider>
+        </LayoutAdmin>
+      );
     } else {
       return (
         <LayoutApp>

@@ -61,9 +61,10 @@ const CustomTreeItem = styled(TreeItem)(({ theme }) => ({
 const AdminSideMenu = () => {
   const router = useRouter();
   const user = useSelector((state: RootState) => state.userReducer);
+  const [rootPath, setRootPath] = useState('');
 
   const [currentSideMenu, setCurrentSideMenu] = useState<SideMenuType>({});
-  const side_menu_items: SideMenuType = {
+  const admin_side_menu_items: SideMenuType = {
     index: {
       label: '홈',
       children: [],
@@ -120,14 +121,50 @@ const AdminSideMenu = () => {
     },
   };
 
+  const super_side_menu_items: SideMenuType = {
+    index: {
+      label: '홈',
+      children: [],
+      path: '/super',
+    },
+    product: {
+      label: '매장 관리',
+      children: [
+        {
+          label: '숙박업소 관리',
+          path: '/super/product/accommodation',
+        },
+        {
+          label: '음식점 관리',
+          path: '/super/product/restaurant',
+        },
+      ],
+      path: null,
+    },
+    notice: {
+      label: '공지사항 등록',
+      children: [],
+      path: '/super/notice',
+    },
+  };
+
   useEffect(() => {
-    if (user && user.type == 1) {
-      // delete side_menu_items.accommodation;
-    } else if (user.type == 2) {
-      delete side_menu_items.restaurant;
+    const root_path = router.pathname.split('/')[1];
+    setRootPath(root_path);
+  }, [router.pathname]);
+
+  useEffect(() => {
+    if (rootPath.indexOf('admin') >= 0) {
+      if (user && user.type == 1) {
+        // delete side_menu_items.accommodation;
+      } else if (user.type == 2) {
+        delete admin_side_menu_items.restaurant;
+      }
+      setCurrentSideMenu({ ...admin_side_menu_items });
+    } else {
+      setCurrentSideMenu({ ...super_side_menu_items });
     }
-    setCurrentSideMenu({ ...side_menu_items });
-  }, [user]);
+  }, [user, rootPath]);
 
   const setTreeItems = () => {
     return Object.keys(currentSideMenu).map((key, idx) => {

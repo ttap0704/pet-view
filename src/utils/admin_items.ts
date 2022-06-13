@@ -319,3 +319,40 @@ export const restaurant_entire_menu = {
   footer_colspan: 7,
   table_items: [],
 }
+
+export const product_menu = {
+  header: [
+    {
+      label: 'check',
+      center: true,
+      key: 'check',
+      type: 'checkbox',
+    },
+    {
+      label: "이름",
+      key: 'label',
+      center: false,
+    },
+    {
+      label: "관리자",
+      key: 'president',
+      center: false,
+    },
+    {
+      label: "이메일",
+      key: 'email',
+      center: false,
+    },
+    {
+      label: "상태",
+      key: 'status',
+      center: false,
+    },
+  ],
+  edit_items: ["상태 수정", "가격 수정", "카테고리 수정", "메뉴 삭제"],
+  type: 'product',
+  title: '매장 관리',
+  rows_length: 0,
+  footer_colspan: 7,
+  table_items: [],
+}
