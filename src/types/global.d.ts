@@ -104,3 +104,4 @@ interface ChartData {
   name: string;
   [key: string]: number | string;
 }
+declare module 'react-quill';

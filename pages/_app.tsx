@@ -10,7 +10,6 @@ import TableProvider from '../src/provider/TableProvider';
 import theme from '../src/utils/theme';
 import LayoutApp from '../src/components/layout/LayoutApp';
 import LayoutAdmin from '../src/components/layout/LayoutAdmin';
-import LayoutSuper from '../src/components/layout/LayoutSuper';
 import wrapper from '../src/store/configureStore';
 import { setUser } from '../src/store/slices/user';
 

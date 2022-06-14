@@ -348,8 +348,14 @@ export const product_menu = {
       key: 'status',
       center: false,
     },
+    {
+      label: '상품 확인',
+      key: 'domain',
+      center: true,
+      type: 'button'
+    }
   ],
-  edit_items: ["상태 수정", "가격 수정", "카테고리 수정", "메뉴 삭제"],
+  edit_items: ["노출 중지", "노출 진행"],
   type: 'product',
   title: '매장 관리',
   rows_length: 0,

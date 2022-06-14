@@ -52,7 +52,8 @@ const LayoutAdmin = (props: LayoutAdminProps) => {
   const children = props.children;
 
   useEffect(() => {
-    if (!excepted_path.includes(router.pathname) && !user.uid) {
+    console.log();
+    if (router.pathname.indexOf('admin') >= 0 && !excepted_path.includes(router.pathname) && !user.uid) {
       const user = sessionStorage.getItem('user');
       if (user) {
         const session: UserType = JSON.parse(user);
