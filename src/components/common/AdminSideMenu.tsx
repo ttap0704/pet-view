@@ -146,11 +146,11 @@ const AdminSideMenu = () => {
       children: [
         {
           label: '공지사항 등록',
-          path: '/super/notice',
+          path: '/super/notice/registration',
         },
         {
           label: '공지사항 관리',
-          path: '/super/product/restaurant',
+          path: '/super/notice/manage',
         },
       ],
       path: null,
