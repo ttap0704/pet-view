@@ -64,6 +64,7 @@ const _APP = ({ Component, pageProps }: AppProps) => {
           <Layout />
         </ModalProvider>
       </ThemeProvider>
+      {/* <script src='/node_modules/quill-image-resize-module/image-resize.min.js'></script> */}
       <script
         type='text/javascript'
         src={`//dapi.kakao.com/v2/maps/sdk.js?autoload=false&appkey=${process.env.NEXT_PUBLIC_KAKAO_MAP_API_KEY}&libraries=services`}

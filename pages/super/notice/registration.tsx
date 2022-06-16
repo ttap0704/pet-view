@@ -1,17 +1,18 @@
-import { styled } from '@mui/material';
-import { useEffect, useState, useContext, useMemo } from 'react';
+import { FormControlLabel, FormGroup, Radio, styled } from '@mui/material';
+import dynamic from 'next/dynamic';
+import React, { useEffect, useState, useContext, useMemo } from 'react';
 import Button from '../../../src/components/button/Button';
 
-import Editor from '../../../src/components/common/Editor';
 import ContainerRegistrationItem from '../../../src/components/container/ContainerRegistrationItem';
 import { ModalContext } from '../../../src/provider/ModalProvider';
-import { toolbar } from '../../../src/utils/editor_tools';
 
-const CustomEditor = styled(Editor)(({ theme }) => ({}));
+const Editor = dynamic(import('../../../src/components/common/Editor'), {
+  ssr: false,
+  loading: () => <p>Loading ...</p>,
+});
 
 const AdminRestaurantInfo = () => {
   const { modal_confirm } = useContext(ModalContext);
-
   const [confirm, setConfirm] = useState(false);
 
   const confirmRegistration = () => {
@@ -23,7 +24,7 @@ const AdminRestaurantInfo = () => {
   return (
     <>
       <ContainerRegistrationItem title='공지사항 작성'>
-        <CustomEditor confirm={confirm} onComplete={() => setConfirm(false)} />
+        <Editor confirm={confirm} onComplete={() => setConfirm(false)} />
         <Button variant='contained' color='orange' sx={{ marginTop: '1rem' }} onClick={confirmRegistration}>
           등록
         </Button>

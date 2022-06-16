@@ -104,4 +104,7 @@ interface ChartData {
   name: string;
   [key: string]: number | string;
 }
+
 declare module 'react-quill';
+declare module 'quill-image-resize-module';
+declare module '@looop/quill-image-resize-module-react';
