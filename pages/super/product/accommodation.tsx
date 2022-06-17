@@ -22,6 +22,7 @@ const SuperProductAccommodation = () => {
   useEffect(() => {
     const target_idx = data.clicked_dropdown_idx;
     const target = data.table_items.find(item => item.checked);
+    console.log(target_idx);
     if (target && target_idx != null && target_idx >= 0) {
       if (target_idx == 0) {
         modal_confirm.openModalConfirm('해당 상품의 노출을 중지시키겠습니까?', () => {
@@ -45,7 +46,7 @@ const SuperProductAccommodation = () => {
   }, [data.clicked_row_button_idx, data.clicked_row_button_key]);
 
   const setProductStatus = async (status: number, id: number) => {
-    const update_res = await fetchPostApi(`/super/product/accommodation/${id}/status`, { status });
+    const update_res = await fetchPostApi(`/super/product/accommodation/${id}/info`, { status });
 
     if (update_res.affected == 1) {
       modal_alert.openModalAlert('수정이 완료되었습니다.');

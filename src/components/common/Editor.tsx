@@ -1,13 +1,16 @@
 import { FormControlLabel, FormGroup, Radio, styled } from '@mui/material';
 import dynamic from 'next/dynamic';
-import React, { createElement, useEffect, useMemo, useRef, useState } from 'react';
+import React, { createElement, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import ReactQuill, { Quill } from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 
+import InputOutlined from '../input/InputOutlined';
 import ImageResize from '@looop/quill-image-resize-module-react';
 import UtilBox from './UtilBox';
 import { setImageFormData } from '../../utils/tools';
 import { fetchFileApi, fetchGetApi, fetchPostApi } from '../../utils/api';
+import { ModalContext } from '../../provider/ModalProvider';
+import { useRouter } from 'next/router';
 Quill.register('modules/ImageResize', ImageResize);
 
 interface EditorProps {
@@ -28,22 +31,59 @@ const StyledQuill = styled(ReactQuill)(({ theme }) => ({
 }));
 
 export default function Editor(props: EditorProps) {
+  const { modal_alert } = useContext(ModalContext);
   const contents = useRef('');
   const confirm = props.confirm;
   const onComplete = props.onComplete;
+  const router = useRouter();
 
+  const [editId, setEditId] = useState(0);
+  const [title, setTitle] = useState('');
   const [targetContents, setTargetContents] = useState([
     {
       checked: false,
       type: 1,
-      label: '유저',
+      label: '유저/공지사항',
     },
     {
       checked: false,
       type: 2,
-      label: '관리자',
+      label: '관리자/공지사항',
+    },
+    {
+      checked: false,
+      type: 3,
+      label: '유저/이벤트',
+    },
+    {
+      checked: false,
+      type: 4,
+      label: '관리자/이벤트',
     },
   ]);
+
+  useEffect(() => {
+    if (!router.isReady) return;
+    if (router.query.id) {
+      setEditId(Number(router.query.id));
+      setEditContents(Number(router.query.id));
+    }
+  }, [router.isReady]);
+
+  const setEditContents = async (id: number) => {
+    const detail = await fetchGetApi(`/super/notice/${id}`);
+    if (detail) {
+      const tmp_target_contenst = [...targetContents];
+      for (const item of tmp_target_contenst) {
+        if (item.type == detail.target) {
+          item.checked = true;
+        }
+      }
+      contents.current = JSON.parse(detail.contents);
+      setTargetContents([...tmp_target_contenst]);
+      setTitle(detail.title);
+    }
+  };
 
   useEffect(() => {
     if (confirm) {
@@ -86,7 +126,6 @@ export default function Editor(props: EditorProps) {
       const last_id = await fetchGetApi(`/super/notice/last-id`);
 
       let tmp_contents = contents.current;
-      console.log(src_arr);
 
       if (notice_files.length > 0) {
         const notice_image_data = await setImageFormData(
@@ -117,7 +156,6 @@ export default function Editor(props: EditorProps) {
         }
 
         for (const image of uploaded_images) {
-          console.log(image.file_name);
           tmp_contents.replace(
             src_arr[image.seq],
             `http://localhost:3080/image/notice/${target_path}/${image.file_name}`,
@@ -130,13 +168,34 @@ export default function Editor(props: EditorProps) {
       const create_data = {
         contents: tmp_contents,
         target: find_item.type,
+        title: title,
       };
       const notice = await fetchPostApi(`/super/notice`, create_data);
 
-      console.log(notice);
+      if (notice.id) {
+        modal_alert.openModalAlert('공지사항이 등록되었습니다.', true, () => {
+          clearContents();
+          onComplete();
+        });
+      } else {
+        modal_alert.openModalAlert('오류로 인해 등록이 실패하였습니다.', true);
+      }
+
+      if (editId > 0) {
+        await fetchPostApi(`/super/notice/${editId}/delete`, {});
+      }
+    }
+  };
+
+  const clearContents = () => {
+    const tmp_contents = [...targetContents];
+    for (const item of tmp_contents) {
+      item.checked = false;
     }
 
-    onComplete();
+    contents.current = '';
+    setTargetContents([...tmp_contents]);
+    setTitle('');
   };
 
   const modules = useMemo(
@@ -186,6 +245,12 @@ export default function Editor(props: EditorProps) {
           })}
         </FormGroup>
       </UtilBox>
+      <InputOutlined
+        placeholder='제목을 입력해주세요.'
+        value={title}
+        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setTitle(e.target.value)}
+        sx={{ marginBottom: '1rem' }}
+      />
       <StyledQuill
         value={contents.current}
         onChange={(value: any) => {

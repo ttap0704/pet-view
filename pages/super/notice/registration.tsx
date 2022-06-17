@@ -1,17 +1,23 @@
 import { FormControlLabel, FormGroup, Radio, styled } from '@mui/material';
 import dynamic from 'next/dynamic';
+import { NextRouter, useRouter } from 'next/router';
 import React, { useEffect, useState, useContext, useMemo } from 'react';
 import Button from '../../../src/components/button/Button';
 
 import ContainerRegistrationItem from '../../../src/components/container/ContainerRegistrationItem';
 import { ModalContext } from '../../../src/provider/ModalProvider';
+import { fetchGetApi } from '../../../src/utils/api_back';
+
+interface NoticeRegistrationProps {
+  router?: NextRouter;
+}
 
 const Editor = dynamic(import('../../../src/components/common/Editor'), {
   ssr: false,
   loading: () => <p>Loading ...</p>,
 });
 
-const AdminRestaurantInfo = () => {
+const AdminRestaurantInfo = (props: NoticeRegistrationProps) => {
   const { modal_confirm } = useContext(ModalContext);
   const [confirm, setConfirm] = useState(false);
 

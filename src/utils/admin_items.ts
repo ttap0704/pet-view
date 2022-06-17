@@ -362,3 +362,41 @@ export const product_menu = {
   footer_colspan: 7,
   table_items: [],
 }
+
+export const notice = {
+  header: [
+    {
+      label: 'check',
+      center: true,
+      key: 'check',
+      type: 'checkbox',
+    },
+    {
+      label: "타이틀",
+      key: 'label',
+      center: false,
+    },
+    {
+      label: "작성일",
+      key: 'created_at',
+      center: false,
+    },
+    {
+      label: "상태",
+      key: 'status',
+      center: false,
+    },
+    {
+      label: '확인',
+      key: 'domain',
+      center: true,
+      type: 'button'
+    }
+  ],
+  edit_items: ["노출 중지", "노출 진행", "공지사항 수정", "공지사항 삭제"],
+  type: 'notice',
+  title: '공지사항 관리',
+  rows_length: 0,
+  footer_colspan: 7,
+  table_items: [],
+}

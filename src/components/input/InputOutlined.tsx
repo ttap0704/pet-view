@@ -57,7 +57,7 @@ const StyledInput = styled(OutlinedInput)(({ theme }) => ({
   },
 }));
 
-const CustomInput = (props: InputOutlinedProps) => {
+const InputOutlined = (props: InputOutlinedProps) => {
   const value = props.value;
   const max = props.max;
   const placeholder = props.placeholder;
@@ -161,4 +161,4 @@ const CustomInput = (props: InputOutlinedProps) => {
   );
 };
 
-export default CustomInput;
+export default InputOutlined;
