@@ -7,7 +7,13 @@ import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../store';
 import { setUser } from '../../store/slices/user';
 
-const excepted_path = ['/admin/join', '/admin/login', '/admin/join/success', '/admin/join/certification/[id]'];
+const excepted_path = [
+  '/admin/join',
+  '/admin/login',
+  '/admin/join/success',
+  '/admin/join/certification/[id]',
+  '/super/login',
+];
 
 interface LayoutAdminProps {
   children: React.ReactNode;
@@ -52,14 +58,21 @@ const LayoutAdmin = (props: LayoutAdminProps) => {
   const children = props.children;
 
   useEffect(() => {
-    console.log();
-    if (router.pathname.indexOf('admin') >= 0 && !excepted_path.includes(router.pathname) && !user.uid) {
+    if (
+      (router.pathname.indexOf('admin') >= 0 || router.pathname.indexOf('super') >= 0) &&
+      !excepted_path.includes(router.pathname) &&
+      !user.uid
+    ) {
       const user = sessionStorage.getItem('user');
       if (user) {
         const session: UserType = JSON.parse(user);
         dispatch(setUser(session));
       } else {
-        router.push('/admin/login');
+        if (router.pathname.indexOf('admin') >= 0) {
+          router.push('/admin/login');
+        } else {
+          router.push('/super/login');
+        }
       }
     }
   }, []);

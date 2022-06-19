@@ -71,7 +71,7 @@ export default function Editor(props: EditorProps) {
   }, [router.isReady]);
 
   const setEditContents = async (id: number) => {
-    const detail = await fetchGetApi(`/super/notice/${id}`);
+    const detail = await fetchGetApi(`/notice/${id}`);
     if (detail) {
       const tmp_target_contenst = [...targetContents];
       for (const item of tmp_target_contenst) {
@@ -79,7 +79,11 @@ export default function Editor(props: EditorProps) {
           item.checked = true;
         }
       }
-      contents.current = JSON.parse(detail.contents);
+      try {
+        contents.current = JSON.parse(detail.contents);
+      } catch (err) {
+        contents.current = detail.contents;
+      }
       setTargetContents([...tmp_target_contenst]);
       setTitle(detail.title);
     }
@@ -171,14 +175,15 @@ export default function Editor(props: EditorProps) {
         title: title,
       };
       const notice = await fetchPostApi(`/super/notice`, create_data);
+      const type = editId > 0 ? '수정' : '등록';
 
       if (notice.id) {
-        modal_alert.openModalAlert('공지사항이 등록되었습니다.', true, () => {
+        modal_alert.openModalAlert(`공지사항이 ${type}되었습니다.`, true, () => {
           clearContents();
           onComplete();
         });
       } else {
-        modal_alert.openModalAlert('오류로 인해 등록이 실패하였습니다.', true);
+        modal_alert.openModalAlert(`오류로 인해 ${type}이 실패하였습니다.`, true);
       }
 
       if (editId > 0) {
@@ -218,13 +223,16 @@ export default function Editor(props: EditorProps) {
 
   const handleRadio = (idx: number) => {
     const tmp_contents = [...targetContents];
-    tmp_contents[idx].checked = true;
-
-    let false_idx = 0;
-    if (idx == 0) {
-      false_idx = 1;
+    let cur_idx = 0;
+    for (const content of tmp_contents) {
+      if (cur_idx == idx) {
+        tmp_contents[cur_idx].checked = true;
+      } else {
+        tmp_contents[cur_idx].checked = false;
+      }
+      cur_idx++;
     }
-    tmp_contents[false_idx].checked = false;
+
     setTargetContents([...tmp_contents]);
   };
 
@@ -249,7 +257,7 @@ export default function Editor(props: EditorProps) {
         placeholder='제목을 입력해주세요.'
         value={title}
         onChange={(e: React.ChangeEvent<HTMLInputElement>) => setTitle(e.target.value)}
-        sx={{ marginBottom: '1rem' }}
+        sx={{ marginBottom: '0.5rem' }}
       />
       <StyledQuill
         value={contents.current}

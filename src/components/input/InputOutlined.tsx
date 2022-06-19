@@ -75,6 +75,7 @@ const InputOutlined = (props: InputOutlinedProps) => {
   const align = props.align;
   const id = props.id;
   const format = props.format;
+  const sx = props.sx;
 
   const [currentValue, setCurrentValue] = useState('');
   const [currentFormat, setCurrentFormat] = useState('');
@@ -154,7 +155,7 @@ const InputOutlined = (props: InputOutlinedProps) => {
         onKeyDown={handleKeyDown}
         onBlur={onBlur}
         onClick={onClick}
-        sx={{ ...setStyle(), cursor: onClick ? 'pointer' : 'inherit' }}
+        sx={{ ...setStyle(), cursor: onClick ? 'pointer' : 'inherit', ...sx }}
         inputProps={{ style: { textAlign: align ? align : 'left' } }}
       />
     </>

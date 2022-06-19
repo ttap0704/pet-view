@@ -18,11 +18,20 @@ const Editor = dynamic(import('../../../src/components/common/Editor'), {
 });
 
 const AdminRestaurantInfo = (props: NoticeRegistrationProps) => {
+  const router = useRouter();
   const { modal_confirm } = useContext(ModalContext);
   const [confirm, setConfirm] = useState(false);
+  const [edit, setEdit] = useState(false);
+
+  useEffect(() => {
+    if (!router.isReady) return;
+    if (router.query.id) {
+      setEdit(true);
+    }
+  }, [router.isReady]);
 
   const confirmRegistration = () => {
-    modal_confirm.openModalConfirm('공지사항을 등록하시겠습니까?', () => {
+    modal_confirm.openModalConfirm(`공지사항을 ${edit ? '수정' : '등록'}하시겠습니까?`, () => {
       setConfirm(true);
     });
   };
@@ -32,7 +41,7 @@ const AdminRestaurantInfo = (props: NoticeRegistrationProps) => {
       <ContainerRegistrationItem title='공지사항 작성'>
         <Editor confirm={confirm} onComplete={() => setConfirm(false)} />
         <Button variant='contained' color='orange' sx={{ marginTop: '1rem' }} onClick={confirmRegistration}>
-          등록
+          {edit ? '수정' : '등록'}
         </Button>
       </ContainerRegistrationItem>
     </>

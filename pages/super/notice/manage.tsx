@@ -1,8 +1,7 @@
 import { Box } from '@mui/material';
 import { useEffect, useState, useContext } from 'react';
 import { useSelector } from 'react-redux';
-import 'react-quill/dist/quill.snow.css';
-import parse from 'html-react-parser';
+
 import Table from '../../../src/components/table/Table';
 
 import { fetchGetApi } from '../../../src/utils/api';
@@ -35,7 +34,7 @@ const AdminRestaurantInfo = () => {
         rows_length: 0,
       });
     };
-  }, []);
+  }, [targetDropdownIdx]);
 
   useEffect(() => {
     const target_idx = data.clicked_dropdown_idx;
@@ -88,6 +87,9 @@ const AdminRestaurantInfo = () => {
 
   const getTableItems = async () => {
     let url = `/super/notice?page=${data.per_page}`;
+    if (targetDropdownIdx != 0) {
+      url += `&target=${targetDropdownIdx}`;
+    }
     const notice = await fetchGetApi(url);
 
     const count = notice.count;
@@ -95,10 +97,22 @@ const AdminRestaurantInfo = () => {
 
     let tmp_table_items = [];
     for (let x of rows) {
+      let target = '';
+      if (x.target == 1) {
+        target = '유저/공지사항';
+      } else if (x.target == 2) {
+        target = '관리자/공지사항';
+      } else if (x.target == 3) {
+        target = '유저/이벤트';
+      } else if (x.target == 4) {
+        target = '관리자/이벤트';
+      }
+
       tmp_table_items.push({
         id: x.id,
         label: x.title,
         status: x.status === 1 ? '진행' : '중단',
+        target,
         created_at: getDate(x.created_at),
         domain: `http://localhost:3001/accommodation/${x.id}`,
         checked: false,
@@ -112,19 +126,15 @@ const AdminRestaurantInfo = () => {
     });
   };
 
-  const handleTargetDropdown = (idx: number) => {
-    console.log('hi');
-  };
-
   return (
     <>
       <Table contents={noticeContents} />
-      <UtilBox>
+      <UtilBox justifyContent='flex-start'>
         <CustomDropdown
           variant='outlined'
           title={target_arr[targetDropdownIdx]}
           items={target_arr}
-          onClick={(idx: number) => handleTargetDropdown(idx)}
+          onClick={(idx: number) => setTargetdropdownIdx(idx)}
           buttonDisabled={false}
         />
       </UtilBox>

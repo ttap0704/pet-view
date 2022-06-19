@@ -32,7 +32,7 @@ const MenuBox = styled(Box)(({ theme }) => ({
   flexDirection: 'column',
   gap: '2rem',
   borderRight: '1px solid',
-  borderColor: theme.palette.gray_2.main,
+  borderColor: theme.palette.gray_4.main,
 }));
 
 const SideMenuLogoBox = styled(Box)(({ theme }) => ({
@@ -113,6 +113,11 @@ const AdminSideMenu = () => {
         },
       ],
       path: null,
+    },
+    notice: {
+      label: '공지사항/이벤트',
+      children: [],
+      path: '/admin/notice',
     },
     app: {
       label: '사용자 페이지',

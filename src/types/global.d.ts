@@ -105,6 +105,15 @@ interface ChartData {
   [key: string]: number | string;
 }
 
+interface NoticeType {
+  id: number;
+  title: string;
+  contents: string;
+  target: number;
+  created_at: string;
+  new: boolean
+}
+
 declare module 'react-quill';
 declare module 'quill-image-resize-module';
 declare module '@looop/quill-image-resize-module-react';

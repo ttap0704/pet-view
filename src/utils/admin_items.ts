@@ -377,6 +377,11 @@ export const notice = {
       center: false,
     },
     {
+      label: '타겟',
+      key: 'target',
+      center: false
+    },
+    {
       label: "작성일",
       key: 'created_at',
       center: false,
