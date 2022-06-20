@@ -1,4 +1,4 @@
-import LayoutSuccessJoin from '../../../src/components/layout/LayoutSuccessJoin';
+import LayoutSuccessJoin from '../../src/components/layout/LayoutSuccessJoin';
 
 const AdminJoinSuccess = () => {
   return <LayoutSuccessJoin />;

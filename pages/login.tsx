@@ -2,16 +2,12 @@ import { useRouter } from 'next/router';
 
 import { useContext } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { setUser } from '../../../src/store/slices/user';
+import { setUser } from '../src/store/slices/user';
 
-import { HiArrowNarrowLeft } from 'react-icons/hi';
+import LayoutLogin from '../src/components/layout/LayoutLogin';
 
-import Button from '../../../src/components/button/Button';
-import UtilBox from '../../../src/components/common/UtilBox';
-import LayoutLogin from '../../../src/components/layout/LayoutLogin';
-
-import { ModalContext } from '../../../src/provider/ModalProvider';
-import { fetchPostApi } from '../../../src/utils/api';
+import { ModalContext } from '../src/provider/ModalProvider';
+import { fetchPostApi } from '../src/utils/api';
 
 const LoginIndex = () => {
   const router = useRouter();
@@ -39,16 +35,24 @@ const LoginIndex = () => {
       sessionStorage.setItem('user', JSON.stringify({ ...saved_user }));
       dispatch(setUser({ ...saved_user }));
       modal_notice.openModalNotice(`${user.nickname}님 환영합니다!`, () => {
-        router.push('/admin');
+        router.push('/');
       });
     } else {
       let message = '';
+      let callback = () => {
+        return;
+      };
       if (login_res.message == 'Before Certification') {
         message = '이메일 인증 완료 후\r\n로그인 해주세요.';
+      } else if (login_res.message == 'Not Super') {
+        message = '접근 권한이 없습니다.';
+        callback = () => {
+          router.push('/');
+        };
       } else {
         message = '아이디 또는 비밀번호가 틀렸습니다.';
       }
-      modal_alert.openModalAlert(message, true);
+      modal_alert.openModalAlert(message, true, callback);
     }
   };
 

@@ -106,14 +106,19 @@ function AppHeader() {
         path: '/restaurant',
       },
       {
+        label: '로그인',
+        path: '/login',
+      },
+      {
         label: '더보기',
         path: '',
-        children: ['후원하기', '관리자'],
+        children: ['공지사항', '관리자'],
       },
     ];
 
     const moveMorePage = (idx: number) => {
       if (idx == 0) {
+        router.push('/notice');
       } else {
         if (user && Number(user.uid) > 0) {
           router.push('/admin');
