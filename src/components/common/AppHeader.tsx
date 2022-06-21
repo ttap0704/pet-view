@@ -112,13 +112,15 @@ function AppHeader() {
       {
         label: '더보기',
         path: '',
-        children: ['공지사항', '관리자'],
+        children: ['공지사항', '일상 공유', '관리자'],
       },
     ];
 
     const moveMorePage = (idx: number) => {
       if (idx == 0) {
         router.push('/notice');
+      } else if (idx == 1) {
+        router.push('/daily');
       } else {
         if (user && Number(user.uid) > 0) {
           router.push('/admin');

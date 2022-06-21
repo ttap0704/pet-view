@@ -20,6 +20,10 @@ const CustomTextarea = styled('textarea')(({ theme }) => ({
   padding: '0.5rem',
   fontSize: '1rem',
   resize: 'none',
+
+  '&:focus-visible': {
+    outline: 'none',
+  },
 }));
 
 function Textarea(props: TextareaProps) {
