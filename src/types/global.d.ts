@@ -114,6 +114,15 @@ interface NoticeType {
   new: boolean
 }
 
+interface DailyType {
+  id: number;
+  contents: string;
+  writer_id: number;
+  created_at: string;
+  image_list: ImageType[];
+  nickname: string;
+}
+
 declare module 'react-quill';
 declare module 'quill-image-resize-module';
 declare module '@looop/quill-image-resize-module-react';

@@ -85,7 +85,7 @@ export async function setImageFormData(data: { target_id: number; files: File[] 
         const file_name_arr = files[i].name.split('.');
         const file_extention = file_name_arr[file_name_arr.length - 1];
         let file_name = '';
-        if (['accommodation', 'restaurant', 'notice'].includes(type)) {
+        if (['accommodation', 'restaurant', 'notice', 'daily'].includes(type)) {
           file_name = `${type}_${target_id}_${i}_${new Date().getTime()}.${file_extention}`;
         } else if (['rooms', 'exposure_menu'].includes(type)) {
           file_name = `${type}_${parent_id}_${target_id}_${i}_${new Date().getTime()}.${file_extention}`;
@@ -112,6 +112,8 @@ export async function setImageFormData(data: { target_id: number; files: File[] 
     category = '11';
   } else if (type == 'notice') {
     category = '100';
+  } else if (type == 'daily') {
+    category = '50';
   }
   upload_images.append('length', count.toString());
   upload_images.append('category', category);

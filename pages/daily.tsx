@@ -1,5 +1,5 @@
 import { Box, IconButton, styled, Typography } from '@mui/material';
-import React, { useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { AiFillCloseCircle } from 'react-icons/ai';
 import { HiChevronDown, HiChevronUp } from 'react-icons/hi';
 import { FiPlusCircle } from 'react-icons/fi';
@@ -7,7 +7,13 @@ import { IoIosClose } from 'react-icons/io';
 import Button from '../src/components/button/Button';
 import UtilBox from '../src/components/common/UtilBox';
 import Textarea from '../src/components/textarea/Textarea';
-import { setFileToImage } from '../src/utils/tools';
+import { setFileToImage, setImageArray, setImageFormData } from '../src/utils/tools';
+import { fetchFileApi, fetchPostApi } from '../src/utils/api';
+import { useSelector } from 'react-redux';
+import { RootState } from '../src/store';
+import { ModalContext } from '../src/provider/ModalProvider';
+import { fetchGetApi } from '../src/utils/api_back';
+import InputOutlined from '../src/components/input/InputOutlined';
 
 const DailyContainer = styled(Box)(({ theme }) => ({
   width: '100%',
@@ -46,11 +52,16 @@ const DailyListBox = styled(Box)(({ theme }) => ({
   gap: '1rem',
   cursor: 'pointer',
 
+  input: {
+    cursor: 'text',
+  },
+
   '&.slide': {
     '.contents': {
       maxHeight: 'unset',
       overflow: 'hidden',
       textOverflow: 'unset',
+      display: 'block',
     },
   },
 
@@ -77,33 +88,63 @@ const DailyListBox = styled(Box)(({ theme }) => ({
   '.contents': {
     width: '100%',
     maxHeight: '3rem',
-    whiteSpace: 'wrap',
+    whiteSpace: 'pre-wrap',
     overflow: 'hidden',
     textOverflow: 'ellipsis',
+    display: '-webkit-box',
+    WebkitBoxOrient: 'vertical',
+    WebkitLineClamp: 2,
   },
 }));
 
 const PhotosContainer = styled(Box)(({ theme }) => ({
   width: '100%',
-  height: '6rem',
+  minHeight: '6rem',
   padding: '0.5rem 0',
   display: 'flex',
   alignItems: 'center',
   gap: '0.25rem',
+  flexWrap: 'nowrap',
+  overflow: 'hidden',
   '&.regi': {
     gap: '1rem',
+  },
+
+  '&.slide': {
+    flexWrap: 'wrap',
+    '& > div': {
+      height: 'auto',
+      '& > img': {
+        height: 'auto',
+        width: '100%',
+      },
+      [theme.breakpoints.down('xl')]: {
+        width: '49%',
+      },
+      [theme.breakpoints.down('xsm')]: {
+        width: '99%',
+      },
+    },
   },
 
   '& > div': {
     cursor: 'pointer',
     width: '5rem',
+    minWidth: '5rem',
     height: '5rem',
-    border: '1px solid',
-    borderColor: theme.palette.gray_4.main,
     position: 'relative',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
+    backgroundSize: 'cover',
+    backgroundPosition: 'center',
+    backgroundRepeat: 'no-repeat',
+    overflow: 'hidden',
+    borderRadius: '12px',
+
+    '& > img': {
+      height: '100%',
+    },
 
     '.empty': {
       fontSize: '0.75rem',
@@ -137,11 +178,53 @@ const SlideButton = styled(IconButton)(({ theme }) => ({
   transform: 'translateY(-50%)',
 }));
 
+interface DailyListType extends DailyType {
+  slide: boolean;
+  photo_list: ImageListType[];
+  comment: string;
+}
+
 const Daily = () => {
-  const [slide, setSlide] = useState(false);
+  const user = useSelector((state: RootState) => state.userReducer);
+  const { modal_alert } = useContext(ModalContext);
+
   const [contents, setContents] = useState('');
   const [photoList, setPhotoList] = useState<ImageListType[]>([]);
   const [regi, setRegi] = useState(false);
+  const [dailyList, setDailyList] = useState<DailyListType[]>([]);
+  const [page, setPage] = useState(1);
+
+  useEffect(() => {
+    getDailyList();
+
+    return () => {
+      setDailyList([]);
+      clearContents();
+    };
+  }, [page]);
+
+  const getDailyList = async () => {
+    const list: DailyType[] = await fetchGetApi(`/daily?page=${page}`);
+    const tmp_list = [...dailyList];
+    for (const item of list) {
+      const file_names = item.image_list.map(item => ({ file_name: item.file_name }));
+      tmp_list.push({
+        ...item,
+        slide: false,
+        photo_list: await setImageArray(file_names),
+        comment: '',
+      });
+    }
+
+    console.log(tmp_list);
+    setDailyList([...tmp_list]);
+  };
+
+  const setSlide = async (idx: number) => {
+    const tmp_list = [...dailyList];
+    tmp_list[idx].slide = !tmp_list[idx].slide;
+    setDailyList([...tmp_list]);
+  };
 
   const onClickPhoto = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -156,7 +239,6 @@ const Daily = () => {
   };
 
   const handleFiles = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    console.log(e.target.files);
     const files = e.target.files;
     if (files && files.length > 0) {
       const cur_files = await setFileToImage(files, []);
@@ -171,10 +253,57 @@ const Daily = () => {
     setPhotoList([...tmp_photos]);
   };
 
+  const openRegistraionFrom = () => {
+    if (!user.uid) {
+      modal_alert.openModalAlert('로그인 후 공유가 가능합니다.');
+    } else {
+      setRegi(true);
+    }
+  };
+
+  const createDaily = async () => {
+    const create_data = {
+      contents,
+      writer_id: user.uid,
+    };
+    const create_res: DailyType = await fetchPostApi('/daily', create_data);
+
+    if (create_res.writer_id) {
+      const images_data: { target_id: number; files: File[] }[] = [{ target_id: create_res.id, files: [] }];
+      for (const photo of photoList) {
+        if (photo.file) {
+          images_data[0].files.push(photo.file);
+        }
+      }
+
+      const upload_images = await setImageFormData(images_data, 'daily');
+      const upload_res = await fetchFileApi('/upload/image', upload_images);
+      if (upload_res.length > 0) {
+        modal_alert.openModalAlert('일상이 성공적으로 공유되었습니다!', true, clearContents);
+      } else {
+        modal_alert.openModalAlert('오류로 인해 공유가 실패되었습니다.\r\n다시 시도해주세요.');
+      }
+    } else {
+      modal_alert.openModalAlert('오류로 인해 공유가 실패되었습니다.\r\n다시 시도해주세요.');
+    }
+  };
+
+  const handleComment = (value: string, idx: number) => {
+    const tmp_list = [...dailyList];
+    tmp_list[idx].comment = value;
+    setDailyList([...tmp_list]);
+  };
+
+  const clearContents = () => {
+    setContents('');
+    setRegi(false);
+    setPhotoList([]);
+  };
+
   return (
     <DailyContainer>
       <UtilBox justifyContent='flex-end' sx={{ height: '3rem' }}>
-        <Button variant='outlined' color='orange' disableRipple onClick={() => setRegi(true)}>
+        <Button variant='outlined' color='orange' disableRipple onClick={openRegistraionFrom}>
           공유하기
         </Button>
       </UtilBox>
@@ -200,9 +329,6 @@ const Daily = () => {
                   <Box
                     sx={{
                       backgroundImage: `url('${image.src}')`,
-                      backgroundSize: 'cover',
-                      backgroundPosition: 'center',
-                      backgroundRepeat: 'no-repeat',
                     }}
                     key={`registration_daily_photo_${image_idx}`}
                     onClick={(e: React.MouseEvent) => onClickPhoto(e)}
@@ -224,27 +350,50 @@ const Daily = () => {
             <input type='file' onChange={handleFiles} id='photos' name='photos' multiple={true}></input>
           </PhotosContainer>
           <UtilBox justifyContent='center' sx={{ height: 'auto' }}>
-            <Button variant='contained'>등록하기</Button>
+            <Button variant='contained' onClick={createDaily}>
+              등록하기
+            </Button>
           </UtilBox>
         </DailyRegistraionBox>
       ) : null}
 
-      <DailyListBox onClick={() => setSlide(!slide)} className={slide ? 'slide' : ''}>
-        <Box className='profile'>
-          <Box />
-          <Typography component='span'>name</Typography>
-          <SlideButton>{slide ? <HiChevronUp /> : <HiChevronDown />}</SlideButton>
-        </Box>
-        <Typography className='contents'>
-          ihihjihihihihihihjihihihihihihjihihihihihihjihihihihihihjihihihihihihjihihihihihihjihihihihihihjihihihihihihjihihihihihihjihihihihihihjihihihihihihjihihihihihi
-          ihihjihihihihihihjihihihihihihjihihihihihihjihihihihihihjihihihihihihjihihihihihihjihihihihihihjihihihihihihjihihihihihihjihihihihihihjihihihihihihjihihihihihi
-          ihihjihihihihihihjihihihihihihjihihihihihihjihihihihihihjihihihihihihjihihihihihihjihihihihihihjihihihihihihjihihihihihihjihihihihihihjihihihihihihjihihihihihi
-          ihihjihihihihihihjihihihihihihjihihihihihihjihihihihihihjihihihihihihjihihihihihihjihihihihihihjihihihihihihjihihihihihihjihihihihihihjihihihihihihjihihihihihi
-        </Typography>
-        <PhotosContainer>
-          <Box onClick={(e: React.MouseEvent) => onClickPhoto(e)}></Box>
-        </PhotosContainer>
-      </DailyListBox>
+      {dailyList.map((daily, daily_idx) => {
+        return (
+          <DailyListBox onClick={() => setSlide(daily_idx)} className={daily.slide ? 'slide' : ''}>
+            <Box className='profile'>
+              <Box />
+              <Typography component='span'>{daily.nickname}</Typography>
+              <SlideButton>{daily.slide ? <HiChevronUp /> : <HiChevronDown />}</SlideButton>
+            </Box>
+            <Typography className='contents'>{daily.contents}</Typography>
+            {daily.photo_list && daily.photo_list.length > 0 ? (
+              <PhotosContainer className={daily.slide ? 'slide' : ''}>
+                {daily.photo_list.map((image, image_idx) => {
+                  return (
+                    <Box
+                      key={`daily_${daily_idx}_photo_${image_idx}`}
+                      onClick={(e: React.MouseEvent) => onClickPhoto(e)}
+                    >
+                      <Box component='img' src={`http://localhost:3080/images/daily/${image.src}`} />
+                    </Box>
+                  );
+                })}
+              </PhotosContainer>
+            ) : null}
+            {daily.slide ? (
+              <Box>
+                <Typography component='h3'>댓글</Typography>
+                <Box>
+                  <InputOutlined
+                    value={daily.comment}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleComment(e.target.value, daily_idx)}
+                  />
+                </Box>
+              </Box>
+            ) : null}
+          </DailyListBox>
+        );
+      })}
     </DailyContainer>
   );
 };

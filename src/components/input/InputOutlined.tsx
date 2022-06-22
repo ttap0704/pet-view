@@ -68,6 +68,7 @@ const InputOutlined = (props: InputOutlinedProps) => {
   const onChange = props.onChange;
   const onClick = props.onClick;
   const onBlur = props.onBlur;
+  const onFocus = props.onFocus;
   const class_name = props.className;
   const onKeyDownEnter = props.onKeyDownEnter;
   const width = props.width;
@@ -153,6 +154,7 @@ const InputOutlined = (props: InputOutlinedProps) => {
         type={type}
         readOnly={read_only || onClick ? true : false}
         onKeyDown={handleKeyDown}
+        onFocus={onFocus}
         onBlur={onBlur}
         onClick={onClick}
         sx={{ ...setStyle(), cursor: onClick ? 'pointer' : 'inherit', ...sx }}
