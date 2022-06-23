@@ -12,13 +12,42 @@ import LayoutApp from '../src/components/layout/LayoutApp';
 import LayoutAdmin from '../src/components/layout/LayoutAdmin';
 import wrapper from '../src/store/configureStore';
 import { setUser } from '../src/store/slices/user';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from '../src/store';
 
 dotenv.config();
 // store 설정파일 로드
 
+const excepted_path = [
+  '/admin/join',
+  '/admin/login',
+  '/admin/join/success',
+  '/admin/join/certification/[id]',
+  '/super/login',
+];
+
 const _APP = ({ Component, pageProps }: AppProps) => {
+  const user = useSelector((state: RootState) => state.userReducer);
+  const dispatch = useDispatch();
+
   const router = useRouter();
   const [rootPath, setRootPath] = useState('');
+
+  useEffect(() => {
+    if (!excepted_path.includes(router.pathname) && !user.uid) {
+      const user = sessionStorage.getItem('user');
+      if (user) {
+        const session: UserType = JSON.parse(user);
+        dispatch(setUser(session));
+      } else {
+        if (router.pathname.indexOf('admin') >= 0) {
+          router.push('/admin/login');
+        } else {
+          router.push('/super/login');
+        }
+      }
+    }
+  }, []);
 
   useEffect(() => {
     const root_path = router.pathname.split('/')[1];

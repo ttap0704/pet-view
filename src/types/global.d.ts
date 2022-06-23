@@ -123,6 +123,16 @@ interface DailyType {
   nickname: string;
 }
 
+interface CommentType {
+  id: number;
+  comment: string;
+  writer_id: number;
+  target_id: number;
+  category: number;
+  created_at: string;
+  nickname: string;
+}
+
 declare module 'react-quill';
 declare module 'quill-image-resize-module';
 declare module '@looop/quill-image-resize-module-react';

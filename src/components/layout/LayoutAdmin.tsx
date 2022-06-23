@@ -51,31 +51,8 @@ const LayoutChildrenBox = styled(Box)(({ theme }) => ({
 }));
 
 const LayoutAdmin = (props: LayoutAdminProps) => {
-  const user = useSelector((state: RootState) => state.userReducer);
   const router = useRouter();
-  const dispatch = useDispatch();
-
   const children = props.children;
-
-  useEffect(() => {
-    if (
-      (router.pathname.indexOf('admin') >= 0 || router.pathname.indexOf('super') >= 0) &&
-      !excepted_path.includes(router.pathname) &&
-      !user.uid
-    ) {
-      const user = sessionStorage.getItem('user');
-      if (user) {
-        const session: UserType = JSON.parse(user);
-        dispatch(setUser(session));
-      } else {
-        if (router.pathname.indexOf('admin') >= 0) {
-          router.push('/admin/login');
-        } else {
-          router.push('/super/login');
-        }
-      }
-    }
-  }, []);
 
   return (
     <LayoutAdminBox>
