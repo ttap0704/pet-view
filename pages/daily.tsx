@@ -232,7 +232,7 @@ interface DailyListType extends DailyType {
 
 const Daily = () => {
   const user = useSelector((state: RootState) => state.userReducer);
-  const { modal_alert } = useContext(ModalContext);
+  const { modal_alert, modal_confirm } = useContext(ModalContext);
 
   const [contents, setContents] = useState('');
   const [photoList, setPhotoList] = useState<ImageListType[]>([]);
@@ -242,6 +242,10 @@ const Daily = () => {
   const [comment, setComment] = useState<{ [key: string]: string }>({});
   const [dropdownElement, setDropdownElement] = useState<null | HTMLElement>(null);
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [dropdownContents, setDropdownContents] = useState(['신고하기']);
+  const [selectedCommentId, setSelectedCommentId] = useState(0);
+  const [targetCommentIdx, setTargetCommentIdx] = useState(0);
+  const [targetDailyIdx, setTargetDailyIdx] = useState(0);
 
   useEffect(() => {
     getDailyList();
@@ -397,6 +401,44 @@ const Daily = () => {
     }
   };
 
+  const openCommentDropdown = (
+    e: React.MouseEvent<HTMLElement>,
+    uid: number,
+    comment_id: number,
+    comment_idx: number,
+    daily_idx: number,
+  ) => {
+    setDropdownElement(e.currentTarget);
+    setDropdownOpen(true);
+    setSelectedCommentId(comment_id);
+    setTargetCommentIdx(comment_idx);
+    setTargetDailyIdx(daily_idx);
+
+    const dropdown_contents = ['신고하기'];
+    if (user.uid == uid) {
+      dropdown_contents.push('삭제하기');
+    }
+    setDropdownContents([...dropdown_contents]);
+  };
+
+  const handleCommentDropdown = (idx: number) => {
+    if (idx == 0) {
+      console.log('신고하기');
+    } else if (idx == 1) {
+      modal_confirm.openModalConfirm('이 댓글을 삭제하시겠습니까?', async () => {
+        const delete_res = await fetchPostApi(`/comment/${selectedCommentId}/delete`, {});
+
+        if (delete_res) {
+          const tmp_daily_list = [...dailyList];
+          tmp_daily_list[targetDailyIdx].comment.splice(targetCommentIdx, 1);
+          setDailyList([...tmp_daily_list]);
+
+          modal_alert.openModalAlert('댓글이 삭제되었습니다.');
+        }
+      });
+    }
+  };
+
   return (
     <DailyContainer>
       <UtilBox justifyContent='flex-end' sx={{ height: '3rem' }}>
@@ -503,8 +545,7 @@ const Daily = () => {
                           <ProfileButton
                             className='comment'
                             onClick={(e: React.MouseEvent<HTMLElement>) => {
-                              setDropdownElement(e.currentTarget);
-                              setDropdownOpen(true);
+                              openCommentDropdown(e, item.writer_id, item.id, item_idx, daily_idx);
                             }}
                           >
                             <HiOutlineDotsVertical />
@@ -524,10 +565,8 @@ const Daily = () => {
         open={dropdownOpen}
         anchorEl={dropdownElement}
         onClose={() => setDropdownOpen(false)}
-        onClick={(idx: number) => {
-          console.log(idx);
-        }}
-        items={['신고하기']}
+        onClick={handleCommentDropdown}
+        items={dropdownContents}
       />
     </DailyContainer>
   );
