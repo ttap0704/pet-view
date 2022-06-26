@@ -7,7 +7,7 @@ import { IoIosClose } from 'react-icons/io';
 import Button from '../src/components/button/Button';
 import UtilBox from '../src/components/common/UtilBox';
 import Textarea from '../src/components/textarea/Textarea';
-import { setFileToImage, setImageArray, setImageFormData } from '../src/utils/tools';
+import { setFileToImage, setImageArray, setImageFormData, report_reasons } from '../src/utils/tools';
 import { fetchFileApi, fetchPostApi } from '../src/utils/api';
 import { useSelector } from 'react-redux';
 import { RootState } from '../src/store';
@@ -15,6 +15,7 @@ import { ModalContext } from '../src/provider/ModalProvider';
 import { fetchGetApi } from '../src/utils/api_back';
 import InputOutlined from '../src/components/input/InputOutlined';
 import DropdownMenu from '../src/components/common/DropdownMenu';
+import ModalRadio from '../src/components/modal/ModalRadio';
 
 const DailyContainer = styled(Box)(({ theme }) => ({
   width: '100%',
@@ -246,9 +247,18 @@ const Daily = () => {
   const [selectedCommentId, setSelectedCommentId] = useState(0);
   const [targetCommentIdx, setTargetCommentIdx] = useState(0);
   const [targetDailyIdx, setTargetDailyIdx] = useState(0);
+  const [radioContents, setRadioContents] = useState<RadioModalContentsDataType>({
+    visible: false,
+    title: '신고 사유',
+    contents: [],
+  });
 
   useEffect(() => {
     getDailyList();
+    setRadioContents({
+      ...radioContents,
+      contents: [...report_reasons],
+    });
 
     return () => {
       setDailyList([]);
@@ -423,7 +433,7 @@ const Daily = () => {
 
   const handleCommentDropdown = (idx: number) => {
     if (idx == 0) {
-      console.log('신고하기');
+      setRadioContents({ ...radioContents, visible: true });
     } else if (idx == 1) {
       modal_confirm.openModalConfirm('이 댓글을 삭제하시겠습니까?', async () => {
         const delete_res = await fetchPostApi(`/comment/${selectedCommentId}/delete`, {});
@@ -437,6 +447,43 @@ const Daily = () => {
         }
       });
     }
+  };
+
+  const sendReport = async (data: { label: string; id: number | string }) => {
+    const report_data: {
+      target_id: number;
+      category: number;
+      reason: number;
+      reporter?: number;
+    } = {
+      target_id: dailyList[targetDailyIdx].comment[targetCommentIdx].id,
+      category: 50,
+      reason: Number(data.id),
+    };
+    if (user.uid) {
+      report_data['reporter'] = Number(user.uid);
+    }
+
+    const send_res = await fetchPostApi(`/report`, report_data);
+    if (send_res.id > 0) {
+      clearRadioContents();
+      clearDropdown();
+      modal_alert.openModalAlert('신고가 접수되었습니다.');
+    } else {
+      modal_alert.openModalAlert('오류로 인해 공유가 실패되었습니다.\r\n다시 시도해주세요.');
+    }
+  };
+
+  const clearRadioContents = () => {
+    setRadioContents({
+      ...radioContents,
+      visible: false,
+    });
+  };
+
+  const clearDropdown = () => {
+    setDropdownElement(null);
+    setDropdownOpen(false);
   };
 
   return (
@@ -567,6 +614,15 @@ const Daily = () => {
         onClose={() => setDropdownOpen(false)}
         onClick={handleCommentDropdown}
         items={dropdownContents}
+      />
+      <ModalRadio
+        visible={radioContents.visible}
+        title={radioContents.title}
+        contents={radioContents.contents}
+        onClose={() => setRadioContents({ ...radioContents, visible: false })}
+        onCompleteUpdate={sendReport}
+        buttonTitle='접수'
+        useConfirm={false}
       />
     </DailyContainer>
   );

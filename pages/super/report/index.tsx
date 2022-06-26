@@ -9,7 +9,7 @@ import { TableContext } from '../../../src/provider/TableProvider';
 import { getDate } from '../../../src/utils/tools';
 import { ModalContext } from '../../../src/provider/ModalProvider';
 
-const SuperUsersReport = () => {
+const SuperReport = () => {
   const [productContents, setProductContents] = useState<ChildrenDataType>(product_menu);
   const user = useSelector((state: RootState) => state.userReducer);
   const { data } = useContext(TableContext);
@@ -87,4 +87,4 @@ const SuperUsersReport = () => {
   );
 };
 
-export default SuperUsersReport;
+export default SuperReport;

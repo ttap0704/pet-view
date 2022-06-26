@@ -17,6 +17,8 @@ interface ModalRadioProps {
   contents: { label: string; id: number | string }[];
   onClose: () => void;
   onCompleteUpdate: (data: { label: string; id: number | string }) => void;
+  buttonTitle?: string;
+  useConfirm?: boolean;
 }
 
 const CustomFormControl = styled(FormControl)(({ theme }) => ({
@@ -44,6 +46,8 @@ function ModalRadio(props: ModalRadioProps) {
   const contents = props.contents;
   const onClose = props.onClose;
   const onCompleteUpdate = props.onCompleteUpdate;
+  const button_title = props.buttonTitle;
+  const use_confirm = props.useConfirm;
 
   const [value, setValue] = useState<number | string>('');
 
@@ -95,10 +99,14 @@ function ModalRadio(props: ModalRadioProps) {
               variant='contained'
               color='orange'
               onClick={() => {
-                modal_confirm.openModalConfirm(`수정을 완료하시겠습니까?`, confirmUpdate);
+                if (use_confirm !== false) {
+                  modal_confirm.openModalConfirm(`수정을 완료하시겠습니까?`, confirmUpdate);
+                } else {
+                  confirmUpdate();
+                }
               }}
             >
-              선택
+              {button_title ? button_title : '선택'}
             </Button>
           </UtilBox>
         </ContainerModalContents>

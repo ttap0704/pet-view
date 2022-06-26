@@ -67,6 +67,7 @@ const SuperUsers = () => {
         checked: false,
         email: x.email,
         phone: x.phone,
+        warning: x.warning,
         created_at: getDate(x.created_at),
         type: x.type,
       });

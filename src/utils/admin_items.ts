@@ -430,6 +430,11 @@ export const users = {
       center: false,
     },
     {
+      label: '경고',
+      key: 'warning',
+      center: false
+    },
+    {
       label: "생성일",
       key: 'created_at',
       center: false,

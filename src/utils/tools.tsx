@@ -284,3 +284,34 @@ export const setMonthKorDropdownItems = (min_date: Date) => {
 
   return dropdown_items;
 };
+
+export const report_reasons = [
+  {
+    label: '스팸',
+    id: 1,
+  },
+  {
+    label: '광고성 게시물',
+    id: 2,
+  },
+  {
+    label: '욕설 및 비방',
+    id: 3,
+  },
+  {
+    label: '음란물 배포',
+    id: 4,
+  },
+  {
+    label: '지적 재산권 침해',
+    id: 5,
+  },
+  {
+    label: '거짓 정보',
+    id: 6,
+  },
+  {
+    label: '불법 상품 판매',
+    id: 7,
+  },
+];
