@@ -405,3 +405,40 @@ export const notice = {
   footer_colspan: 7,
   table_items: [],
 }
+
+export const users = {
+  header: [
+    {
+      label: 'check',
+      center: true,
+      key: 'check',
+      type: 'checkbox',
+    },
+    {
+      label: "이메일",
+      key: 'email',
+      center: false,
+    },
+    {
+      label: '휴대폰 번호',
+      key: 'phone',
+      center: false
+    },
+    {
+      label: "타입",
+      key: 'type',
+      center: false,
+    },
+    {
+      label: "생성일",
+      key: 'created_at',
+      center: false,
+    },
+  ],
+  edit_items: [""],
+  type: 'users',
+  title: '상태 관리',
+  rows_length: 0,
+  footer_colspan: 7,
+  table_items: [],
+}

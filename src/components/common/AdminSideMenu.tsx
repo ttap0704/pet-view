@@ -132,6 +132,20 @@ const AdminSideMenu = () => {
       children: [],
       path: '/super',
     },
+    users: {
+      label: '유저 관리',
+      children: [
+        {
+          label: '유저상태 관리',
+          path: '/super/users',
+        },
+        {
+          label: '신고 접수',
+          path: '/super/users/report',
+        },
+      ],
+      path: null,
+    },
     product: {
       label: '매장 관리',
       children: [

@@ -9,7 +9,7 @@ import { TableContext } from '../../../src/provider/TableProvider';
 import { getDate } from '../../../src/utils/tools';
 import { ModalContext } from '../../../src/provider/ModalProvider';
 
-const SuperProductAccommodation = () => {
+const SuperUsersReport = () => {
   const [productContents, setProductContents] = useState<ChildrenDataType>(product_menu);
   const user = useSelector((state: RootState) => state.userReducer);
   const { data } = useContext(TableContext);
@@ -22,7 +22,6 @@ const SuperProductAccommodation = () => {
   useEffect(() => {
     const target_idx = data.clicked_dropdown_idx;
     const target = data.table_items.find(item => item.checked);
-    console.log(target_idx);
     if (target && target_idx != null && target_idx >= 0) {
       if (target_idx == 0) {
         modal_confirm.openModalConfirm('해당 상품의 노출을 중지시키겠습니까?', () => {
@@ -46,7 +45,7 @@ const SuperProductAccommodation = () => {
   }, [data.clicked_row_button_idx, data.clicked_row_button_key]);
 
   const setProductStatus = async (status: number, id: number) => {
-    const update_res = await fetchPostApi(`/super/product/accommodation/${id}/status`, { status });
+    const update_res = await fetchPostApi(`/super/product/restaurant/${id}/status`, { status });
 
     if (update_res.affected == 1) {
       modal_alert.openModalAlert('수정이 완료되었습니다.');
@@ -57,9 +56,9 @@ const SuperProductAccommodation = () => {
   };
 
   const getTableItems = async () => {
-    const accommodation = await fetchGetApi(`/super/product/accommodation?page=${data.per_page}`);
-    const count = accommodation.count;
-    const rows = accommodation.rows;
+    const list = await fetchGetApi(`/super/product/restaurant?page=${data.per_page}`);
+    const count = list.count;
+    const rows = list.rows;
 
     let tmp_table_items = [];
     for (let x of rows) {
@@ -69,7 +68,7 @@ const SuperProductAccommodation = () => {
         president: x.president,
         email: x.email,
         status: x.status,
-        domain: `http://localhost:3001/accommodation/${x.id}`,
+        domain: `http://localhost:3001/restaurant/${x.id}`,
         checked: false,
       });
     }
@@ -88,4 +87,4 @@ const SuperProductAccommodation = () => {
   );
 };
 
-export default SuperProductAccommodation;
+export default SuperUsersReport;
