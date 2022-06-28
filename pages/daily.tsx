@@ -279,7 +279,6 @@ const Daily = () => {
       });
     }
 
-    console.log(tmp_list);
     setDailyList([...tmp_list]);
   };
 
@@ -457,7 +456,7 @@ const Daily = () => {
       reporter?: number;
     } = {
       target_id: dailyList[targetDailyIdx].comment[targetCommentIdx].id,
-      category: 50,
+      category: 60,
       reason: Number(data.id),
     };
     if (user.uid) {

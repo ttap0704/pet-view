@@ -447,3 +447,41 @@ export const users = {
   footer_colspan: 7,
   table_items: [],
 }
+
+export const reports = {
+  header: [
+    {
+      label: 'check',
+      center: true,
+      key: 'check',
+      type: 'checkbox',
+    },
+    {
+      label: "카테고리",
+      key: 'category',
+      center: false,
+    },
+    {
+      label: "신고 사유",
+      key: 'reason',
+      center: false,
+    },
+    {
+      label: "신고일",
+      key: 'created_at',
+      center: false,
+    },
+    {
+      label: '게시물 확인',
+      key: 'target_id',
+      center: true,
+      type: 'button'
+    }
+  ],
+  edit_items: ["레포트 삭제", "게시물 삭제", "타겟 경고"],
+  type: 'reports',
+  title: '신고 접수',
+  rows_length: 0,
+  footer_colspan: 7,
+  table_items: [],
+}
