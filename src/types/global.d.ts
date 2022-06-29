@@ -12,7 +12,8 @@ interface UserType {
 
 
 interface StoreUserType extends UserType {
-  uid: number
+  uid: number;
+  is_mobile: boolean;
 }
 
 interface RadioModalContentsDataType {

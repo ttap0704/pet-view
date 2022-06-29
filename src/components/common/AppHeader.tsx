@@ -41,6 +41,7 @@ const CustomBox = styled(Box)(({ theme }) => ({
 
 const LogoBox = styled(Box)(() => ({
   width: '10%',
+  textAlign: 'center',
 }));
 
 const MenuBox = styled(Box)(({ theme }) => ({
@@ -156,13 +157,15 @@ function AppHeader() {
   };
 
   return (
-    <CustomBox className={sticky ? 'sticky' : ''}>
+    <CustomBox className={sticky && user.is_mobile ? 'sticky' : ''}>
       <AppBar position='static'>
-        <CustomToolbar>
+        <CustomToolbar sx={{ justifyContent: user.is_mobile ? 'center' : 'center' }}>
           <LogoBox>logo</LogoBox>
-          <MenuBox>
-            <Menu />
-          </MenuBox>
+          {!user.is_mobile ? null : (
+            <MenuBox>
+              <Menu />
+            </MenuBox>
+          )}
         </CustomToolbar>
       </AppBar>
     </CustomBox>

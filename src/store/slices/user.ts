@@ -12,6 +12,7 @@ const initialState: StoreUserType = {
   wrong_num: 0,
   type: 0,
   certification: 0,
+  is_mobile: false,
 };
 
 const userSlice = createSlice({
@@ -29,6 +30,7 @@ const userSlice = createSlice({
       state.wrong_num = 0;
       state.type = 0;
       state.certification = 0;
+      state.is_mobile = false;
     },
     setUser(state, action: PayloadAction<UserType>) {
       state.uid = action.payload.id;
@@ -42,6 +44,9 @@ const userSlice = createSlice({
       state.type = action.payload.type;
       state.certification = action.payload.certification;
     },
+    setUserMobile(state, action: PayloadAction<{ is_mobile: boolean }>) {
+      state.is_mobile = action.payload.is_mobile;
+    },
   },
   extraReducers: {
     [HYDRATE]: (state, action) => {
@@ -50,5 +55,5 @@ const userSlice = createSlice({
   },
 })
 
-export const { setUser, resetUser } = userSlice.actions
+export const { setUser, resetUser, setUserMobile } = userSlice.actions
 export default userSlice.reducer

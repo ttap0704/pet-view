@@ -46,7 +46,7 @@ const SuperProductAccommodation = () => {
   }, [data.clicked_row_button_idx, data.clicked_row_button_key]);
 
   const setProductStatus = async (status: number, id: number) => {
-    const update_res = await fetchPostApi(`/super/product/accommodation/${id}/status`, { status });
+    const update_res = await fetchPostApi(`/super/product/accommodation/${id}/info`, { status });
 
     if (update_res.affected == 1) {
       modal_alert.openModalAlert('수정이 완료되었습니다.');

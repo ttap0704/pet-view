@@ -76,8 +76,18 @@ const SuperReport = () => {
       } else {
         modal_alert.openModalAlert('오류로 인해 경고가 실패되었습니다.');
       }
+    } else if (['숙박업소', '음식점'].includes(category)) {
+      const url = category == '음식점' ? `/restaurant/${target_id}/info` : `/accommodation/${target_id}/info`;
+      const res = await fetchPostApi(`/super${url}`, {
+        warning: 0,
+      });
+
+      if (res.affected == 1) {
+        modal_alert.openModalAlert('타겟의 경고가 추가되었습니다.');
+      } else {
+        modal_alert.openModalAlert('오류로 인해 경고가 실패되었습니다.');
+      }
     }
-    console.log(category, target_id);
   };
 
   const openCommentCheckModal = async (id: number) => {

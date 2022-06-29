@@ -1,5 +1,5 @@
 import React from 'react';
-import { AppContext, AppProps } from 'next/app';
+import App, { AppContext, AppProps } from 'next/app';
 import { useRouter } from 'next/router';
 import { useState, useEffect } from 'react';
 import '../src/assets/styles/globals.scss';
@@ -11,7 +11,7 @@ import theme from '../src/utils/theme';
 import LayoutApp from '../src/components/layout/LayoutApp';
 import LayoutAdmin from '../src/components/layout/LayoutAdmin';
 import wrapper from '../src/store/configureStore';
-import { setUser } from '../src/store/slices/user';
+import { setUser, setUserMobile } from '../src/store/slices/user';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../src/store';
 
@@ -34,6 +34,9 @@ const _APP = ({ Component, pageProps }: AppProps) => {
   const [rootPath, setRootPath] = useState('');
 
   useEffect(() => {
+    if (pageProps.is_mobile) {
+      setUserMobile({ is_mobile: pageProps.is_mobile });
+    }
     if (!excepted_path.includes(router.pathname) && !user.uid) {
       const user = sessionStorage.getItem('user');
       if (user) {
@@ -42,7 +45,7 @@ const _APP = ({ Component, pageProps }: AppProps) => {
       } else {
         if (router.pathname.indexOf('admin') >= 0) {
           router.push('/admin/login');
-        } else {
+        } else if (router.pathname.indexOf('super') >= 0) {
           router.push('/super/login');
         }
       }
@@ -101,6 +104,14 @@ const _APP = ({ Component, pageProps }: AppProps) => {
       />
     </>
   );
+};
+
+_APP.getInitialProps = async (appContext: AppContext) => {
+  const appProps = await App.getInitialProps(appContext);
+  const userAgent = (await appContext.ctx.req) ? appContext.ctx.req?.headers['user-agent'] : navigator.userAgent;
+  const mobile = await userAgent?.indexOf('Mobi');
+  appProps.pageProps.isMobile = (await (mobile !== -1)) ? true : false;
+  return { ...appProps };
 };
 
 export default wrapper.withRedux(_APP);

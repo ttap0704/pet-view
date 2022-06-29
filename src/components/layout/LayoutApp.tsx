@@ -1,4 +1,5 @@
 import AppHeader from '../common/AppHeader';
+import MobileBottomNavigation from '../common/MobileBottomNavigation';
 import Box from '@mui/material/Box';
 import { styled } from '@mui/material/styles';
 
@@ -12,6 +13,7 @@ const ChildrenBox = styled(Box)(({ theme }) => ({
   padding: '1rem 1rem 3rem',
   margin: '0 auto',
   height: 'auto',
+  position: 'relative',
 }));
 
 const LayoutApp = (props: LayoutAppProps) => {
@@ -20,6 +22,7 @@ const LayoutApp = (props: LayoutAppProps) => {
     <>
       <AppHeader />
       <ChildrenBox>{children}</ChildrenBox>
+      <MobileBottomNavigation />
     </>
   );
 };

@@ -410,6 +410,11 @@ const Daily = () => {
     }
   };
 
+  const openReportModal = (daily_idx: number) => {
+    setTargetDailyIdx(daily_idx);
+    setRadioContents({ ...radioContents, visible: true });
+  };
+
   const openCommentDropdown = (
     e: React.MouseEvent<HTMLElement>,
     uid: number,
@@ -418,10 +423,10 @@ const Daily = () => {
     daily_idx: number,
   ) => {
     setDropdownElement(e.currentTarget);
-    setDropdownOpen(true);
     setSelectedCommentId(comment_id);
     setTargetCommentIdx(comment_idx);
     setTargetDailyIdx(daily_idx);
+    setDropdownOpen(true);
 
     const dropdown_contents = ['신고하기'];
     if (user.uid == uid) {
@@ -455,8 +460,8 @@ const Daily = () => {
       reason: number;
       reporter?: number;
     } = {
-      target_id: dailyList[targetDailyIdx].comment[targetCommentIdx].id,
-      category: 60,
+      target_id: dropdownOpen ? dailyList[targetDailyIdx].comment[targetCommentIdx].id : dailyList[targetDailyIdx].id,
+      category: dropdownOpen ? 60 : 50,
       reason: Number(data.id),
     };
     if (user.uid) {
@@ -569,6 +574,19 @@ const Daily = () => {
             ) : null}
             {daily.slide ? (
               <CommentContainer>
+                <Box sx={{ display: 'flex', justifyContent: 'flex-end', paddingRight: '8px' }}>
+                  <Button
+                    variant='text'
+                    color='gray_1'
+                    sx={{ fontSize: '0.9rem' }}
+                    disableRipple
+                    onClick={() => {
+                      openReportModal(daily_idx);
+                    }}
+                  >
+                    신고하기
+                  </Button>
+                </Box>
                 <Typography component='h3'>댓글</Typography>
                 <Box className='input_box'>
                   <InputOutlined
