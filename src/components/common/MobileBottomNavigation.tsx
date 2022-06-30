@@ -10,7 +10,7 @@ import { RiRestaurantFill } from 'react-icons/ri';
 import { TbMessage2 } from 'react-icons/tb';
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
-import MobileSideDrawer from './MobileSideDrawer';
+import DrawerMobileSideMenu from '../drawer/DrawerMobileSideMenu';
 
 const NavigationWrapper = styled(Box)(({ theme }) => ({
   width: '100%',
@@ -38,7 +38,7 @@ const NavigationButton = styled(BottomNavigationAction)(({ theme }) => ({
   },
 }));
 
-export default function SimpleBottomNavigation() {
+export default function MobileBottomNavigation() {
   const router = useRouter();
   const [value, setValue] = useState(0);
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -95,7 +95,6 @@ export default function SimpleBottomNavigation() {
     } else {
       setValue(4);
       setDrawerOpen(true);
-      // console.log('hi');
     }
   };
 
@@ -123,7 +122,7 @@ export default function SimpleBottomNavigation() {
           })}
         </BottomNavigation>
       </NavigationWrapper>
-      <MobileSideDrawer
+      <DrawerMobileSideMenu
         open={drawerOpen}
         onClose={() => {
           setDrawerOpen(false);

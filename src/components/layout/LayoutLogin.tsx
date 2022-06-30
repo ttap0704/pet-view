@@ -18,7 +18,6 @@ interface LayoutLoginProps {
 
 const LoginWrap = styled(Box)(({ theme }) => ({
   width: '100%',
-  maxWidth: '350px',
   margin: '2rem auto 0 !important',
   height: 'auto',
   padding: '1rem',
@@ -28,6 +27,15 @@ const LoginWrap = styled(Box)(({ theme }) => ({
   alignItems: 'center',
   gap: '1rem',
   position: 'relative',
+  [theme.breakpoints.up('lg')]: {
+    maxWidth: '350px',
+  },
+  [theme.breakpoints.between('md', 'lg')]: {
+    maxWidth: '325px',
+  },
+  [theme.breakpoints.down('md')]: {
+    maxWidth: '275px',
+  },
 }));
 
 const LoginBox = styled(Box)(({ theme }) => ({

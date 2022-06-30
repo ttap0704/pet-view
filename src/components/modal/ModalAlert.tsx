@@ -10,7 +10,8 @@ import { ModalContext } from '../../provider/ModalProvider';
 const ModalAlertBox = styled(Box)(({ theme }) => ({
   fontSize: '0.9rem',
   width: 'auto',
-  padding: '2rem 4rem',
+  minWidth: '20rem',
+  padding: '2rem 0',
   backgroundColor: theme.palette.gray_1.main,
   color: theme.palette.white.main,
   display: 'flex',

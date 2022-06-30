@@ -3,6 +3,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import { AiFillCloseCircle } from 'react-icons/ai';
 import { HiChevronDown, HiChevronUp, HiOutlineDotsVertical } from 'react-icons/hi';
 import { FiPlusCircle } from 'react-icons/fi';
+import { BsPlusCircleFill } from 'react-icons/bs';
 import { IoIosClose } from 'react-icons/io';
 import Button from '../src/components/button/Button';
 import UtilBox from '../src/components/common/UtilBox';
@@ -222,6 +223,22 @@ const CommentWrapper = styled(Box)(({ theme }) => ({
 
   '.contents': {
     fontSize: '1rem',
+  },
+}));
+
+const MobileDailyButton = styled(IconButton)(({ theme }) => ({
+  position: 'fixed',
+  bottom: '5rem',
+  right: '1rem',
+  width: '4rem',
+  height: '4rem',
+  zIndex: 1,
+  backgroundColor: theme.palette.white.main,
+  padding: 0,
+  svg: {
+    width: '4rem',
+    height: '4rem',
+    color: theme.palette.orange.main,
   },
 }));
 
@@ -492,11 +509,18 @@ const Daily = () => {
 
   return (
     <DailyContainer>
-      <UtilBox justifyContent='flex-end' sx={{ height: '3rem' }}>
-        <Button variant='outlined' color='orange' disableRipple onClick={openRegistraionFrom}>
-          공유하기
-        </Button>
-      </UtilBox>
+      {user.is_mobile ? (
+        <MobileDailyButton disableRipple onClick={openRegistraionFrom}>
+          <BsPlusCircleFill />
+        </MobileDailyButton>
+      ) : (
+        <UtilBox justifyContent='flex-end' sx={{ height: '3rem' }}>
+          <Button variant='outlined' color='orange' disableRipple onClick={openRegistraionFrom}>
+            공유하기
+          </Button>
+        </UtilBox>
+      )}
+
       {regi ? (
         <DailyRegistraionBox>
           <UtilBox

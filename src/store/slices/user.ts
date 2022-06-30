@@ -45,6 +45,7 @@ const userSlice = createSlice({
       state.certification = action.payload.certification;
     },
     setUserMobile(state, action: PayloadAction<{ is_mobile: boolean }>) {
+      console.log(action.payload)
       state.is_mobile = action.payload.is_mobile;
     },
   },

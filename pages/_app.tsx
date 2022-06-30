@@ -34,9 +34,11 @@ const _APP = ({ Component, pageProps }: AppProps) => {
   const [rootPath, setRootPath] = useState('');
 
   useEffect(() => {
-    if (pageProps.is_mobile) {
-      setUserMobile({ is_mobile: pageProps.is_mobile });
-    }
+    console.log('app useeffect');
+    // if (pageProps.is_mobile) {
+    // setUserMobile({ is_mobile: props.is_mobile });
+    // }
+    dispatch(setUserMobile({ is_mobile: true }));
     if (!excepted_path.includes(router.pathname) && !user.uid) {
       const user = sessionStorage.getItem('user');
       if (user) {
