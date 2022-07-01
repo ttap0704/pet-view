@@ -17,6 +17,7 @@ import { fetchGetApi } from '../src/utils/api_back';
 import InputOutlined from '../src/components/input/InputOutlined';
 import DropdownMenu from '../src/components/common/DropdownMenu';
 import ModalRadio from '../src/components/modal/ModalRadio';
+import DrawerDefault from '../src/components/drawer/DrawerDefault';
 
 const DailyContainer = styled(Box)(({ theme }) => ({
   width: '100%',
@@ -24,6 +25,7 @@ const DailyContainer = styled(Box)(({ theme }) => ({
   display: 'flex',
   flexDirection: 'column',
   gap: '1rem',
+  position: 'relative',
 
   '.close_icon': {
     width: '1.5rem',
@@ -35,11 +37,15 @@ const DailyContainer = styled(Box)(({ theme }) => ({
 
 const DailyRegistraionBox = styled(Box)(({ theme }) => ({
   width: '100%',
+  maxWidth: '60rem',
   height: 'auto',
-  border: '1px solid',
   borderColor: theme.palette.gray_4.main,
-  borderRadius: 12,
   padding: '1rem',
+  margin: '0 auto',
+
+  h3: {
+    padding: '0.5rem 0',
+  },
 }));
 
 const DailyListBox = styled(Box)(({ theme }) => ({
@@ -118,14 +124,20 @@ const ProfileBox = styled(Box)(({ theme }) => ({
 const PhotosContainer = styled(Box)(({ theme }) => ({
   width: '100%',
   minHeight: '6rem',
-  padding: '0.5rem 0',
+  padding: '1rem 0',
   display: 'flex',
   alignItems: 'center',
   gap: '0.25rem',
-  flexWrap: 'nowrap',
+  flexWrap: 'wrap',
   overflow: 'hidden',
   '&.regi': {
-    gap: '1rem',
+    gap: '0.75rem',
+
+    '& > div': {
+      border: '1px solid',
+      borderColor: theme.palette.gray_3.main,
+      overflow: 'visible',
+    },
   },
 
   '&.slide': {
@@ -174,8 +186,8 @@ const PhotosContainer = styled(Box)(({ theme }) => ({
     },
 
     '& > svg': {
-      width: '1rem',
-      height: '1rem',
+      width: '1.5rem',
+      height: '1.5rem',
       position: 'absolute',
       top: '-0.75rem',
       right: '-0.75rem',
@@ -221,15 +233,20 @@ const CommentWrapper = styled(Box)(({ theme }) => ({
   gap: '1rem',
   padding: '1rem',
 
+  h4: {
+    textAlign: 'center',
+    color: theme.palette.black.main,
+    fontWeight: '400 !important',
+    fontSize: '0.75rem',
+  },
+
   '.contents': {
     fontSize: '1rem',
   },
 }));
 
-const MobileDailyButton = styled(IconButton)(({ theme }) => ({
+const RegistrationDailyButton = styled(IconButton)(({ theme }) => ({
   position: 'fixed',
-  bottom: '5rem',
-  right: '1rem',
   width: '4rem',
   height: '4rem',
   zIndex: 1,
@@ -239,6 +256,16 @@ const MobileDailyButton = styled(IconButton)(({ theme }) => ({
     width: '4rem',
     height: '4rem',
     color: theme.palette.orange.main,
+  },
+
+  '&.mobile': {
+    bottom: '5rem',
+    right: '1rem',
+  },
+
+  '&.pc': {
+    right: '2rem',
+    bottom: '1rem',
   },
 }));
 
@@ -509,28 +536,12 @@ const Daily = () => {
 
   return (
     <DailyContainer>
-      {user.is_mobile ? (
-        <MobileDailyButton disableRipple onClick={openRegistraionFrom}>
-          <BsPlusCircleFill />
-        </MobileDailyButton>
-      ) : (
-        <UtilBox justifyContent='flex-end' sx={{ height: '3rem' }}>
-          <Button variant='outlined' color='orange' disableRipple onClick={openRegistraionFrom}>
-            공유하기
-          </Button>
-        </UtilBox>
-      )}
-
-      {regi ? (
+      <RegistrationDailyButton className={user.is_mobile ? 'mobile' : 'pc'} disableRipple onClick={openRegistraionFrom}>
+        <BsPlusCircleFill />
+      </RegistrationDailyButton>
+      <DrawerDefault open={regi} anchor='top' onClose={clearContents}>
         <DailyRegistraionBox>
-          <UtilBox
-            justifyContent='flex-end'
-            sx={{
-              height: '2rem',
-            }}
-          >
-            <IoIosClose className='close_icon' onClick={() => setRegi(false)} />
-          </UtilBox>
+          <Typography component='h3'>일상 공유하기</Typography>
           <Textarea
             value={contents}
             onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setContents(e.target.value)}
@@ -569,7 +580,7 @@ const Daily = () => {
             </Button>
           </UtilBox>
         </DailyRegistraionBox>
-      ) : null}
+      </DrawerDefault>
 
       {dailyList.map((daily, daily_idx) => {
         return (
@@ -614,7 +625,7 @@ const Daily = () => {
                 <Typography component='h3'>댓글</Typography>
                 <Box className='input_box'>
                   <InputOutlined
-                    placeholder='댓글을 작성해주세요.'
+                    placeholder=''
                     sx={{ curosr: 'text' }}
                     value={comment[daily_idx] ?? ''}
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleComment(e.target.value, daily_idx)}
@@ -624,25 +635,29 @@ const Daily = () => {
                   </Button>
                 </Box>
                 <CommentWrapper>
-                  {daily.comment.map((item, item_idx) => {
-                    return (
-                      <>
-                        <ProfileBox key={`daily_${daily_idx}_comment_${item_idx}`} className='comment'>
-                          <Box />
-                          <Typography component='span'>{item.nickname}</Typography>
-                          <ProfileButton
-                            className='comment'
-                            onClick={(e: React.MouseEvent<HTMLElement>) => {
-                              openCommentDropdown(e, item.writer_id, item.id, item_idx, daily_idx);
-                            }}
-                          >
-                            <HiOutlineDotsVertical />
-                          </ProfileButton>
-                        </ProfileBox>
-                        <Typography className='contents'>{item.comment}</Typography>
-                      </>
-                    );
-                  })}
+                  {daily.comment.length == 0 ? (
+                    <Typography component='h4'>댓글을 작성해주세요!</Typography>
+                  ) : (
+                    daily.comment.map((item, item_idx) => {
+                      return (
+                        <>
+                          <ProfileBox key={`daily_${daily_idx}_comment_${item_idx}`} className='comment'>
+                            <Box />
+                            <Typography component='span'>{item.nickname}</Typography>
+                            <ProfileButton
+                              className='comment'
+                              onClick={(e: React.MouseEvent<HTMLElement>) => {
+                                openCommentDropdown(e, item.writer_id, item.id, item_idx, daily_idx);
+                              }}
+                            >
+                              <HiOutlineDotsVertical />
+                            </ProfileButton>
+                          </ProfileBox>
+                          <Typography className='contents'>{item.comment}</Typography>
+                        </>
+                      );
+                    })
+                  )}
                 </CommentWrapper>
               </CommentContainer>
             ) : null}

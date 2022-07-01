@@ -19,6 +19,8 @@ const NavigationWrapper = styled(Box)(({ theme }) => ({
   bottom: '-5px',
   borderTop: '1px solid',
   borderColor: theme.palette.gray_6.main,
+  zIndex: '2',
+  backgroundColor: theme.palette.white.main,
 }));
 
 const NavigationButton = styled(BottomNavigationAction)(({ theme }) => ({
@@ -40,7 +42,7 @@ const NavigationButton = styled(BottomNavigationAction)(({ theme }) => ({
 
 export default function MobileBottomNavigation() {
   const router = useRouter();
-  const [value, setValue] = useState(0);
+  const [value, setValue] = useState(-1);
   const [drawerOpen, setDrawerOpen] = useState(false);
 
   const mobile_nav_items = [
@@ -84,12 +86,17 @@ export default function MobileBottomNavigation() {
       cur_nav_value = 2;
     } else if (path.includes('daily')) {
       cur_nav_value = 3;
+    } else if (path == '/') {
+      cur_nav_value = 0;
+    } else {
+      cur_nav_value = -1;
     }
 
     setValue(cur_nav_value);
   };
 
   const movePage = (path: string | null) => {
+    if (path == router.pathname) return;
     if (path) {
       router.push(path);
     } else {

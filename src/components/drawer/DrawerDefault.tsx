@@ -8,7 +8,6 @@ interface DrawerDefaultProps {
   onClose: () => void;
   children: React.ReactNode;
   anchor: 'left' | 'right' | 'top' | 'bottom';
-  sx?: BoxProps['sx'];
 }
 
 function DrawerDefault(props: DrawerDefaultProps) {
@@ -16,7 +15,6 @@ function DrawerDefault(props: DrawerDefaultProps) {
   const onClose = props.onClose;
   const children = props.children;
   const anchor = props.anchor;
-  const sx = props.sx;
 
   const toggleDrawer = (open: boolean) => (event: React.KeyboardEvent | React.MouseEvent) => {
     if (

@@ -159,7 +159,7 @@ function AppHeader() {
   return (
     <CustomBox className={sticky && !user.is_mobile ? 'sticky' : ''}>
       <AppBar position='static'>
-        <CustomToolbar sx={{ justifyContent: user.is_mobile ? 'center' : 'center' }}>
+        <CustomToolbar sx={{ justifyContent: !user.is_mobile ? 'space-between' : 'center' }}>
           <LogoBox>logo</LogoBox>
           {user.is_mobile ? null : (
             <MenuBox>

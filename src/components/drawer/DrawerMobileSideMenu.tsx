@@ -51,6 +51,7 @@ const ProfileBox = styled(Box)(({ theme }) => ({
 
 const MenuBox = styled(Box)(({ theme }) => ({
   width: '80vw',
+  maxWidth: '30rem',
   padding: '1rem',
   height: '100%',
   display: 'flex',
@@ -72,10 +73,10 @@ const ContentsBox = styled(Box)(({ theme }) => ({
     alignItems: 'center',
     justifyContent: 'center',
     gap: '0.5rem',
-    '&:nth-child(1)': {
+    '&:nth-of-type(1)': {
       color: theme.palette.blue.main,
     },
-    '&:nth-child(2)': {
+    '&:nth-of-type(2)': {
       color: theme.palette.orange.main,
     },
     svg: {
@@ -155,6 +156,15 @@ function DrawerMobileSideMenu(props: DrawerMobileSideMenuProps) {
   ];
   const admin_contents = ['카카오톡 1:1 문의', '사업자 회원가입'];
 
+  const handleListContents = (idx: number) => {
+    onClose();
+    if (idx == 0) {
+      router.push('/user');
+    } else if (idx == 1) {
+      router.push('/notice');
+    }
+  };
+
   return (
     <DrawerDefault anchor='right' open={open} onClose={onClose}>
       <MenuBox>
@@ -180,7 +190,7 @@ function DrawerMobileSideMenu(props: DrawerMobileSideMenuProps) {
             <ListContentsBox>
               {list_contents.map((content, content_idx) => {
                 return (
-                  <Box key={`mobile_list_content_${content_idx}`}>
+                  <Box key={`mobile_list_content_${content_idx}`} onClick={() => handleListContents(content_idx)}>
                     {content.icon}
                     <Typography component='span'>{content.label}</Typography>
                   </Box>

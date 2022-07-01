@@ -1,7 +1,7 @@
-import NoticeLayoutDetail from '../../src/components/layout/LayoutNoticeDetail';
+import LayoutNoticeDetail from '../../src/components/layout/LayoutNoticeDetail';
 
 const NoticeDetail = () => {
-  return <NoticeLayoutDetail />;
+  return <LayoutNoticeDetail />;
 };
 
 export default NoticeDetail;

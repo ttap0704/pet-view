@@ -35,6 +35,12 @@ const StyledInput = styled(OutlinedInput)(({ theme }) => ({
     },
   },
 
+  '&.Mui-focused': {
+    fieldset: {
+      borderWidth: '1px !important',
+    },
+  },
+
   '&:hover': {
     '.MuiOutlinedInput-notchedOutline': {
       borderColor: theme.palette.gray_4.main,

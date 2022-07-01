@@ -34,7 +34,6 @@ const _APP = ({ Component, pageProps }: AppProps) => {
   const [rootPath, setRootPath] = useState('');
 
   useEffect(() => {
-    console.log('app useeffect');
     // if (pageProps.is_mobile) {
     // setUserMobile({ is_mobile: props.is_mobile });
     // }

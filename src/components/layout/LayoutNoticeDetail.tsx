@@ -29,13 +29,13 @@ const DateTitle = styled('h3')(({ theme }) => ({
   color: theme.palette.gray_3.main,
 }));
 
-const NoticeLayoutDetailBox = styled(Box)(({ theme }) => ({
+const LayoutNoticeDetailBox = styled(Box)(({ theme }) => ({
   width: '100%',
   maxWidth: '60rem',
   height: '100%',
 }));
 
-const NoticeLayoutDetail = () => {
+const LayoutNoticeDetail = () => {
   const router = useRouter();
   const { modal_alert } = useContext(ModalContext);
   const [notice, setNotice] = useState<NoticeType | null>(null);
@@ -65,7 +65,7 @@ const NoticeLayoutDetail = () => {
   };
 
   return (
-    <NoticeLayoutDetailBox>
+    <LayoutNoticeDetailBox>
       {notice ? (
         <>
           <TitleBox>
@@ -73,13 +73,16 @@ const NoticeLayoutDetail = () => {
             <DateTitle>{getDate(notice.created_at)}</DateTitle>
           </TitleBox>
           <NoticeDivider />
-          <Box className='ql-editor' sx={{ paddingTop: '1rem !important', paddingX: '0 !important' }}>
+          <Box
+            className='ql-editor'
+            sx={{ paddingTop: '1rem !important', paddingX: '0 !important', overflow: 'hidden' }}
+          >
             {parse(notice.contents)}
           </Box>
         </>
       ) : null}
-    </NoticeLayoutDetailBox>
+    </LayoutNoticeDetailBox>
   );
 };
 
-export default NoticeLayoutDetail;
+export default LayoutNoticeDetail;
