@@ -5,7 +5,7 @@ interface UserType {
   phone: string;
   wrong_num: number;
   nickname: string;
-  profile_path: string;
+  profile_path: string | null;
   type: number;
   certification: number;
 }

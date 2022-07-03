@@ -64,6 +64,23 @@ declare module '@mui/material/Button' {
   }
 }
 
+declare module '@mui/material/TextField' {
+  interface TextFieldPropsColorOverrides {
+    orange: true;
+    brown: true;
+    yellow: true;
+    blue: true;
+    white: true;
+    gray_1: SimplePaletteColorOptions;
+    gray_2: SimplePaletteColorOptions;
+    gray_3: SimplePaletteColorOptions;
+    gray_4: SimplePaletteColorOptions;
+    gray_5: SimplePaletteColorOptions;
+    gray_6: SimplePaletteColorOptions;
+    black: true;
+  }
+}
+
 declare module '@mui/material/styles' {
   interface BreakpointOverrides {
     xs: true;

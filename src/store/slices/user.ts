@@ -48,6 +48,9 @@ const userSlice = createSlice({
       console.log(action.payload)
       state.is_mobile = action.payload.is_mobile;
     },
+    setUserNickname(state, action: { payload: { nickname: string } }) {
+      state.nickname = action.payload.nickname
+    }
   },
   extraReducers: {
     [HYDRATE]: (state, action) => {
@@ -56,5 +59,5 @@ const userSlice = createSlice({
   },
 })
 
-export const { setUser, resetUser, setUserMobile } = userSlice.actions
+export const { setUser, resetUser, setUserMobile, setUserNickname } = userSlice.actions
 export default userSlice.reducer

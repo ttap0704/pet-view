@@ -7,7 +7,7 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../../store';
 import { useRouter } from 'next/router';
 import { IoMdHeart } from 'react-icons/io';
-import { FiClock } from 'react-icons/fi';
+import { FiClock, FiLogOut } from 'react-icons/fi';
 import { TbNotes } from 'react-icons/tb';
 import { BsEmojiSmile } from 'react-icons/bs';
 
@@ -45,6 +45,9 @@ const ProfileBox = styled(Box)(({ theme }) => ({
   },
 
   '.not_login': {
+    whiteSpace: 'pre-wrap',
+    textAlign: 'center',
+    padding: '2rem 0',
     color: theme.palette.gray_2.main,
   },
 }));
@@ -153,6 +156,7 @@ function DrawerMobileSideMenu(props: DrawerMobileSideMenuProps) {
   const list_contents = [
     { label: '내 정보', icon: <BsEmojiSmile /> },
     { label: '공지사항 및 이벤트', icon: <TbNotes /> },
+    { label: '로그아웃', icon: <FiLogOut /> },
   ];
   const admin_contents = ['카카오톡 1:1 문의', '사업자 회원가입'];
 
@@ -162,7 +166,14 @@ function DrawerMobileSideMenu(props: DrawerMobileSideMenuProps) {
       router.push('/user');
     } else if (idx == 1) {
       router.push('/notice');
+    } else if (idx == 2) {
+      logoutUser();
     }
+  };
+
+  const logoutUser = () => {
+    window.sessionStorage.removeItem('user');
+    window.location.reload();
   };
 
   return (
@@ -208,9 +219,9 @@ function DrawerMobileSideMenu(props: DrawerMobileSideMenuProps) {
             </AdminContentsBox>
           </>
         ) : (
-          <ProfileBox>
-            <Typography component='span' className='not_login'>
-              로그인을 해주세요!
+          <ProfileBox sx={{ flexDirection: 'column' }}>
+            <Typography component='p' className='not_login'>
+              {'로그인 후 더 많은 서비스를 이용하세요!'}
             </Typography>
             <Button variant='contained' color='orange' sx={{ width: '100%' }} onClick={moveLoginPage}>
               로그인

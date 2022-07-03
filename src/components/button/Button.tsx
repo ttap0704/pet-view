@@ -21,6 +21,11 @@ const CustomButton = styled(MuiButton)(({ theme }) => ({
     width: '100%',
     height: '100%',
   },
+
+  '&.Mui-disabled': {
+    backgroundColor: theme.palette.gray_6.main,
+    color: theme.palette.white.main,
+  },
 }));
 
 function Button(props: ButtonProps) {
@@ -33,6 +38,7 @@ function Button(props: ButtonProps) {
   const onClick = props.onClick;
   const class_name = props.className;
   const disable_ripple = props.disableRipple;
+  const disabled = props.disabled;
 
   return (
     <CustomButton
@@ -44,6 +50,7 @@ function Button(props: ButtonProps) {
       onClick={onClick}
       className={class_name}
       disableRipple={disable_ripple}
+      disabled={disabled}
     >
       {children}
     </CustomButton>
