@@ -4,10 +4,7 @@ import { useEffect, useState, useContext } from 'react';
 import { Box, IconButton, Typography } from '@mui/material';
 import { styled } from '@mui/material/styles';
 
-import InputOutlined from '../input/InputOutlined';
-import ButtonFileInput from '../button/ButtonFileInput';
 import ImageBox from '../image/ImageBox';
-import { RiCloseCircleFill } from 'react-icons/ri';
 import { ModalContext } from '../../provider/ModalProvider';
 import { FaSearchPlus } from 'react-icons/fa';
 

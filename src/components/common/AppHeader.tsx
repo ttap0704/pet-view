@@ -69,6 +69,14 @@ const CustomToolbar = styled(Toolbar)(() => ({
   backgroundColor: 'transparent',
 }));
 
+const CustomAppBar = styled(AppBar)(({ theme }) => ({
+  height: '4rem',
+  '& > div': {
+    height: '4rem',
+    minHeight: 'unset',
+  },
+}));
+
 function AppHeader() {
   const user = useSelector((state: RootState) => state.userReducer);
 
@@ -107,27 +115,33 @@ function AppHeader() {
         path: '/restaurant',
       },
       {
-        label: '로그인',
-        path: '/login',
-      },
-      {
         label: '더보기',
         path: '',
-        children: ['공지사항', '일상 공유', '관리자'],
+        children: ['로그인', '공지사항', '일상 공유'],
       },
     ];
 
+    useEffect(() => {
+      if (user.uid > 0 && header_items[3].children) {
+        header_items[3].children[0] = '내 정보';
+        header_items[3].children[3] = '로그아웃';
+      }
+    }, [user]);
+
     const moveMorePage = (idx: number) => {
       if (idx == 0) {
-        router.push('/notice');
-      } else if (idx == 1) {
-        router.push('/daily');
-      } else {
-        if (user && Number(user.uid) > 0) {
-          router.push('/admin');
+        if (user.uid > 0) {
+          router.push('/user');
         } else {
-          router.push('/admin/login');
+          router.push('/login');
         }
+      } else if (idx == 1) {
+        router.push('/notice');
+      } else if (idx == 2) {
+        router.push('/daily');
+      } else if (idx == 3) {
+        window.sessionStorage.removeItem('user');
+        window.location.reload();
       }
     };
 
@@ -158,7 +172,7 @@ function AppHeader() {
 
   return (
     <CustomBox className={sticky && !user.is_mobile ? 'sticky' : ''}>
-      <AppBar position='static'>
+      <CustomAppBar position='static'>
         <CustomToolbar sx={{ justifyContent: !user.is_mobile ? 'space-between' : 'center' }}>
           <LogoBox>logo</LogoBox>
           {user.is_mobile ? null : (
@@ -167,7 +181,7 @@ function AppHeader() {
             </MenuBox>
           )}
         </CustomToolbar>
-      </AppBar>
+      </CustomAppBar>
     </CustomBox>
   );
 }

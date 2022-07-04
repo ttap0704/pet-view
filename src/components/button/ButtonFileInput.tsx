@@ -14,6 +14,7 @@ interface ButtonFileInputProps {
   onClick?: () => void;
   id: string;
   sx?: ButtonProps['sx'];
+  buttonId?: string;
 }
 
 const UploadInput = (props: ButtonFileInputProps) => {
@@ -23,6 +24,7 @@ const UploadInput = (props: ButtonFileInputProps) => {
   const onClick = props.onClick;
   const id = props.id;
   const sx = props.sx;
+  const button_id = props.buttonId;
 
   function onChangeEvent(e: React.ChangeEvent<HTMLInputElement>) {
     e.preventDefault();
@@ -31,7 +33,7 @@ const UploadInput = (props: ButtonFileInputProps) => {
 
   return (
     <>
-      <Button sx={sx ? { ...sx, padding: 0 } : { padding: 0 }} onClick={onClick}>
+      <Button sx={sx ? { ...sx, padding: 0 } : { padding: 0 }} onClick={onClick} id={button_id}>
         <CustomLabel htmlFor={id}>{title}</CustomLabel>
       </Button>
       <input type='file' onChange={e => onChangeEvent(e)} id={id} name={id} multiple={multiple}></input>

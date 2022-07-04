@@ -39,6 +39,7 @@ function Button(props: ButtonProps) {
   const class_name = props.className;
   const disable_ripple = props.disableRipple;
   const disabled = props.disabled;
+  const id = props.id;
 
   return (
     <CustomButton
@@ -51,6 +52,7 @@ function Button(props: ButtonProps) {
       className={class_name}
       disableRipple={disable_ripple}
       disabled={disabled}
+      id={id}
     >
       {children}
     </CustomButton>

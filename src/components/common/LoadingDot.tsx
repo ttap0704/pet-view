@@ -1,4 +1,16 @@
 import { Box, styled } from '@mui/material';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../store';
+
+const LoadingWrap = styled(Box)(({ theme }) => ({
+  '&.app': {
+    width: '100vw',
+    height: '100vh',
+    position: 'fixed',
+    top: '0',
+    left: '0',
+  },
+}));
 
 const LoadingContainer = styled(Box)(({ theme }) => ({
   width: '100%',
@@ -12,6 +24,7 @@ const LoadingContainer = styled(Box)(({ theme }) => ({
   left: '50%',
   transform: 'translate(-50%, -50%)',
   zIndex: '1',
+
   '.dot-flashing': {
     position: 'relative',
     width: '1rem',
@@ -62,13 +75,20 @@ const LoadingContainer = styled(Box)(({ theme }) => ({
   },
 }));
 
-function LoadingDot() {
+interface LoadingDotProps {
+  className?: string;
+}
+
+function LoadingDot(props: LoadingDotProps) {
+  const user = useSelector((state: RootState) => state.userReducer);
+  const class_name = props.className;
+
   return (
-    <Box className='snippet'>
+    <LoadingWrap className={`snippet ${class_name ? `${class_name}` : ''}`}>
       <LoadingContainer className='stage'>
         <Box className='dot-flashing'></Box>
       </LoadingContainer>
-    </Box>
+    </LoadingWrap>
   );
 }
 

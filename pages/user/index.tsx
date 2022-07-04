@@ -4,9 +4,14 @@ import { useDispatch, useSelector } from 'react-redux';
 import Button from '../../src/components/button/Button';
 import { RootState } from '../../src/store';
 import { MdPets } from 'react-icons/md';
-import { fetchPostApi } from '../../src/utils/api';
+import { fetchFileApi, fetchPostApi } from '../../src/utils/api';
 import { ModalContext } from '../../src/provider/ModalProvider';
-import { setUserNickname } from '../../src/store/slices/user';
+import { setUserNickname, setUserProfilePath } from '../../src/store/slices/user';
+import ButtonFileInput from '../../src/components/button/ButtonFileInput';
+import { readFile, setImageFormData } from '../../src/utils/tools';
+import { fetchGetApi } from '../../src/utils/api_back';
+import LoadingDot from '../../src/components/common/LoadingDot';
+import { useRouter } from 'next/router';
 
 const UserWrap = styled(Box)(({ theme }) => ({
   width: '100%',
@@ -39,6 +44,9 @@ const ProfileBox = styled(Box)(({ theme }) => ({
   cursor: 'pointer',
   marginBottom: '2rem',
   position: 'relative',
+  backgroundPosition: 'center',
+  backgroundSize: 'cover',
+  backgroundRepeat: 'no-repeat',
 
   svg: {
     position: 'absolute',
@@ -53,7 +61,7 @@ const ProfileBox = styled(Box)(({ theme }) => ({
   '& > div': {
     width: '100%',
     height: '2rem',
-    backgroundColor: 'rgba(0, 0, 0, 0.25)',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
@@ -78,6 +86,7 @@ const UserTextField = styled(TextField)(({ theme }) => ({
 
     '&:read-only': {
       backgroundColor: theme.palette.gray_6.main,
+      color: theme.palette.gray_3.main,
     },
   },
   '.MuiInputBase-fullWidth': {
@@ -94,8 +103,13 @@ const UserTextField = styled(TextField)(({ theme }) => ({
 const UserIndex = () => {
   const user = useSelector((state: RootState) => state.userReducer);
   const dispatch = useDispatch();
+  const router = useRouter();
   const { modal_alert } = useContext(ModalContext);
 
+  const [loading, setLoading] = useState(false);
+  const [currentProfile, setCurrentProfile] = useState<File | null>(null);
+  const [currentProfilePath, setCurrentProfilePath] = useState('');
+  const [originProfilePath, setOriginProfilePath] = useState('');
   const [updated, setUpdated] = useState(false);
   const [userContents, setUserContents] = useState([
     { label: '이메일', value: '', readonly: true, error: false, error_text: '' },
@@ -117,9 +131,21 @@ const UserIndex = () => {
       tmp_contents[1].value = user.nickname;
       tmp_contents[2].value = user.phone ?? '';
 
+      console.log(user);
+      setOriginProfilePath(user.profile_path ?? '');
+      setCurrentProfilePath(user.profile_path ?? '');
+
       setUserContents([...tmp_contents]);
+    } else {
+      router.push('/');
     }
-  }, [user]);
+
+    return () => {
+      setOriginProfilePath('');
+      setCurrentProfilePath('');
+      setCurrentProfile(null);
+    };
+  }, []);
 
   useEffect(() => {
     checkUpdate();
@@ -136,6 +162,7 @@ const UserIndex = () => {
       }
       idx++;
     }
+
     setUpdated(updated);
   };
 
@@ -143,7 +170,6 @@ const UserIndex = () => {
     const tmp_contents = [...userContents];
     const nick_reg = /([a-zA-Z0-9ㄱ-ㅎ|ㅏ-ㅣ|가-힣])/g;
     let error = false;
-    console.log(nick_reg.test(value));
     if (idx == 1 && !nick_reg.test(value)) {
       error = true;
     }
@@ -155,58 +181,122 @@ const UserIndex = () => {
   };
 
   const updateUserInfo = async () => {
-    const update_data = {
-      nickname: userContents[1].value,
-    };
+    setLoading(true);
+    let update_status = false;
 
-    const update_res = await fetchPostApi(`/users/${user.uid}/info`, update_data);
-    if (update_res.affected == 1) {
+    if (updated) {
+      const check_nickname = await fetchGetApi(`/users/${userContents[1].value}`);
+      if (check_nickname) {
+        modal_alert.openModalAlert('중복된 닉네임이 있습니다.\r\n다른 닉네임을 사용해주세요!');
+        setLoading(false);
+        return;
+      }
+
+      const update_data = {
+        nickname: userContents[1].value,
+      };
+      const update_res = await fetchPostApi(`/users/${user.uid}/info`, update_data);
+      if (update_res.affected == 1) {
+        update_status = true;
+        dispatch(setUserNickname({ nickname: update_data.nickname }));
+      }
+    }
+
+    if (currentProfile) {
+      await fetchPostApi(`/images/profile/${user.uid}/delete`, {});
+      const upload_data = await setImageFormData([{ target_id: Number(user.uid), files: [currentProfile] }], 'profile');
+      const upload_res = await fetchFileApi('/upload/image', upload_data);
+
+      if (upload_res.length > 0) {
+        update_status = true;
+        const target_path = Math.floor(Number(user.uid) / 50) * 50;
+        const path = `http://localhost:3080/images/profile/${target_path}/${upload_res[0].file_name}`;
+        dispatch(setUserProfilePath({ profile_path: path }));
+        setCurrentProfilePath(path);
+        setOriginProfilePath(path);
+        setCurrentProfile(null);
+      }
+    }
+
+    if (update_status) {
       modal_alert.openModalAlert('정보가 수정되었습니다.');
-
-      dispatch(setUserNickname({ nickname: update_data.nickname }));
     } else {
       modal_alert.openModalAlert('오류로 인해 수정이 실패되었습니다.\r\n다시 시도해주세요.');
+    }
+    setLoading(false);
+  };
+
+  const onChangeImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    setLoading(true);
+
+    const files = e.target.files;
+    if (files && files.length > 0) {
+      const file = files[0];
+      const cur_image = await readFile(file);
+
+      setCurrentProfilePath(cur_image);
+      setCurrentProfile(file);
+    }
+    setLoading(false);
+  };
+
+  const openFileInput = () => {
+    const button_el = document.getElementById('profile_file_button');
+
+    if (button_el && button_el.children[0]) {
+      (button_el.children[0] as HTMLElement).click();
     }
   };
 
   return (
-    <UserWrap>
-      <ProfileBox>
-        <MdPets />
-        <Box>편집</Box>
-      </ProfileBox>
-      <InfoBox>
-        {userContents.map((content, content_idx) => {
-          return (
-            <UserTextField
-              key={`user_content_${content_idx}`}
-              variant='standard'
-              label={content.label}
-              focused
-              color='gray_4'
-              fullWidth
-              value={content.value}
-              error={content.error}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleContents(e.target.value, content_idx)}
-              InputProps={{
-                readOnly: content.readonly,
-              }}
-              aria-describedby={`user_content_${content_idx}`}
-            />
-          );
-        })}
-      </InfoBox>
-      <Button
-        className='fill'
-        color='orange'
-        variant='contained'
-        disableRipple
-        disabled={!updated}
-        onClick={updateUserInfo}
-      >
-        저장
-      </Button>
-    </UserWrap>
+    <>
+      <UserWrap>
+        <ProfileBox onClick={openFileInput} sx={{ backgroundImage: `url(${currentProfilePath})` }}>
+          {currentProfilePath.length == 0 ? <MdPets /> : null}
+          <Box>편집</Box>
+        </ProfileBox>
+        <InfoBox>
+          {userContents.map((content, content_idx) => {
+            return (
+              <UserTextField
+                key={`user_content_${content_idx}`}
+                variant='standard'
+                label={content.label}
+                focused
+                color='gray_4'
+                fullWidth
+                value={content.value}
+                error={content.error}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleContents(e.target.value, content_idx)}
+                InputProps={{
+                  readOnly: content.readonly,
+                }}
+                aria-describedby={`user_content_${content_idx}`}
+              />
+            );
+          })}
+        </InfoBox>
+        <Button
+          className='fill'
+          color='orange'
+          variant='contained'
+          disableRipple
+          disabled={!(updated || originProfilePath != currentProfilePath)}
+          onClick={updateUserInfo}
+        >
+          저장
+        </Button>
+        <ButtonFileInput
+          sx={{ opacity: 0, position: 'absolute', top: '-50000000', left: '-5000000' }}
+          buttonId='profile_file_button'
+          title=''
+          onChange={onChangeImage}
+          multiple={false}
+          id='profile_file_input'
+        />
+      </UserWrap>
+      {loading ? <LoadingDot className='app' /> : null}
+    </>
   );
 };
 

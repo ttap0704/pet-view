@@ -50,6 +50,9 @@ const userSlice = createSlice({
     },
     setUserNickname(state, action: { payload: { nickname: string } }) {
       state.nickname = action.payload.nickname
+    },
+    setUserProfilePath(state, action: { payload: { profile_path: string | null } }) {
+      state.profile_path = action.payload.profile_path;
     }
   },
   extraReducers: {
@@ -59,5 +62,5 @@ const userSlice = createSlice({
   },
 })
 
-export const { setUser, resetUser, setUserMobile, setUserNickname } = userSlice.actions
+export const { setUser, resetUser, setUserMobile, setUserNickname, setUserProfilePath } = userSlice.actions
 export default userSlice.reducer

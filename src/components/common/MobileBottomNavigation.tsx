@@ -111,6 +111,7 @@ export default function MobileBottomNavigation() {
         <BottomNavigation
           showLabels
           value={value}
+          sx={{ height: '100%' }}
           // onChange={(event, newValue) => {
           //   console.log(newValue);
           //   setValue(newValue);
