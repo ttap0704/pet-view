@@ -12,6 +12,7 @@ import { readFile, setImageFormData } from '../../src/utils/tools';
 import { fetchGetApi } from '../../src/utils/api_back';
 import LoadingDot from '../../src/components/common/LoadingDot';
 import { useRouter } from 'next/router';
+import { GetServerSidePropsContext } from 'next';
 
 const UserWrap = styled(Box)(({ theme }) => ({
   width: '100%',
@@ -136,8 +137,6 @@ const UserIndex = () => {
       setCurrentProfilePath(user.profile_path ?? '');
 
       setUserContents([...tmp_contents]);
-    } else {
-      router.push('/');
     }
 
     return () => {
@@ -145,7 +144,7 @@ const UserIndex = () => {
       setCurrentProfilePath('');
       setCurrentProfile(null);
     };
-  }, []);
+  }, [user]);
 
   useEffect(() => {
     checkUpdate();
@@ -299,5 +298,27 @@ const UserIndex = () => {
     </>
   );
 };
+
+export async function getServerSideProps(context: GetServerSidePropsContext) {
+  const { query } = context;
+  const { headers } = context.req;
+  console.log(headers, 'index');
+
+  if (typeof query.uid == 'string' && Number(query.uid) > 0) {
+    return {
+      props: {
+        test: 'hi',
+      },
+    };
+  } else {
+    return {
+      redirect: {
+        permanent: false,
+        destination: '/',
+      },
+      props: {},
+    };
+  }
+}
 
 export default UserIndex;

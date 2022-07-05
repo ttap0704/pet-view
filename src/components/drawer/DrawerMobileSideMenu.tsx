@@ -163,7 +163,7 @@ function DrawerMobileSideMenu(props: DrawerMobileSideMenuProps) {
   const handleListContents = (idx: number) => {
     onClose();
     if (idx == 0) {
-      router.push('/user');
+      router.push({ pathname: '/user', query: { uid: user.uid } });
     } else if (idx == 1) {
       router.push('/notice');
     } else if (idx == 2) {

@@ -14,6 +14,7 @@ import wrapper from '../src/store/configureStore';
 import { setUser, setUserMobile } from '../src/store/slices/user';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../src/store';
+import { GetServerSidePropsContext } from 'next';
 
 dotenv.config();
 // store 설정파일 로드
@@ -34,21 +35,19 @@ const _APP = ({ Component, pageProps }: AppProps) => {
   const [rootPath, setRootPath] = useState('');
 
   useEffect(() => {
+    // 실사용
     // if (pageProps.is_mobile) {
-    // setUserMobile({ is_mobile: props.is_mobile });
+    //   setUserMobile({ is_mobile: pageProps.is_mobile });
     // }
+
+    // 임시
     dispatch(setUserMobile({ is_mobile: true }));
+
     if (!excepted_path.includes(router.pathname) && !user.uid) {
       const user = sessionStorage.getItem('user');
       if (user) {
         const session: UserType = JSON.parse(user);
         dispatch(setUser(session));
-      } else {
-        if (router.pathname.indexOf('admin') >= 0) {
-          router.push('/admin/login');
-        } else if (router.pathname.indexOf('super') >= 0) {
-          router.push('/super/login');
-        }
       }
     }
   }, []);
@@ -112,6 +111,20 @@ _APP.getInitialProps = async (appContext: AppContext) => {
   const userAgent = (await appContext.ctx.req) ? appContext.ctx.req?.headers['user-agent'] : navigator.userAgent;
   const mobile = await userAgent?.indexOf('Mobi');
   appProps.pageProps.isMobile = (await (mobile !== -1)) ? true : false;
+
+  if (appContext.ctx.req && appContext.ctx.res) {
+    const { headers } = appContext.ctx.req;
+    if (headers.cookie) {
+      const cookie = headers.cookie.split('; ').filter(item => item.includes('a-token'));
+      if (cookie.length > 0) {
+        const a_token = cookie[0].replace('a-token=', '');
+        appContext.ctx.res.setHeader('Set-Cookie', 'a-token=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;');
+        appContext.ctx.res.writeHead(307, { Location: '/' });
+        appContext.ctx.res.end();
+      }
+    }
+  }
+
   return { ...appProps };
 };
 

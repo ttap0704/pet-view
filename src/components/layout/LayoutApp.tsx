@@ -7,6 +7,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../store';
+import { GetServerSidePropsContext } from 'next';
 
 interface LayoutAppProps {
   children: React.ReactNode;
