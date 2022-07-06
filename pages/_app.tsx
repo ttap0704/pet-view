@@ -15,6 +15,7 @@ import { setUser, setUserMobile } from '../src/store/slices/user';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../src/store';
 import { GetServerSidePropsContext } from 'next';
+import { fetchGetApi, fetchPostApi } from '../src/utils/api';
 
 dotenv.config();
 // store 설정파일 로드
@@ -114,13 +115,24 @@ _APP.getInitialProps = async (appContext: AppContext) => {
 
   if (appContext.ctx.req && appContext.ctx.res) {
     const { headers } = appContext.ctx.req;
+    const context = appContext.ctx;
     if (headers.cookie) {
       const cookie = headers.cookie.split('; ').filter(item => item.includes('a-token'));
       if (cookie.length > 0) {
-        const a_token = cookie[0].replace('a-token=', '');
-        appContext.ctx.res.setHeader('Set-Cookie', 'a-token=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;');
-        appContext.ctx.res.writeHead(307, { Location: '/' });
-        appContext.ctx.res.end();
+        const token_res = await fetchGetApi('/auth', context);
+        if (token_res.statusCode && token_res.statusCode == 401) {
+          const new_token_res = await fetchPostApi('/auth/token', { token: cookie[0].replace('a-token=', '') });
+          const three_month_later = new Date(new Date().setMonth(new Date().getMonth() + 3));
+
+          console.log(new_token_res, new_token_res.new_token, three_month_later);
+
+          if (new_token_res.new_token) {
+            appContext.ctx.res.setHeader('Set-Cookie', `a-token=; expires=2022-12-31 12:33:30; path=/`);
+            // appContext.ctx.res.setHeader('Set-Cookie', `a-token=${123}; expires=${three_month_later}; path=/`);
+            appContext.ctx.res.end();
+          }
+        }
+        // const a_token = cookie[0].replace('a-token=', '');
       }
     }
   }

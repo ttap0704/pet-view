@@ -290,6 +290,16 @@ export async function checkAppRedirect(path: string) {
   return { redirect_state, redirect };
 }
 
+export async function checkAdminRedirect(path: string) {
+  const excepted_path = [
+    '/admin/join',
+    '/admin/login',
+    '/admin/join/success',
+    '/admin/join/certification/[id]',
+    '/super/login',
+  ];
+}
+
 export const setMonthKorDropdownItems = (min_date: Date) => {
   const min_year = min_date.getFullYear();
   const min_month = min_date.getMonth() + 1;
