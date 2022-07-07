@@ -1,4 +1,4 @@
-import { Box, Typography } from '@mui/material';
+import { Box, Divider, Typography } from '@mui/material';
 import { useRouter } from 'next/router';
 
 import { useState } from 'react';
@@ -7,6 +7,7 @@ import { styled } from '@mui/material/styles';
 import { MdAttachEmail } from 'react-icons/md';
 import { RiLockPasswordFill } from 'react-icons/ri';
 
+import ButtonKaKaoLogin from '../button/ButtonKakaoLogin';
 import InputOutlined from '../input/InputOutlined';
 import Button from '../button/Button';
 
@@ -15,6 +16,12 @@ interface LayoutLoginProps {
   onSubmit: (data: { id: string; password: string }) => void;
   join?: boolean;
 }
+
+const LoginDivider = styled(Divider)(({ theme }) => ({
+  width: '100%',
+  margin: '1rem auto',
+  backgroundColor: theme.palette.gray_6.main,
+}));
 
 const LoginWrap = styled(Box)(({ theme }) => ({
   width: '100%',
@@ -142,6 +149,10 @@ const LayoutLogin = (props: LayoutLoginProps) => {
             회원가입
           </Button>
         ) : null}
+
+        <LoginDivider />
+
+        <ButtonKaKaoLogin />
       </LoginBox>
       {children}
     </LoginWrap>

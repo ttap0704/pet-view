@@ -10,6 +10,7 @@ declare module '@mui/material/styles' {
   interface Palette {
     orange: SimplePaletteColorOptions;
     yellow: SimplePaletteColorOptions;
+    kakao_yellow: SimplePaletteColorOptions;
     brown: SimplePaletteColorOptions;
     blue: SimplePaletteColorOptions;
     white: SimplePaletteColorOptions;
@@ -26,6 +27,7 @@ declare module '@mui/material/styles' {
   interface PaletteOptions {
     orange: SimplePaletteColorOptions;
     yellow: SimplePaletteColorOptions;
+    kakao_yellow: SimplePaletteColorOptions;
     brown: SimplePaletteColorOptions;
     blue: SimplePaletteColorOptions;
     white: SimplePaletteColorOptions;
@@ -52,6 +54,7 @@ declare module '@mui/material/Button' {
     orange: true;
     brown: true;
     yellow: true;
+    kakao_yellow: true;
     blue: true;
     white: true;
     gray_1: SimplePaletteColorOptions;
@@ -69,6 +72,7 @@ declare module '@mui/material/TextField' {
     orange: true;
     brown: true;
     yellow: true;
+    kakao_yellow: true;
     blue: true;
     white: true;
     gray_1: SimplePaletteColorOptions;

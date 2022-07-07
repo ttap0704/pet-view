@@ -10,6 +10,10 @@ const theme = createTheme({
       contrastText: "#fff",
       main: "#fff064"
     },
+    kakao_yellow: {
+      contrastText: "#000",
+      main: "#FEE500"
+    },
     brown: {
       contrastText: "#fff",
       main: "#cfaf7b"

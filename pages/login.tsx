@@ -58,7 +58,11 @@ const LoginIndex = () => {
     }
   };
 
-  return <LayoutLogin onSubmit={userLogin} join={true} />;
+  return (
+    <>
+      <LayoutLogin onSubmit={userLogin} join={true} />
+    </>
+  );
 };
 
 export default LoginIndex;

@@ -1,21 +1,23 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import App, { AppContext, AppProps } from 'next/app';
 import { useRouter } from 'next/router';
 import { useState, useEffect } from 'react';
 import '../src/assets/styles/globals.scss';
 import dotenv from 'dotenv';
 import { ThemeProvider } from '@mui/material/styles';
-import ModalProvider from '../src/provider/ModalProvider';
+import ModalProvider, { ModalContext } from '../src/provider/ModalProvider';
 import TableProvider from '../src/provider/TableProvider';
 import theme from '../src/utils/theme';
 import LayoutApp from '../src/components/layout/LayoutApp';
 import LayoutAdmin from '../src/components/layout/LayoutAdmin';
 import wrapper from '../src/store/configureStore';
-import { setUser, setUserMobile } from '../src/store/slices/user';
+import { setUser, setUserMobile, resetUser } from '../src/store/slices/user';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../src/store';
 import { GetServerSidePropsContext } from 'next';
 import { fetchGetApi, fetchPostApi } from '../src/utils/api';
+import { checkAppRedirect } from '../src/utils/tools';
+import Head from 'next/head';
 
 dotenv.config();
 // store 설정파일 로드
@@ -31,26 +33,31 @@ const excepted_path = [
 const _APP = ({ Component, pageProps }: AppProps) => {
   const user = useSelector((state: RootState) => state.userReducer);
   const dispatch = useDispatch();
+  const { modal_alert } = useContext(ModalContext);
 
   const router = useRouter();
   const [rootPath, setRootPath] = useState('');
 
   useEffect(() => {
+    if (pageProps.tokenExpired) {
+      dispatch(resetUser());
+      window.sessionStorage.removeItem('user');
+    } else {
+      if (!excepted_path.includes(router.pathname) && !user.uid) {
+        const session_user = sessionStorage.getItem('user');
+        if (session_user) {
+          const session: UserType = JSON.parse(session_user);
+          dispatch(setUser(session));
+        }
+      }
+    }
+
     // 실사용
     // if (pageProps.is_mobile) {
     //   setUserMobile({ is_mobile: pageProps.is_mobile });
     // }
-
     // 임시
     dispatch(setUserMobile({ is_mobile: true }));
-
-    if (!excepted_path.includes(router.pathname) && !user.uid) {
-      const user = sessionStorage.getItem('user');
-      if (user) {
-        const session: UserType = JSON.parse(user);
-        dispatch(setUser(session));
-      }
-    }
   }, []);
 
   useEffect(() => {
@@ -92,6 +99,10 @@ const _APP = ({ Component, pageProps }: AppProps) => {
 
   return (
     <>
+      <Head>
+        <script src='https://developers.kakao.com/sdk/js/kakao.js'></script>
+        <script>Kakao.init('{process.env.NEXT_PUBLIC_KAKAO_LOGIN_API_KEY}')</script>
+      </Head>
       <ThemeProvider theme={theme}>
         <ModalProvider>
           <Layout />
@@ -111,6 +122,7 @@ _APP.getInitialProps = async (appContext: AppContext) => {
   const appProps = await App.getInitialProps(appContext);
   const userAgent = (await appContext.ctx.req) ? appContext.ctx.req?.headers['user-agent'] : navigator.userAgent;
   const mobile = await userAgent?.indexOf('Mobi');
+  const path = appContext.router.pathname;
   appProps.pageProps.isMobile = (await (mobile !== -1)) ? true : false;
 
   if (appContext.ctx.req && appContext.ctx.res) {
@@ -122,17 +134,33 @@ _APP.getInitialProps = async (appContext: AppContext) => {
         const token_res = await fetchGetApi('/auth', context);
         if (token_res.statusCode && token_res.statusCode == 401) {
           const new_token_res = await fetchPostApi('/auth/token', { token: cookie[0].replace('a-token=', '') });
-          const three_month_later = new Date(new Date().setMonth(new Date().getMonth() + 3));
+          const three_month_later = new Date(new Date().setMonth(new Date().getMonth() + 3)).toUTCString();
 
-          console.log(new_token_res, new_token_res.new_token, three_month_later);
+          if (new_token_res.pass && new_token_res.new_token) {
+            appContext.ctx.res.setHeader(
+              'Set-Cookie',
+              `a-token=${new_token_res.new_token}; expires=${three_month_later}; path=/`,
+            );
+          } else {
+            appProps.pageProps.token_expires = true;
 
-          if (new_token_res.new_token) {
-            appContext.ctx.res.setHeader('Set-Cookie', `a-token=; expires=2022-12-31 12:33:30; path=/`);
-            // appContext.ctx.res.setHeader('Set-Cookie', `a-token=${123}; expires=${three_month_later}; path=/`);
-            appContext.ctx.res.end();
+            const check_redirect = await checkAppRedirect(path);
+            if (check_redirect.redirect_state) {
+              appContext.ctx.res.writeHead(307, { Location: check_redirect.redirect.destination });
+              appContext.ctx.res.end();
+            }
+
+            appContext.ctx.res.setHeader('Set-Cookie', `a-token=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;`);
           }
+
+          appContext.ctx.res.end();
         }
-        // const a_token = cookie[0].replace('a-token=', '');
+      } else {
+        const check_redirect = await checkAppRedirect(path);
+        if (check_redirect.redirect_state) {
+          appContext.ctx.res.writeHead(307, { Location: check_redirect.redirect.destination });
+          appContext.ctx.res.end();
+        }
       }
     }
   }

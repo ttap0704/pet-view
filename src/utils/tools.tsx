@@ -266,25 +266,19 @@ export const setLookedUpList = (type: string, id: number) => {
 };
 
 export async function checkAppRedirect(path: string) {
-  const excepted_path = [
-    '/admin/join',
-    '/admin/login',
-    '/admin/join/success',
-    '/admin/join/certification/[id]',
-    '/super/login',
-  ];
-
   let redirect_state = false;
   let redirect = {
     permanent: false,
     destination: '',
   };
-  if (path.indexOf('admin') >= 0) {
-    redirect_state = true;
-    redirect.destination = '/admin/login';
-  } else if (path.indexOf('super') >= 0) {
-    redirect_state = true;
-    redirect.destination = '/super/login';
+  if (!path.includes('login')) {
+    if (path.indexOf('admin') >= 0) {
+      redirect_state = true;
+      redirect.destination = '/admin/login';
+    } else if (path.indexOf('super') >= 0) {
+      redirect_state = true;
+      redirect.destination = '/super/login';
+    }
   }
 
   return { redirect_state, redirect };
