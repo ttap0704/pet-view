@@ -101,7 +101,12 @@ const _APP = ({ Component, pageProps }: AppProps) => {
     <>
       <Head>
         <script src='https://developers.kakao.com/sdk/js/kakao.js'></script>
-        <script>Kakao.init('{process.env.NEXT_PUBLIC_KAKAO_LOGIN_API_KEY}')</script>
+        <script
+          type='text/javascript'
+          src={`//dapi.kakao.com/v2/maps/sdk.js?autoload=false&appkey=${process.env.NEXT_PUBLIC_KAKAO_MAP_API_KEY}&libraries=services`}
+          id='KAKAO_MAP_SERVICE'
+        />
+        <script>Kakao.init(`7f3acef0dda383251e1144046bfaba5b`)</script>
       </Head>
       <ThemeProvider theme={theme}>
         <ModalProvider>
@@ -109,11 +114,6 @@ const _APP = ({ Component, pageProps }: AppProps) => {
         </ModalProvider>
       </ThemeProvider>
       {/* <script src='/node_modules/quill-image-resize-module/image-resize.min.js'></script> */}
-      <script
-        type='text/javascript'
-        src={`//dapi.kakao.com/v2/maps/sdk.js?autoload=false&appkey=${process.env.NEXT_PUBLIC_KAKAO_MAP_API_KEY}&libraries=services`}
-        id='KAKAO_MAP_SERVICE'
-      />
     </>
   );
 };

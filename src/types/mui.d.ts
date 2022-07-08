@@ -84,6 +84,23 @@ declare module '@mui/material/TextField' {
     black: true;
   }
 }
+declare module '@mui/material/ToggleButtonGroup' {
+  interface ToggleButtonGroupPropsColorOverrides {
+    orange: true;
+    brown: true;
+    yellow: true;
+    kakao_yellow: true;
+    blue: true;
+    white: true;
+    gray_1: SimplePaletteColorOptions;
+    gray_2: SimplePaletteColorOptions;
+    gray_3: SimplePaletteColorOptions;
+    gray_4: SimplePaletteColorOptions;
+    gray_5: SimplePaletteColorOptions;
+    gray_6: SimplePaletteColorOptions;
+    black: true;
+  }
+}
 
 declare module '@mui/material/styles' {
   interface BreakpointOverrides {

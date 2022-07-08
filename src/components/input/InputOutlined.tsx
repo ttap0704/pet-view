@@ -83,6 +83,7 @@ const InputOutlined = (props: InputOutlinedProps) => {
   const id = props.id;
   const format = props.format;
   const sx = props.sx;
+  const disabled = props.disabled;
 
   const [currentValue, setCurrentValue] = useState('');
   const [currentFormat, setCurrentFormat] = useState('');
@@ -121,6 +122,7 @@ const InputOutlined = (props: InputOutlinedProps) => {
   };
 
   const handleInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (disabled) return;
     const input_value = e.target.value;
     const cur_value = input_value.replace(/[\,]/gi, '');
     if (max && max < cur_value.length) return;
@@ -160,6 +162,7 @@ const InputOutlined = (props: InputOutlinedProps) => {
         type={type}
         readOnly={read_only || onClick ? true : false}
         onKeyDown={handleKeyDown}
+        disabled={disabled}
         onFocus={onFocus}
         onBlur={onBlur}
         onClick={onClick}

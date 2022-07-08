@@ -347,3 +347,14 @@ export const report_reasons = [
     id: 7,
   },
 ];
+
+export const setYearContents = () => {
+  const this_year = new Date().getFullYear();
+  const years: string[] = [];
+
+  for (let i = 1940; i <= this_year; i++) {
+    years.push(`${i}년`);
+  }
+
+  return years.reverse();
+};
