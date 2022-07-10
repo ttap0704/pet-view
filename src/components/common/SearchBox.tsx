@@ -259,26 +259,6 @@ const SideSearchBox = (props: SideSearchBoxProps) => {
                 검색
               </Button>
             </ItemBox>
-
-            {
-              type == 'accommodation' ? null : null
-              // <>
-              //   <ItemBox>
-              //     <ItemTitle>음식</ItemTitle>
-              //     <InputOutlined
-              //       className='search-bar'
-              //       endAdornment={<FaSearchLocation onClick={search} />}
-              //       value={searchItems.menu}
-              //       onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleInput('menu', e.target.value)}
-              //       onKeyDownEnter={search}
-              //       placeholder='음식명을 입력해주세요.'
-              //     />
-              //     <Button variant='outlined' color='orange' disableRipple={true} onClick={search}>
-              //       검색
-              //     </Button>
-              //   </ItemBox>
-              // </>
-            }
           </>
         ) : null}
       </SideBox>

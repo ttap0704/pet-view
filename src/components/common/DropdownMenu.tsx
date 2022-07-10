@@ -67,6 +67,7 @@ const DropdownMenu = (props: DropdownMenuProps) => {
       anchorEl={anchorEl}
       open={open}
       onClose={onClose}
+      key={'test'}
     >
       {items.map((data, index) => {
         return (

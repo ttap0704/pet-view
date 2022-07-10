@@ -57,7 +57,7 @@ const _APP = ({ Component, pageProps }: AppProps) => {
     //   setUserMobile({ is_mobile: pageProps.is_mobile });
     // }
     // 임시
-    dispatch(setUserMobile({ is_mobile: true }));
+    dispatch(setUserMobile({ is_mobile: false }));
   }, []);
 
   useEffect(() => {
@@ -65,8 +65,46 @@ const _APP = ({ Component, pageProps }: AppProps) => {
     setRootPath(root_path);
 
     const local = window.localStorage;
-    if (!local.getItem('restaurant')) local.setItem('restaurant', JSON.stringify({ list: [] }));
-    if (!local.getItem('accommodation')) local.setItem('accommodation', JSON.stringify({ list: [] }));
+    if (!local.getItem('restaurant')) {
+      local.setItem('restaurant', JSON.stringify({ list: {} }));
+    } else {
+      const rest_list = local.getItem('restaurant');
+      if (rest_list) {
+        const rest_list_json: { list: { [key: string]: number[] } } = JSON.parse(rest_list);
+        const target_list = rest_list_json.list;
+
+        for (const key of Object.keys(target_list)) {
+          if (
+            new Date(key).getTime() <
+            new Date(new Date().setTime(new Date().getTime() - 1000 * 60 * 60 * 24 * 6)).getTime()
+          ) {
+            delete target_list[key];
+          }
+        }
+
+        local.setItem('restaurant', JSON.stringify({ list: target_list }));
+      }
+    }
+    if (!local.getItem('accommodation')) {
+      local.setItem('accommodation', JSON.stringify({ list: {} }));
+    } else {
+      const rest_list = local.getItem('accommodation');
+      if (rest_list) {
+        const rest_list_json: { list: { [key: string]: number[] } } = JSON.parse(rest_list);
+        const target_list = rest_list_json.list;
+
+        for (const key of Object.keys(target_list)) {
+          if (
+            new Date(key).getTime() <
+            new Date(new Date().setTime(new Date().getTime() - 1000 * 60 * 60 * 24 * 6)).getTime()
+          ) {
+            delete target_list[key];
+          }
+        }
+
+        local.setItem('accommodation', JSON.stringify({ list: target_list }));
+      }
+    }
   }, [router.pathname]);
 
   const Layout = () => {

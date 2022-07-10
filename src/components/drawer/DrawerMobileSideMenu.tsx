@@ -76,6 +76,7 @@ const ContentsBox = styled(Box)(({ theme }) => ({
     alignItems: 'center',
     justifyContent: 'center',
     gap: '0.5rem',
+    cursor: 'pointer',
     '&:nth-of-type(1)': {
       color: theme.palette.blue.main,
     },
@@ -104,6 +105,7 @@ const ListContentsBox = styled(Box)(({ theme }) => ({
     display: 'flex',
     alignItems: 'center',
     gap: '0.5rem',
+    cursor: 'pointer',
     '&:not(:last-of-type)': {
       borderBottom: '1px solid',
       borderColor: theme.palette.gray_5.main,
@@ -135,6 +137,7 @@ const AdminContentsBox = styled(Box)(({ theme }) => ({
     border: '1px solid',
     borderColor: theme.palette.gray_5.main,
     borderRadius: 6,
+    cursor: 'pointer',
   },
 }));
 
@@ -185,15 +188,37 @@ function DrawerMobileSideMenu(props: DrawerMobileSideMenuProps) {
       const local_accom = local.getItem('accommodation');
       const local_rest = local.getItem('restaurant');
       if (local_accom) {
-        const target = JSON.parse(local_accom);
-        if (target.list && target.list.length > 0) {
-          query.push(`accommodation=${target.list.join(',')}`);
+        const target: { list: { [key: string]: number[] } } = JSON.parse(local_accom);
+
+        if (target.list) {
+          const ids: number[] = [];
+          for (const key of [...Object.keys(target.list)]) {
+            console.log(target.list, key, target.list[key]);
+            if (target.list[key]) {
+              for (const id of target.list[key]) {
+                if (!ids.includes(id)) ids.push(id);
+              }
+            }
+          }
+
+          query.push(`accommodation=${ids.join(',')}`);
         }
       }
+
       if (local_rest) {
-        const target = JSON.parse(local_rest);
-        if (target.list && target.list.length > 0) {
-          query.push(`restaurant=${target.list.join(',')}`);
+        const target: { list: { [key: string]: number[] } } = JSON.parse(local_rest);
+
+        if (target.list) {
+          const ids: number[] = [];
+          for (const key of [...Object.keys(target.list)]) {
+            if (target.list[key]) {
+              for (const id of target.list[key]) {
+                if (!ids.includes(id)) ids.push(id);
+              }
+            }
+          }
+
+          query.push(`restaurant=${ids.join(',')}`);
         }
       }
 

@@ -10,6 +10,8 @@ import { styled } from '@mui/material/styles';
 import { useRouter } from 'next/router';
 import { RootState } from '../../store';
 import { useSelector } from 'react-redux';
+import DrawerMobileSideMenu from '../drawer/DrawerMobileSideMenu';
+import Button from '../button/Button';
 
 const CustomBox = styled(Box)(({ theme }) => ({
   position: 'sticky',
@@ -81,6 +83,7 @@ function AppHeader() {
   const user = useSelector((state: RootState) => state.userReducer);
 
   const [sticky, setSticky] = useState(false);
+  const [drawerOpen, setDrawerOpen] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -113,6 +116,10 @@ function AppHeader() {
       {
         label: '음식점',
         path: '/restaurant',
+      },
+      {
+        label: '일상',
+        path: '/daily',
       },
       {
         label: '더보기',
@@ -156,13 +163,16 @@ function AppHeader() {
             );
           } else {
             return (
-              <Dropdown
-                items={item.children}
-                title='더보기'
-                buttonDisabled={false}
-                onClick={moveMorePage}
-                key={`header_menu_${idx}`}
-              />
+              <Button disableRipple onClick={() => setDrawerOpen(true)}>
+                더보기
+              </Button>
+              // <Dropdown
+              //   items={item.children}
+              //   title='더보기'
+              //   buttonDisabled={false}
+              //   onClick={moveMorePage}
+              //   key={`header_menu_${idx}`}
+              // />
             );
           }
         })}
@@ -171,18 +181,26 @@ function AppHeader() {
   };
 
   return (
-    <CustomBox className={sticky && !user.is_mobile ? 'sticky' : ''}>
-      <CustomAppBar position='static'>
-        <CustomToolbar sx={{ justifyContent: !user.is_mobile ? 'space-between' : 'center' }}>
-          <LogoBox>logo</LogoBox>
-          {user.is_mobile ? null : (
-            <MenuBox>
-              <Menu />
-            </MenuBox>
-          )}
-        </CustomToolbar>
-      </CustomAppBar>
-    </CustomBox>
+    <>
+      <CustomBox className={sticky && !user.is_mobile ? 'sticky' : ''}>
+        <CustomAppBar position='static'>
+          <CustomToolbar sx={{ justifyContent: !user.is_mobile ? 'space-between' : 'center' }}>
+            <LogoBox>logo</LogoBox>
+            {user.is_mobile ? null : (
+              <MenuBox>
+                <Menu />
+              </MenuBox>
+            )}
+          </CustomToolbar>
+        </CustomAppBar>
+      </CustomBox>
+      <DrawerMobileSideMenu
+        open={drawerOpen}
+        onClose={() => {
+          setDrawerOpen(false);
+        }}
+      />
+    </>
   );
 }
 

@@ -253,11 +253,15 @@ export const setLookedUpList = (type: string, id: number) => {
 
   const cur_item = local.getItem(type);
   if (cur_item) {
-    const item_json: { list: number[] } = JSON.parse(cur_item);
+    const item_json: { list: { [key: string]: number[] } } = JSON.parse(cur_item);
+    const postdate = getDate(`${new Date()}`);
+    console.log(item_json.list);
+    if (!item_json.list[`${postdate}`]) {
+      item_json.list[`${postdate}`] = [];
+    }
 
-    if (!item_json.list.includes(id)) {
-      const postdate = getDate(`${new Date()}`);
-      item_json.list.push(id);
+    if (!item_json.list[`${postdate}`].includes(id)) {
+      item_json.list[`${postdate}`].push(id);
 
       local.setItem(type, JSON.stringify(item_json));
       fetchPostApi(`/${type}/${id}/count`, {});

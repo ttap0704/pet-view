@@ -1,4 +1,10 @@
-import { GetStaticPaths, GetStaticPathsContext, GetStaticProps, GetStaticPropsContext } from 'next';
+import {
+  GetServerSidePropsContext,
+  GetStaticPaths,
+  GetStaticPathsContext,
+  GetStaticProps,
+  GetStaticPropsContext,
+} from 'next';
 
 import { Box, useMediaQuery, useTheme } from '@mui/material';
 import { useEffect, useState, Fragment } from 'react';
@@ -12,6 +18,7 @@ import LabelList from '../../src/components/label/LabelList';
 import ContainerList from '../../src/components/container/ContainerList';
 import SearchBox from '../../src/components/common/SearchBox';
 import CardEmpty from '../../src/components/card/CardEmpty';
+import Button from '../../src/components/button/Button';
 
 interface RecentListType {
   accommodation_images?: { file_name: string }[];
@@ -78,18 +85,27 @@ const UserRecent = (props: { list: RecentListType[]; style: { [key: string]: str
           <CardEmpty />
         )}
       </ContainerList>
+      <Button>hihi</Button>
     </RecentContainer>
   );
 };
 
-export const getStaticProps: GetStaticProps = async (context: GetStaticPropsContext) => {
-  console.log(context);
-  const accom_data: RecentListType[] = await fetchGetApi(`/accommodation?recent=0`);
-  const rest_data: RecentListType[] = await fetchGetApi(`/restaurant`);
-  const data = [...accom_data, ...rest_data];
+export async function getServerSideProps(context: GetServerSidePropsContext) {
+  const { query } = context;
+  const { headers } = context.req;
+
+  let recent_data: RecentListType[] = [];
+  if (query.accommodation) {
+    const accom_data: RecentListType[] = await fetchGetApi(`/accommodation?recent=${query.accommodation.toString()}`);
+    recent_data = [...recent_data, ...accom_data];
+  }
+  if (query.restaurant) {
+    const rest_data: RecentListType[] = await fetchGetApi(`/restaurant?recent=${query.restaurant.toString()}`);
+    recent_data = [...recent_data, ...rest_data];
+  }
 
   const list: RecentListType[] = [];
-  for await (const item of data) {
+  for await (const item of recent_data) {
     let image_list: ImageListType[] = [];
     if (item.accommodation_images) {
       image_list = await setImageArray(item.accommodation_images);
@@ -107,6 +123,6 @@ export const getStaticProps: GetStaticProps = async (context: GetStaticPropsCont
       list: list,
     },
   };
-};
+}
 
 export default UserRecent;
