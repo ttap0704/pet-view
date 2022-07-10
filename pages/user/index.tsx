@@ -83,7 +83,7 @@ const InfoBox = styled(Box)(({ theme }) => ({
 
 const UserTextField = styled(TextField)(({ theme }) => ({
   '.MuiInputBase-input': {
-    padding: '1.5rem 0',
+    padding: '1.5rem 0 1.5rem 0.5rem',
 
     '&:read-only': {
       backgroundColor: theme.palette.gray_6.main,
@@ -132,7 +132,6 @@ const UserIndex = () => {
       tmp_contents[1].value = user.nickname;
       tmp_contents[2].value = user.phone ?? '';
 
-      console.log(user);
       setOriginProfilePath(user.profile_path ?? '');
       setCurrentProfilePath(user.profile_path ?? '');
 
@@ -302,7 +301,6 @@ const UserIndex = () => {
 export async function getServerSideProps(context: GetServerSidePropsContext) {
   const { query } = context;
   const { headers } = context.req;
-  console.log(headers, 'index');
 
   if (typeof query.uid == 'string' && Number(query.uid) > 0) {
     return {

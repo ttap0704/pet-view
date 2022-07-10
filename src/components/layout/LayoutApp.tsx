@@ -8,6 +8,7 @@ import { useRouter } from 'next/router';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../store';
 import { GetServerSidePropsContext } from 'next';
+import ProgressBar from '../common/ProgressBar';
 
 interface LayoutAppProps {
   children: React.ReactNode;
@@ -28,6 +29,7 @@ const ChildrenBox = styled(Box)(({ theme }) => ({
 
 const LayoutApp = (props: LayoutAppProps) => {
   const user = useSelector((state: RootState) => state.userReducer);
+  const progress = useSelector((state: RootState) => state.progressReducer);
   const router = useRouter();
   const children = props.children;
   const [loading, setLoading] = useState(false);
@@ -42,9 +44,7 @@ const LayoutApp = (props: LayoutAppProps) => {
     };
   }, []);
 
-  useEffect(() => {
-    console.log(router.pathname);
-  }, [router.pathname]);
+  useEffect(() => {}, [router.pathname]);
 
   return (
     <>
@@ -52,6 +52,7 @@ const LayoutApp = (props: LayoutAppProps) => {
       <ChildrenBox className={user.is_mobile ? 'mobile' : 'pc'}>{children}</ChildrenBox>
       {user.is_mobile ? <MobileBottomNavigation /> : null}
       {loading ? <LoadingDot /> : null}
+      {progress.loading ? <ProgressBar /> : null}
     </>
   );
 };

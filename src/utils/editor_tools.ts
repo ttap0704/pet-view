@@ -1,5 +1,5 @@
 const imageHandler = () => {
-  console.log('hi')
+  //
 }
 
 export const toolbar = {

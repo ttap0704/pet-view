@@ -64,9 +64,9 @@ const _APP = ({ Component, pageProps }: AppProps) => {
     const root_path = router.pathname.split('/')[1];
     setRootPath(root_path);
 
-    const session = window.sessionStorage;
-    if (!session.getItem('restaurant')) session.setItem('restaurant', JSON.stringify({ list: [] }));
-    if (!session.getItem('accommodation')) session.setItem('accommodation', JSON.stringify({ list: [] }));
+    const local = window.localStorage;
+    if (!local.getItem('restaurant')) local.setItem('restaurant', JSON.stringify({ list: [] }));
+    if (!local.getItem('accommodation')) local.setItem('accommodation', JSON.stringify({ list: [] }));
   }, [router.pathname]);
 
   const Layout = () => {
@@ -113,7 +113,6 @@ const _APP = ({ Component, pageProps }: AppProps) => {
           <Layout />
         </ModalProvider>
       </ThemeProvider>
-      {/* <script src='/node_modules/quill-image-resize-module/image-resize.min.js'></script> */}
     </>
   );
 };

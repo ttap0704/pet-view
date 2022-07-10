@@ -176,6 +176,39 @@ function DrawerMobileSideMenu(props: DrawerMobileSideMenuProps) {
     window.location.reload();
   };
 
+  const moveLikePage = (idx: number) => {
+    if (idx == 0) {
+      const local = window.localStorage;
+
+      let url = `/user/recent`;
+      let query: string[] = [];
+      const local_accom = local.getItem('accommodation');
+      const local_rest = local.getItem('restaurant');
+      if (local_accom) {
+        const target = JSON.parse(local_accom);
+        if (target.list && target.list.length > 0) {
+          query.push(`accommodation=${target.list.join(',')}`);
+        }
+      }
+      if (local_rest) {
+        const target = JSON.parse(local_rest);
+        if (target.list && target.list.length > 0) {
+          query.push(`restaurant=${target.list.join(',')}`);
+        }
+      }
+
+      if (query.length > 0) {
+        url += `?${query.join('&')}`;
+      }
+
+      console.log(url);
+
+      router.push(url);
+    } else {
+      console.log('heart');
+    }
+  };
+
   return (
     <DrawerDefault anchor='right' open={open} onClose={onClose}>
       <MenuBox>
@@ -191,7 +224,7 @@ function DrawerMobileSideMenu(props: DrawerMobileSideMenuProps) {
             <ContentsBox>
               {contents.map((content, content_idx) => {
                 return (
-                  <Box key={`mobile_content_${content_idx}`}>
+                  <Box key={`mobile_content_${content_idx}`} onClick={() => moveLikePage(content_idx)}>
                     {content.icon}
                     <Typography component='span'>{content.label}</Typography>
                   </Box>

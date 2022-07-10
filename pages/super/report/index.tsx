@@ -57,7 +57,6 @@ const SuperReport = () => {
         if (target.category == '댓글') {
           openCommentCheckModal(cur_target_id);
         }
-        console.log();
         // window.open(data.table_items[data.clicked_row_button_idx].target_id);
       }
     }

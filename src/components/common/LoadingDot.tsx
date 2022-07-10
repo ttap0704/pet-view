@@ -3,13 +3,12 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../../store';
 
 const LoadingWrap = styled(Box)(({ theme }) => ({
-  '&.app': {
-    width: '100vw',
-    height: '100vh',
-    position: 'fixed',
-    top: '0',
-    left: '0',
-  },
+  width: '100vw',
+  height: '100vh',
+  position: 'fixed',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
 }));
 
 const LoadingContainer = styled(Box)(({ theme }) => ({

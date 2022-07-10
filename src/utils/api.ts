@@ -74,8 +74,7 @@ function setToken(res: any, ctx?: NextPageContext) {
       document.cookie = `a-token=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;`;
       document.cookie = `a-token=${res.new_token}; expires=${three_month_later}; path=/`;
     }
-  } else if (ctx) {
-    console.log(res, 'new_token')
+  } else if (ctx && ctx.res) {
     if (res.new_token) {
       ctx.res.setHeader('Set-Cookie', `a-token=; path=/; expires=-1`)
       ctx.res.setHeader('Set-Cookie', serialize('a-token', `${res.new_token}`))

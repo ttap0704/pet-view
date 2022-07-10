@@ -2,9 +2,11 @@ import { AnyAction, CombinedState, combineReducers } from 'redux'
 import { HYDRATE } from 'next-redux-wrapper'
 
 import userReducer from './slices/user'
+import progressReducer from './slices/progress'
 
 export interface IState {
-	userReducer: StoreUserType
+	userReducer: StoreUserType,
+	progressReducer: ProgressType
 }
 // models
 
@@ -16,6 +18,7 @@ const rootReducer = (state: IState, action: AnyAction): CombinedState<IState> =>
 			const combineReducer = combineReducers({
 				// models
 				userReducer,
+				progressReducer
 			})
 			return combineReducer(state, action)
 	}

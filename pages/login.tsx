@@ -28,7 +28,6 @@ const LoginIndex = () => {
     const login_res = await fetchPostApi('/users/login', login_data);
     if (login_res.pass) {
       const user: UserType = login_res.user;
-      console.log(`http://localhost:3080${user.profile_path}`);
       const saved_user = {
         ...user,
         uid: user.id,

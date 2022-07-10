@@ -131,7 +131,7 @@ function AppHeader() {
     const moveMorePage = (idx: number) => {
       if (idx == 0) {
         if (user.uid > 0) {
-          router.push('/user');
+          router.push({ pathname: '/user', query: { uid: user.uid } });
         } else {
           router.push('/login');
         }

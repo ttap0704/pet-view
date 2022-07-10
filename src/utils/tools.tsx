@@ -249,9 +249,9 @@ export const setSearchQuery = (items: SearchItems): string => {
 };
 
 export const setLookedUpList = (type: string, id: number) => {
-  const session = window.sessionStorage;
+  const local = window.localStorage;
 
-  const cur_item = session.getItem(type);
+  const cur_item = local.getItem(type);
   if (cur_item) {
     const item_json: { list: number[] } = JSON.parse(cur_item);
 
@@ -259,7 +259,7 @@ export const setLookedUpList = (type: string, id: number) => {
       const postdate = getDate(`${new Date()}`);
       item_json.list.push(id);
 
-      session.setItem(type, JSON.stringify(item_json));
+      local.setItem(type, JSON.stringify(item_json));
       fetchPostApi(`/${type}/${id}/count`, {});
     }
   }

@@ -16,6 +16,10 @@ interface StoreUserType extends UserType {
   is_mobile: boolean;
 }
 
+interface ProgressType {
+  loading: boolean
+}
+
 interface RadioModalContentsDataType {
   visible: boolean;
   title: string;
@@ -122,6 +126,7 @@ interface DailyType {
   created_at: string;
   image_list: ImageType[];
   nickname: string;
+  profile_path: string
 }
 
 interface CommentType {
@@ -132,6 +137,7 @@ interface CommentType {
   category: number;
   created_at: string;
   nickname: string;
+  profile_path: string;
 }
 
 declare module 'react-quill';
