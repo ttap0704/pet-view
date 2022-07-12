@@ -13,6 +13,8 @@ import CardNotice from '../../src/components/card/CardNotice';
 import ImageExposureMenuList from '../../src/components/image/ImageExposureMenuList';
 import KakaoMap from '../../src/components/common/KakaoMap';
 import ListEntireMenuView from '../../src/components/list/ListEntireMenuView';
+import UtilBox from '../../src/components/common/UtilBox';
+import ButtonLike from '../../src/components/button/ButtonLike';
 
 type Props = {
   detail: RestaurantResponse;
@@ -141,6 +143,9 @@ const RestaurantDetail = (props: { detail: RestaurantResponse; style: { [key: st
   return (
     <RestaurantContainer>
       <ContainerRegistrationItem title=''>
+        <UtilBox justifyContent='flex-end' sx={{ height: '2.5rem' }}>
+          <ButtonLike targetId={props.detail.id} category='restaurant' categoryId={1} />
+        </UtilBox>
         <ExposureBox>
           <Box
             sx={{

@@ -8,7 +8,6 @@ interface UserType {
   profile_path: string | null;
   type: number;
   certification: number;
-  likes: { [key: string]: number[] }
 }
 
 

@@ -59,9 +59,9 @@ function ButtonKaKaoLogin() {
           ...user,
           uid: user.id,
           profile_path: user.profile_path ? `http://localhost:3080${user.profile_path}` : '',
-          likes: await fetchGetApi(`/users/${user.id}/like-product`),
         };
         sessionStorage.setItem('user', JSON.stringify({ ...saved_user }));
+        sessionStorage.setItem('likes', JSON.stringify({ ...(await fetchGetApi(`/users/${user.id}/like-product`)) }));
         dispatch(setUser({ ...saved_user }));
         modal_notice.openModalNotice(`${user.nickname}님 환영합니다!`, () => {
           router.push('/');

@@ -363,18 +363,29 @@ export const setYearContents = () => {
   return years.reverse();
 };
 
-export const handleLike = (user_id: number, category: number, target_id: number) => {
+export const handleLike = (user_id: number, category: number, target_id: number, like: boolean) => {
   return new Promise(async (resolve, reject) => {
-    const create_data = {
+    const like_data = {
       user_id,
       category,
       target_id,
     };
-    const like_res = await fetchPostApi(`/users/like-product`, create_data);
-    if (like_res.id && like_res.id > 0) {
-      resolve(true);
+    if (like) {
+      const like_res = await fetchPostApi(`/users/like-product`, like_data);
+      if (like_res.id && like_res.id > 0) {
+        resolve(true);
+      } else {
+        resolve(false);
+      }
     } else {
-      resolve(false);
+      const like_res = await fetchPostApi(`/users/like-product/cancel`, like_data);
+      resolve(like_res);
     }
   });
+};
+
+export const saveLikes = (likes: { [key: string]: number[] }) => {
+  const session = window.sessionStorage;
+  const session_likes = session.getItem('likes');
+  session.setItem('likes', JSON.stringify(likes));
 };

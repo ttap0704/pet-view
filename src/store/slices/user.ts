@@ -13,7 +13,6 @@ const initialState: StoreUserType = {
   type: 0,
   certification: 0,
   is_mobile: false,
-  likes: {}
 };
 
 const userSlice = createSlice({
@@ -45,7 +44,6 @@ const userSlice = createSlice({
       state.wrong_num = action.payload.wrong_num;
       state.type = action.payload.type;
       state.certification = action.payload.certification;
-      state.likes = action.payload.likes;
     },
     setUserMobile(state, action: PayloadAction<{ is_mobile: boolean }>) {
       state.is_mobile = action.payload.is_mobile;
@@ -55,7 +53,7 @@ const userSlice = createSlice({
     },
     setUserProfilePath(state, action: { payload: { profile_path: string | null } }) {
       state.profile_path = action.payload.profile_path;
-    }
+    },
   },
   extraReducers: {
     [HYDRATE]: (state, action) => {
