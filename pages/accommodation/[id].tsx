@@ -3,10 +3,19 @@ import { ParsedUrlQuery } from 'querystring';
 import { Box } from '@mui/material';
 import { useEffect, useState, useContext } from 'react';
 import { styled } from '@mui/material/styles';
-import { setImageArray, getSeasonPriceKey, getNoticeContents, setLookedUpList } from '../../src/utils/tools';
+import {
+  setImageArray,
+  getSeasonPriceKey,
+  getNoticeContents,
+  setLookedUpList,
+  handleLike,
+} from '../../src/utils/tools';
 import { fetchGetApi } from '../../src/utils/api';
 import { ModalContext } from '../../src/provider/ModalProvider';
 import { season_notice } from '../../src/utils/notice_contents';
+import { HiChevronDown, HiChevronUp, HiOutlineDotsVertical } from 'react-icons/hi';
+import { AiOutlineHeart, AiFillHeart } from 'react-icons/ai';
+import { IoMdHeart } from 'react-icons/io';
 
 import ImageBox from '../../src/components/image/ImageBox';
 import LabelDetailTitle from '../../src/components/label/LabelDetailTitle';
@@ -17,6 +26,9 @@ import Tabs from '../../src/components/tabs/Tabs';
 import TableRoomsPrice from '../../src/components/table/TableRoomsPrice';
 import CardNotice from '../../src/components/card/CardNotice';
 import KakaoMap from '../../src/components/common/KakaoMap';
+import UtilBox from '../../src/components/common/UtilBox';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../src/store';
 
 type Props = {
   detail: AccommodationResponse;
@@ -75,6 +87,24 @@ const InfoCardBox = styled(Box)(({ theme }) => ({
   },
 }));
 
+const UserBox = styled(Box)(({ theme }) => ({
+  height: '2.5rem',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'flex-end',
+  width: '100%',
+  gap: '0.5rem',
+  svg: {
+    width: '1.25rem',
+    height: '1.25rem',
+    cursor: 'pointer',
+
+    '&.active': {
+      color: theme.palette.orange.main,
+    },
+  },
+}));
+
 const AccommodationRoomsDetail = (props: { rooms: DetailRoomsType[]; info: { address: string; label: string } }) => {
   const rooms = props.rooms;
   const info = props.info;
@@ -118,6 +148,9 @@ const AccommodationInfoDetail = (props: { detail: AccommodationInfoDetailType })
 };
 
 const AccommodationDetail = (props: { detail: AccommodationResponse; style: { [key: string]: string } }) => {
+  const user = useSelector((state: RootState) => state.userReducer);
+  const { modal_alert } = useContext(ModalContext);
+
   const [isMounted, setIsMounted] = useState(false);
   const [exposureImages, setExposureImages] = useState<ImageListType[]>([]);
   const [accommodationLabel, setAccommodationLabel] = useState('');
@@ -240,9 +273,33 @@ const AccommodationDetail = (props: { detail: AccommodationResponse; style: { [k
     });
   };
 
+  const likeProduct = async () => {
+    if (user.uid > 0) {
+      const like_res = await handleLike(user.uid, 2, props.detail.id);
+      if (like_res) {
+        const get_res = await fetchGetApi(`/users/${user.uid}/like-product`);
+        console.log(get_res);
+        modal_alert.openModalAlert('성공적으로 좋아요를 눌렀습니다!');
+      } else {
+        modal_alert.openModalAlert('오류로 인해 실패하였습니다.\r\n다시 시도해주세요.');
+      }
+    } else {
+      modal_alert.openModalAlert('로그인 후 눌러주세요!');
+    }
+  };
+
   return (
     <AccommodationContainer>
       <ContainerRegistrationItem title=''>
+        <UserBox justifyContent='flex-end'>
+          {user.likes['accommodation'] && user.likes['accommodation'].includes(props.detail.id) ? (
+            <AiOutlineHeart onClick={likeProduct} />
+          ) : (
+            <AiFillHeart onClick={likeProduct} className='active' />
+          )}
+
+          <HiOutlineDotsVertical />
+        </UserBox>
         <ExposureBox>
           <Box
             sx={{

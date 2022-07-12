@@ -7,7 +7,7 @@ import { setUser } from '../src/store/slices/user';
 import LayoutLogin from '../src/components/layout/LayoutLogin';
 
 import { ModalContext } from '../src/provider/ModalProvider';
-import { fetchPostApi } from '../src/utils/api';
+import { fetchGetApi, fetchPostApi } from '../src/utils/api';
 
 const LoginIndex = () => {
   const router = useRouter();
@@ -32,6 +32,7 @@ const LoginIndex = () => {
         ...user,
         uid: user.id,
         profile_path: user.profile_path ? `http://localhost:3080${user.profile_path}` : '',
+        likes: await fetchGetApi(`/users/${user.id}/like-product`),
       };
       sessionStorage.setItem('user', JSON.stringify({ ...saved_user }));
       dispatch(setUser({ ...saved_user }));

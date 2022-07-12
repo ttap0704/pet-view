@@ -225,9 +225,6 @@ function DrawerMobileSideMenu(props: DrawerMobileSideMenuProps) {
       if (query.length > 0) {
         url += `?${query.join('&')}`;
       }
-
-      console.log(url);
-
       router.push(url);
     } else {
       console.log('heart');

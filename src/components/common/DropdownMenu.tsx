@@ -60,6 +60,7 @@ const DropdownMenu = (props: DropdownMenuProps) => {
 
   return (
     <StyledMenu
+      dir='right'
       id='demo-customized-menu'
       MenuListProps={{
         'aria-labelledby': 'demo-customized-button',

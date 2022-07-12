@@ -59,6 +59,7 @@ function ButtonKaKaoLogin() {
           ...user,
           uid: user.id,
           profile_path: user.profile_path ? `http://localhost:3080${user.profile_path}` : '',
+          likes: await fetchGetApi(`/users/${user.id}/like-product`),
         };
         sessionStorage.setItem('user', JSON.stringify({ ...saved_user }));
         dispatch(setUser({ ...saved_user }));

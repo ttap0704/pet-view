@@ -362,3 +362,19 @@ export const setYearContents = () => {
 
   return years.reverse();
 };
+
+export const handleLike = (user_id: number, category: number, target_id: number) => {
+  return new Promise(async (resolve, reject) => {
+    const create_data = {
+      user_id,
+      category,
+      target_id,
+    };
+    const like_res = await fetchPostApi(`/users/like-product`, create_data);
+    if (like_res.id && like_res.id > 0) {
+      resolve(true);
+    } else {
+      resolve(false);
+    }
+  });
+};

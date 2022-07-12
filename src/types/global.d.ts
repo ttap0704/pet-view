@@ -8,6 +8,7 @@ interface UserType {
   profile_path: string | null;
   type: number;
   certification: number;
+  likes: { [key: string]: number[] }
 }
 
 
@@ -138,6 +139,17 @@ interface CommentType {
   created_at: string;
   nickname: string;
   profile_path: string;
+}
+
+interface UserProductType {
+  accommodation_images?: { file_name: string }[];
+  restaurant_images?: { file_name: string }[];
+  bname: string;
+  id: number;
+  label: string;
+  sigungu: string;
+  sido: string;
+  image_list: ImageListType[];
 }
 
 declare module 'react-quill';
