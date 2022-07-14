@@ -72,7 +72,7 @@ const LayoutUserProducts = (props: { list: UserProductType[]; title: string }) =
   return (
     <>
       <RecentContainer>
-        <UtilBox sx={{ maxWidth: '42rem', alignItems: 'flex-start', height: '2.5rem' }}>
+        <UtilBox sx={{ maxWidth: '42rem', alignItems: 'center', height: '2.5rem' }}>
           <Typography component='span' sx={{ fontSize: '1.2rem', fontWeight: '600' }}>
             {props.title}
           </Typography>

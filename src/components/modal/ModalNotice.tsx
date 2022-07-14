@@ -9,8 +9,9 @@ import { ModalContext } from '../../provider/ModalProvider';
 
 const ModalNoticeBox = styled(Box)(({ theme }) => ({
   fontSize: '0.9rem',
-  padding: '2rem 4rem',
-  border: '4px solid',
+  minWidth: '20rem',
+  padding: '2rem 0',
+  border: '1px solid',
   borderColor: theme.palette.orange.main,
   backgroundColor: theme.palette.white.main,
   color: theme.palette.gray_1.main,

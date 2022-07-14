@@ -31,9 +31,7 @@ const excepted_path = [
 ];
 
 const _APP = ({ Component, pageProps }: AppProps) => {
-  const user = useSelector((state: RootState) => state.userReducer);
   const dispatch = useDispatch();
-  const { modal_alert } = useContext(ModalContext);
 
   const router = useRouter();
   const [rootPath, setRootPath] = useState('');
@@ -43,7 +41,11 @@ const _APP = ({ Component, pageProps }: AppProps) => {
       dispatch(resetUser());
       window.sessionStorage.removeItem('user');
     } else {
-      if (!excepted_path.includes(router.pathname) && !user.uid) {
+      const cookies = document.cookie;
+      if (!cookies.includes('a-token')) {
+        sessionStorage.removeItem('user');
+        dispatch(resetUser());
+      } else {
         const session_user = sessionStorage.getItem('user');
         if (session_user) {
           const session: UserType = JSON.parse(session_user);
@@ -57,7 +59,7 @@ const _APP = ({ Component, pageProps }: AppProps) => {
     //   setUserMobile({ is_mobile: pageProps.is_mobile });
     // }
     // 임시
-    dispatch(setUserMobile({ is_mobile: false }));
+    dispatch(setUserMobile({ is_mobile: true }));
   }, []);
 
   useEffect(() => {
@@ -175,27 +177,33 @@ _APP.getInitialProps = async (appContext: AppContext) => {
           type = 'super';
         }
         const token_res = await fetchGetApi(`/auth?type=${type}`, context);
-        if (token_res.statusCode && token_res.statusCode == 401) {
-          const new_token_res = await fetchPostApi('/auth/token', { token: cookie[0].replace('a-token=', '') });
-          const three_month_later = new Date(new Date().setMonth(new Date().getMonth() + 3)).toUTCString();
+        if (token_res.statusCode) {
+          if (token_res.statusCode == 401) {
+            const new_token_res = await fetchPostApi('/auth/token', { token: cookie[0].replace('a-token=', '') });
+            const three_month_later = new Date(new Date().setMonth(new Date().getMonth() + 3)).toUTCString();
 
-          if (new_token_res.pass && new_token_res.new_token) {
-            appContext.ctx.res.setHeader(
-              'Set-Cookie',
-              `a-token=${new_token_res.new_token}; expires=${three_month_later}; path=/`,
-            );
-          } else {
-            appProps.pageProps.token_expires = true;
+            if (new_token_res.pass && new_token_res.new_token) {
+              appContext.ctx.res.setHeader(
+                'Set-Cookie',
+                `a-token=${new_token_res.new_token}; expires=${three_month_later}; path=/`,
+              );
+            } else {
+              appProps.pageProps.token_expires = true;
 
-            const check_redirect = await checkAppRedirect(path);
-            if (check_redirect.redirect_state) {
-              appContext.ctx.res.setHeader('Set-Cookie', `a-token=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;`);
-              appContext.ctx.res.writeHead(307, { Location: check_redirect.redirect.destination });
-              appContext.ctx.res.end();
+              const check_redirect = await checkAppRedirect(path);
+              if (check_redirect.redirect_state) {
+                appContext.ctx.res.setHeader('Set-Cookie', `a-token=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;`);
+                appContext.ctx.res.writeHead(307, { Location: check_redirect.redirect.destination });
+                appContext.ctx.res.end();
+              }
             }
-          }
 
-          appContext.ctx.res.end();
+            appContext.ctx.res.end();
+          } else if (token_res.statusCode == 403) {
+            appContext.ctx.res.setHeader('Set-Cookie', `a-token=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;`);
+            appContext.ctx.res.writeHead(307, { Location: '/' });
+            appContext.ctx.res.end();
+          }
         }
       } else {
         const check_redirect = await checkAppRedirect(path);

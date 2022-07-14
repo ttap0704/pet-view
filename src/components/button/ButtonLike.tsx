@@ -52,7 +52,6 @@ const ButtonLike = (props: ButtonLikeProps) => {
       const like_res = await handleLike(uid, category_id, target_id, true);
       if (like_res) {
         const get_res: { [key: string]: number[] } = await fetchGetApi(`/users/${uid}/like-product`);
-        modal_alert.openModalAlert('성공적으로 좋아요를 눌렀습니다!');
         saveLikes(get_res);
 
         const tmp_likes = { ...likes };
@@ -76,7 +75,6 @@ const ButtonLike = (props: ButtonLikeProps) => {
       const like_res = await handleLike(uid, category_id, target_id, false);
       if (like_res) {
         const get_res: { [key: string]: number[] } = await fetchGetApi(`/users/${uid}/like-product`);
-        modal_alert.openModalAlert('성공적으로 좋아요를 취소하였습니다.');
         saveLikes(get_res);
         console.log(get_res);
 
