@@ -135,23 +135,6 @@ function AppHeader() {
       }
     }, [user]);
 
-    const moveMorePage = (idx: number) => {
-      if (idx == 0) {
-        if (user.uid > 0) {
-          router.push({ pathname: '/user', query: { uid: user.uid } });
-        } else {
-          router.push('/login');
-        }
-      } else if (idx == 1) {
-        router.push('/notice');
-      } else if (idx == 2) {
-        router.push('/daily');
-      } else if (idx == 3) {
-        window.sessionStorage.removeItem('user');
-        window.location.reload();
-      }
-    };
-
     return (
       <>
         {header_items.map((item, idx) => {
@@ -163,16 +146,9 @@ function AppHeader() {
             );
           } else {
             return (
-              <Button disableRipple onClick={() => setDrawerOpen(true)}>
+              <Button disableRipple onClick={() => setDrawerOpen(true)} key={`header_menu_${idx}`}>
                 더보기
               </Button>
-              // <Dropdown
-              //   items={item.children}
-              //   title='더보기'
-              //   buttonDisabled={false}
-              //   onClick={moveMorePage}
-              //   key={`header_menu_${idx}`}
-              // />
             );
           }
         })}

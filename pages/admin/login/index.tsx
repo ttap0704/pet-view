@@ -29,7 +29,7 @@ const LoginIndex = () => {
       return;
     }
 
-    const login_res = await fetchPostApi('/users/login', login_data);
+    const login_res = await fetchPostApi('/admin/login', login_data);
     if (login_res.pass) {
       const user: UserType = login_res.user;
       const saved_user = {
@@ -45,6 +45,8 @@ const LoginIndex = () => {
       let message = '';
       if (login_res.message == 'Before Certification') {
         message = '이메일 인증 완료 후\r\n로그인 해주세요.';
+      } else if (login_res.message == 'Not Admin') {
+        message = '접근 권한이 없습니다.';
       } else {
         message = '아이디 또는 비밀번호가 틀렸습니다.';
       }

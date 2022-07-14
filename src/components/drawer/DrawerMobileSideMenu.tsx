@@ -227,7 +227,37 @@ function DrawerMobileSideMenu(props: DrawerMobileSideMenuProps) {
       }
       router.push(url);
     } else {
-      console.log('heart');
+      const session = window.sessionStorage;
+      const likes = session.getItem('likes');
+
+      let url = `/user/likes`;
+      let query: string[] = [];
+      if (likes) {
+        const likes_json = JSON.parse(likes);
+
+        if (likes_json.accommodation) {
+          const ids: number[] = [];
+          for (const id of likes_json.accommodation) {
+            if (!ids.includes(id)) ids.push(id);
+          }
+
+          query.push(`accommodation=${ids.join(',')}`);
+        }
+
+        if (likes_json.restaurant) {
+          const ids: number[] = [];
+          for (const id of likes_json.restaurant) {
+            if (!ids.includes(id)) ids.push(id);
+          }
+
+          query.push(`restaurant=${ids.join(',')}`);
+        }
+      }
+
+      if (query.length > 0) {
+        url += `?${query.join('&')}`;
+      }
+      router.push(url);
     }
   };
 

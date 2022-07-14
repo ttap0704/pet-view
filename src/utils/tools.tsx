@@ -270,6 +270,7 @@ export const setLookedUpList = (type: string, id: number) => {
 };
 
 export async function checkAppRedirect(path: string) {
+  console.log(path);
   let redirect_state = false;
   let redirect = {
     permanent: false,

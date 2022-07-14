@@ -168,7 +168,13 @@ _APP.getInitialProps = async (appContext: AppContext) => {
     if (headers.cookie) {
       const cookie = headers.cookie.split('; ').filter(item => item.includes('a-token'));
       if (cookie.length > 0) {
-        const token_res = await fetchGetApi('/auth', context);
+        let type = '';
+        if (path.includes('admin')) {
+          type = 'admin';
+        } else if (path.includes('super')) {
+          type = 'super';
+        }
+        const token_res = await fetchGetApi(`/auth?type=${type}`, context);
         if (token_res.statusCode && token_res.statusCode == 401) {
           const new_token_res = await fetchPostApi('/auth/token', { token: cookie[0].replace('a-token=', '') });
           const three_month_later = new Date(new Date().setMonth(new Date().getMonth() + 3)).toUTCString();
@@ -183,11 +189,10 @@ _APP.getInitialProps = async (appContext: AppContext) => {
 
             const check_redirect = await checkAppRedirect(path);
             if (check_redirect.redirect_state) {
+              appContext.ctx.res.setHeader('Set-Cookie', `a-token=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;`);
               appContext.ctx.res.writeHead(307, { Location: check_redirect.redirect.destination });
               appContext.ctx.res.end();
             }
-
-            appContext.ctx.res.setHeader('Set-Cookie', `a-token=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;`);
           }
 
           appContext.ctx.res.end();
@@ -195,6 +200,7 @@ _APP.getInitialProps = async (appContext: AppContext) => {
       } else {
         const check_redirect = await checkAppRedirect(path);
         if (check_redirect.redirect_state) {
+          appContext.ctx.res.setHeader('Set-Cookie', `a-token=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;`);
           appContext.ctx.res.writeHead(307, { Location: check_redirect.redirect.destination });
           appContext.ctx.res.end();
         }

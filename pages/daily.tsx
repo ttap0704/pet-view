@@ -20,6 +20,8 @@ import ModalRadio from '../src/components/modal/ModalRadio';
 import DrawerDefault from '../src/components/drawer/DrawerDefault';
 import { startProgress, stopProgress } from '../src/store/slices/progress';
 import InfiniteScroll from 'react-infinite-scroll-component';
+import { MdPets } from 'react-icons/md';
+import InputTemporary from '../src/components/input/InputTemporary';
 
 const DailyContainer = styled(Box)(({ theme }) => ({
   width: '100%',
@@ -100,6 +102,24 @@ const ProfileBox = styled(Box)(({ theme }) => ({
     backgroundPosition: 'center',
     backgroundSize: 'cover',
     borderRadius: '50%',
+    position: 'relative',
+    border: '1px solid',
+    borderColor: theme.palette.gray_4.main,
+    '.default_profile': {
+      '&.daily': {
+        width: '1.3rem',
+        height: '1.3rem',
+      },
+      '&.comment': {
+        width: '1.1rem',
+        height: '1.1rem',
+      },
+
+      position: 'absolute',
+      top: '50%',
+      left: '50%',
+      transform: 'translate(-50%, -50%)',
+    },
   },
 
   '& > span': {
@@ -295,6 +315,7 @@ const Daily = () => {
     title: '신고 사유',
     contents: [],
   });
+  const [commentObject, setCommentObject] = useState<{ [key: string]: string }>({});
 
   const cur_page = useRef(1);
   const has_more = useRef(true);
@@ -308,7 +329,10 @@ const Daily = () => {
     });
 
     const addDailyContents = () => {
-      if (window.scrollY + window.innerHeight >= document.body.getBoundingClientRect().height && has_more.current) {
+      if (
+        window.scrollY + window.innerHeight >= document.body.getBoundingClientRect().height - 20 &&
+        has_more.current
+      ) {
         has_more.current = false;
         getDailyList(cur_page.current + 1);
       }
@@ -447,6 +471,9 @@ const Daily = () => {
   };
 
   const handleComment = (value: string, idx: number) => {
+    // const tmp_comment_obj = { ...commentObject };
+    // tmp_comment_obj[`${idx}`] = value;
+    // setCommentObject({ ...tmp_comment_obj });
     const tmp_comment = { ...comment };
     tmp_comment[idx] = value;
     setComment({ ...tmp_comment });
@@ -624,7 +651,11 @@ const Daily = () => {
         return (
           <DailyListBox key={`daily_list_${daily_idx}`} className={daily.slide ? 'slide' : ''}>
             <ProfileBox onClick={() => setSlide(daily_idx)}>
-              <Box sx={{ backgroundImage: `url(http://localhost:3080${daily.profile_path})` }} />
+              <Box
+                sx={{ backgroundImage: daily.profile_path ? `url(http://localhost:3080${daily.profile_path})` : '' }}
+              >
+                {!daily.profile_path ? <MdPets className='default_profile daily' /> : null}
+              </Box>
               <Typography component='span'>{daily.nickname}</Typography>
               <ProfileButton>{daily.slide ? <HiChevronUp /> : <HiChevronDown />}</ProfileButton>
             </ProfileBox>
@@ -662,12 +693,15 @@ const Daily = () => {
                 </Box>
                 <Typography component='h3'>댓글</Typography>
                 <Box className='input_box'>
-                  <InputOutlined
-                    placeholder=''
+                  <InputTemporary
                     sx={{ curosr: 'text' }}
+                    onSubmit={(value: string) => handleComment(value, daily_idx)}
+                  />
+                  {/* <InputOutlined
+                    placeholder=''
                     value={comment[daily_idx] ?? ''}
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleComment(e.target.value, daily_idx)}
-                  />
+                  /> */}
                   <Button variant='contained' color='orange' onClick={() => createComment(daily_idx)}>
                     등록
                   </Button>
@@ -680,7 +714,9 @@ const Daily = () => {
                       return (
                         <Fragment key={`daily_${daily_idx}_comment_${item_idx}`}>
                           <ProfileBox className='comment'>
-                            <Box sx={{ backgroundImage: `url(http://localhost:3080${item.profile_path})` }} />
+                            <Box sx={{ backgroundImage: `url(http://localhost:3080${item.profile_path})` }}>
+                              {!item.profile_path ? <MdPets className='default_profile comment' /> : null}
+                            </Box>
                             <Typography component='span'>{item.nickname}</Typography>
                             <ProfileButton
                               className='comment'

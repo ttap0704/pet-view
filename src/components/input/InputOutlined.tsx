@@ -173,4 +173,4 @@ const InputOutlined = (props: InputOutlinedProps) => {
   );
 };
 
-export default InputOutlined;
+export default React.memo(InputOutlined);

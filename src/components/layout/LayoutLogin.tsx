@@ -151,9 +151,12 @@ const LayoutLogin = (props: LayoutLoginProps) => {
           </Button>
         ) : null}
 
-        <LoginDivider />
-
-        <ButtonKaKaoLogin />
+        {router.pathname.includes('admin') || router.pathname.includes('super') ? null : (
+          <>
+            <LoginDivider />
+            <ButtonKaKaoLogin />
+          </>
+        )}
       </LoginBox>
       {children}
     </LoginWrap>

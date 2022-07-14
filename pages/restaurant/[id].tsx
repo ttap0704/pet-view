@@ -1,4 +1,4 @@
-import { GetStaticPaths, GetStaticProps } from 'next';
+import { GetStaticPaths, GetStaticPathsContext, GetStaticProps } from 'next';
 import { ParsedUrlQuery } from 'querystring';
 import { Box, Divider, Typography } from '@mui/material';
 import React, { useEffect, useState, useContext } from 'react';
@@ -176,7 +176,7 @@ const RestaurantDetail = (props: { detail: RestaurantResponse; style: { [key: st
   );
 };
 
-export const getStaticPaths: GetStaticPaths = async () => {
+export const getStaticPaths: GetStaticPaths = async (context: GetStaticPathsContext) => {
   const data: RestaurantResponse[] = await fetchGetApi(`/restaurant`);
 
   const paths = data.map((item: RestaurantResponse) => {
