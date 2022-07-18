@@ -141,7 +141,7 @@ const AdminRestaurantExposureMenu = () => {
 
     if (target_idx != null && target_idx >= 0) {
       if (type == 'exposure_menu') {
-        let exposure_images = [];
+        const exposure_images = [];
 
         const delete_res = await fetchDeleteApi(`/images/exposure_menu/${target_idx}/delete`);
 
@@ -174,7 +174,7 @@ const AdminRestaurantExposureMenu = () => {
     let value = '';
     let title = '';
     let target_string = '';
-    let type: 'input' | 'textarea' = 'input';
+    const type: 'input' | 'textarea' = 'input';
 
     if (target) {
       switch (index) {
@@ -204,7 +204,7 @@ const AdminRestaurantExposureMenu = () => {
     const target_string = modal_edit.data.target;
 
     if (target) {
-      let url = `/admin/${user.uid}/restaurant/${target.restaurant_id}/exposure_menu/${target.id}/info`;
+      const url = `/admin/${user.uid}/restaurant/${target.restaurant_id}/exposure_menu/${target.id}/info`;
       const cur_value = target_string == 'price' ? Number(`${value}`.replace(/[,]/gi, '')) : value;
 
       const update_res = await fetchPostApi(url, { [target_string]: cur_value });
@@ -226,8 +226,8 @@ const AdminRestaurantExposureMenu = () => {
     const count = accommodation.count;
     const rows = accommodation.rows;
 
-    let tmp_table_items = [];
-    for (let x of rows) {
+    const tmp_table_items = [];
+    for (const x of rows) {
       tmp_table_items.push({
         id: x.id,
         label: x.label,

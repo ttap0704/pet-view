@@ -1,4 +1,4 @@
-export { }
+export {};
 
 declare module '@mui/material/styles' {
   interface Theme {
@@ -38,7 +38,6 @@ declare module '@mui/material/styles' {
     gray_5: SimplePaletteColorOptions;
     gray_6: SimplePaletteColorOptions;
     black: SimplePaletteColorOptions;
-
   }
 
   interface PaletteColor {

@@ -182,7 +182,7 @@ const AdminRestaurantInfo = () => {
       const exposure_menu_images_payload = [];
       for (const menu of exposure_menu) {
         const res_menu = res_exposure_menu.find(item => item.label == menu.label);
-        let menu_images = [];
+        const menu_images = [];
         if (menu.image_list && menu.image_list.length > 0 && menu.image_list[0].file) {
           menu_images.push(menu.image_list[0].file);
         }
@@ -289,7 +289,7 @@ const AdminRestaurantInfo = () => {
 
     if (target_idx != null && target_idx >= 0) {
       if (type == 'restaurant') {
-        let exposure_images = [];
+        const exposure_images = [];
 
         const delete_res = await fetchPostApi(`/images/restaurant/${target_idx}/delete`, {});
 
@@ -323,7 +323,7 @@ const AdminRestaurantInfo = () => {
     let title = '';
     let target_string = '';
     let type: 'input' | 'textarea' = 'input';
-    let format = '';
+    const format = '';
 
     if (target) {
       switch (index) {
@@ -349,7 +349,7 @@ const AdminRestaurantInfo = () => {
     const target_string = modal_edit.data.target;
 
     if (target) {
-      let url = `/admin/${user.uid}/restaurant/${target.id}/info`;
+      const url = `/admin/${user.uid}/restaurant/${target.id}/info`;
 
       const update_res = await fetchPostApi(url, { [target_string]: value });
 
@@ -368,8 +368,8 @@ const AdminRestaurantInfo = () => {
     const count = restaurant.count;
     const rows = restaurant.rows;
 
-    let tmp_table_items = [];
-    for (let x of rows) {
+    const tmp_table_items = [];
+    for (const x of rows) {
       tmp_table_items.push({
         id: x.id,
         address: `${x.sido} ${x.sigungu} ${x.bname}`,
@@ -407,7 +407,7 @@ const AdminRestaurantInfo = () => {
   const completeChangeOrder = async (list: OrderListDataType[]) => {
     const target = data.table_items.find(item => item.checked);
     if (target) {
-      let change_data = [];
+      const change_data = [];
       if (curOrderModalType == 'exposure_menu') {
         for (const data of list) {
           const cur_menu = target.exposure_menu.find((item: ExposureMenuType) => item.seq == data.origin);

@@ -60,8 +60,8 @@ const SuperProductAccommodation = () => {
     const count = accommodation.count;
     const rows = accommodation.rows;
 
-    let tmp_table_items = [];
-    for (let x of rows) {
+    const tmp_table_items = [];
+    for (const x of rows) {
       tmp_table_items.push({
         id: x.id,
         label: x.label,

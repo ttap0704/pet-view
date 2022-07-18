@@ -21,7 +21,7 @@ const UtilBox = (props: UtilBoxProps) => {
   const justify_content = props.justifyContent;
 
   const setStyle = () => {
-    let style = {
+    const style = {
       justifyContent: '',
     };
     if (justify_content) {

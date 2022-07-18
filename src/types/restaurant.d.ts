@@ -1,4 +1,3 @@
-
 interface RestaurantListType {
   count: number;
   rows: RestaurantResponse[];
@@ -23,7 +22,7 @@ interface RestaurantResponse {
   restaurant_images: ImageType[];
   exposure_menu: ExposureMenuType[];
   entire_menu: EntireMenuType[];
-  entire_menu_category: EntireMenuCategoryType[]
+  entire_menu_category: EntireMenuCategoryType[];
   bname: string;
   building_name: string;
   created_at: string;
@@ -75,7 +74,7 @@ interface ExposureMenuResponse {
   price: number;
   restaurant_id: number;
   restaurant_label: string;
-  exposure_menu_image: ImageType
+  exposure_menu_image: ImageType;
 }
 
 interface EntireMenuCategoryResponse {
@@ -83,7 +82,7 @@ interface EntireMenuCategoryResponse {
   restaurant_id: number;
   category: string;
   restaurant_label: string;
-  menu: EntireMenuType[]
+  menu: EntireMenuType[];
 }
 
 interface ExposureMenuType {
@@ -123,5 +122,5 @@ interface AddExposureMenuContentsType {
 
 interface AddEntireMenuContentsType {
   category: string;
-  menu: { label: string, price: string | number }[],
+  menu: { label: string; price: string | number }[];
 }

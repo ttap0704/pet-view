@@ -18,12 +18,6 @@ const Home = () => {
       <HomeContents>
         <HomeTitle>여기는 소개, 이거는 지워야됨</HomeTitle>
       </HomeContents>
-      <HomeContents>
-        <HomeTitle>오늘의 숙박업소</HomeTitle>
-      </HomeContents>
-      <HomeContents>
-        <HomeTitle>오늘의 음식점</HomeTitle>
-      </HomeContents>
     </HomeContainer>
   );
 };

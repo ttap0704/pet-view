@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { fetchPostApi } from './api';
 
 export async function setImageArray(data: { file_name: string }[], set_file?: boolean, type?: string) {
-  let image_arr = [];
+  const image_arr = [];
   let count = 0;
 
   for (const x of data) {
@@ -43,7 +43,7 @@ export function imageToBlob(src: string, type: string): Promise<File> {
 
 export function setFileToImage(files: FileList | null, exclude_origin_idx: number[]): Promise<ImageListType[]> {
   return new Promise(resolve => {
-    let new_file_arr: ImageListType[] = [];
+    const new_file_arr: ImageListType[] = [];
     let count = 0;
     let origin = 0;
     if (files) {
@@ -75,7 +75,7 @@ export function setFileArray(image_list: ImageListType[]) {
 }
 
 export async function setImageFormData(data: { target_id: number; files: File[] }[], type: string, parent_id?: number) {
-  let upload_images = new FormData();
+  const upload_images = new FormData();
   let count = 0;
   for (const item of data) {
     const target_id = item.target_id;
@@ -255,7 +255,6 @@ export const setLookedUpList = (type: string, id: number) => {
   if (cur_item) {
     const item_json: { list: { [key: string]: number[] } } = JSON.parse(cur_item);
     const postdate = getDate(`${new Date()}`);
-    console.log(item_json.list);
     if (!item_json.list[`${postdate}`]) {
       item_json.list[`${postdate}`] = [];
     }
@@ -270,9 +269,8 @@ export const setLookedUpList = (type: string, id: number) => {
 };
 
 export async function checkAppRedirect(path: string) {
-  console.log(path);
   let redirect_state = false;
-  let redirect = {
+  const redirect = {
     permanent: false,
     destination: '',
   };

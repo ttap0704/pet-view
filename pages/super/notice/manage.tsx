@@ -95,8 +95,8 @@ const AdminRestaurantInfo = () => {
     const count = notice.count;
     const rows = notice.rows;
 
-    let tmp_table_items = [];
-    for (let x of rows) {
+    const tmp_table_items = [];
+    for (const x of rows) {
       let target = '';
       if (x.target == 1) {
         target = '유저/공지사항';

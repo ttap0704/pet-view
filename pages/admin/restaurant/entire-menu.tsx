@@ -90,7 +90,7 @@ const AdminRestaurantEntireMenu = () => {
     let value = '';
     let title = '';
     let target_string = '';
-    let type: 'input' | 'textarea' = 'input';
+    const type: 'input' | 'textarea' = 'input';
 
     if (target) {
       switch (index) {
@@ -114,7 +114,7 @@ const AdminRestaurantEntireMenu = () => {
     const target = data.table_items.find(item => item.checked);
 
     if (target) {
-      let url = `/admin/${user.uid}/restaurant/${target.restaurant_id}/entire_menu/${target.id}/category`;
+      const url = `/admin/${user.uid}/restaurant/${target.restaurant_id}/entire_menu/${target.id}/category`;
 
       const update_res = await fetchPostApi(url, { category_id: item.id });
 
@@ -134,7 +134,7 @@ const AdminRestaurantEntireMenu = () => {
     const target_string = modal_edit.data.target;
 
     if (target) {
-      let url = `/admin/${user.uid}/restaurant/${target.restaurant_id}/entire_menu/${target.id}/info`;
+      const url = `/admin/${user.uid}/restaurant/${target.restaurant_id}/entire_menu/${target.id}/info`;
       const cur_value = target_string == 'price' ? Number(`${value}`.replace(/[,]/gi, '')) : value;
       const update_res = await fetchPostApi(url, { [target_string]: cur_value });
 
@@ -155,8 +155,8 @@ const AdminRestaurantEntireMenu = () => {
     const count = restaurant.count;
     const rows = restaurant.rows;
 
-    let tmp_table_items = [];
-    for (let x of rows) {
+    const tmp_table_items = [];
+    for (const x of rows) {
       tmp_table_items.push({
         id: x.id,
         category_label: x.category_label,

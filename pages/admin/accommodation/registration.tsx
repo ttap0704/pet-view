@@ -418,15 +418,15 @@ const AdminAccommodationRegistration = () => {
 
     const accommodation_id = accommodation.id;
 
-    let exposure_images = [];
+    const exposure_images = [];
     for (const item of exposureImages) {
       if (item.file) exposure_images.push(item.file);
     }
 
-    let rooms_payload = [];
+    const rooms_payload = [];
     for (const room of rooms) {
       const res_room = accommodation.rooms.find(room_item => room_item.label == room.label);
-      let room_images = [];
+      const room_images = [];
       for (const room_item of room.image_list) {
         if (room_item.file) room_images.push(room_item.file);
       }

@@ -1,15 +1,15 @@
 export default {
   label: (label: string): boolean => {
     let res = true;
-    if (label.length == 0) res = false
+    if (label.length == 0) res = false;
 
     return res;
   },
-  type: (payload: { value: string, type: number }): boolean => {
+  type: (payload: { value: string; type: number }): boolean => {
     let res = true;
 
     const value = payload.value;
-    const type = payload.type
+    const type = payload.type;
     if (value.length == 0 || type < 1) {
       res = false;
     }
@@ -33,29 +33,29 @@ export default {
     }
     return res;
   },
-  entire_menu: (entire_menu: AddEntireMenuContentsType[]): { pass: boolean, message: string } => {
+  entire_menu: (entire_menu: AddEntireMenuContentsType[]): { pass: boolean; message: string } => {
     let message = '';
     const check_number = /^[0-9]+$/;
     for (const menu of entire_menu) {
       if (menu.category.length == 0) {
-        message = '카테고리명을 한 자이상 입력해주세요.'
+        message = '카테고리명을 한 자이상 입력해주세요.';
         break;
       } else {
         if (menu.menu.length == 0) {
-          message = '카테고리의 메뉴는 1개이상 등록되어야 합니다.'
+          message = '카테고리의 메뉴는 1개이상 등록되어야 합니다.';
           break;
         } else {
           for (const menu_item of menu.menu) {
             if (menu_item.label.length == 0) {
-              message = '전체메뉴의 이름이 비어있습니다. 확인해주세요.'
+              message = '전체메뉴의 이름이 비어있습니다. 확인해주세요.';
               break;
             }
 
-            if (menu_item.price.length == 0) {
-              message = '전체메뉴의 가격 비어있습니다. 확인해주세요.'
+            if (`${menu_item.price}`.length == 0) {
+              message = '전체메뉴의 가격 비어있습니다. 확인해주세요.';
               break;
-            } else if (!check_number.test(menu_item.price)) {
-              message = '전체메뉴의 가격은 숫자로만 입력해주세요.'
+            } else if (!check_number.test(`${menu_item.price}`)) {
+              message = '전체메뉴의 가격은 숫자로만 입력해주세요.';
               break;
             }
           }
@@ -65,33 +65,33 @@ export default {
 
     return { pass: message.length == 0, message };
   },
-  exposure_menu: (exposure_menu: AddExposureMenuContentsType[]): { pass: boolean, message: string } => {
+  exposure_menu: (exposure_menu: AddExposureMenuContentsType[]): { pass: boolean; message: string } => {
     let message = '';
     const check_number = /^[0-9]+$/;
 
     for (const menu of exposure_menu) {
       if (menu.image_list.length == 0) {
-        message = '대표메뉴의 이미지를 등록해주세요.'
+        message = '대표메뉴의 이미지를 등록해주세요.';
         break;
       }
       if (menu.label.length == 0) {
-        message = '대표메뉴의 메뉴명을 입력해주세요.'
+        message = '대표메뉴의 메뉴명을 입력해주세요.';
         break;
       }
       if (menu.price.length == 0) {
-        message = '대표메뉴의 메뉴명을 입력해주세요.'
+        message = '대표메뉴의 메뉴명을 입력해주세요.';
         break;
       } else if (!check_number.test(menu.price)) {
-        message = '대표메뉴의 가격은 숫자로만 입력해주세요.'
+        message = '대표메뉴의 가격은 숫자로만 입력해주세요.';
         break;
       }
       if (menu.comment.length == 0) {
-        message = '대표메뉴의 한 줄 설명을 입력해주세요.'
+        message = '대표메뉴의 한 줄 설명을 입력해주세요.';
         break;
       }
     }
 
-    return { pass: message.length == 0, message }
+    return { pass: message.length == 0, message };
   },
   image_list: (image_list: ImageListType[]): boolean => {
     let res = true;
@@ -170,9 +170,9 @@ export default {
       for (let j = 0, jleng = 2; j < jleng; j++) {
         let cur_date = cur_season[j];
         if (j == 0 && cur_date > cur_season[1]) {
-          cur_date = `1000-${cur_date}`
+          cur_date = `1000-${cur_date}`;
         } else {
-          cur_date = `1001-${cur_date}`
+          cur_date = `1001-${cur_date}`;
         }
 
         for (let y = 0; y < season.length; y++) {
@@ -180,11 +180,11 @@ export default {
           let start = vali_season[0];
           let end = vali_season[1];
           if (start > end) {
-            start = `1000-${start}`
-            end = `1001-${end}`
+            start = `1000-${start}`;
+            end = `1001-${end}`;
           } else {
-            start = `1001-${start}`
-            end = `1001-${end}`
+            start = `1001-${start}`;
+            end = `1001-${end}`;
           }
 
           if (i != y && cur_date >= start && cur_date <= end) {
@@ -195,5 +195,5 @@ export default {
     }
 
     return true;
-  }
-}
+  },
+};

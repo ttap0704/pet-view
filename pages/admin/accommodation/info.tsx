@@ -269,7 +269,7 @@ const AdminAccommodationInfo = () => {
 
     if (target_idx != null && target_idx >= 0) {
       if (type == 'accommodation') {
-        let exposure_images = [];
+        const exposure_images = [];
 
         const delete_res = await fetchPostApi(`/images/accommodation/${target_idx}/delete`, {});
 
@@ -330,7 +330,7 @@ const AdminAccommodationInfo = () => {
     const target_string = modal_edit.data.target;
 
     if (target) {
-      let url = `/admin/${user.uid}/accommodation/${target.id}/info`;
+      const url = `/admin/${user.uid}/accommodation/${target.id}/info`;
 
       const update_res = await fetchPostApi(url, { [target_string]: value });
 
@@ -362,14 +362,14 @@ const AdminAccommodationInfo = () => {
         };
       });
 
-      let rooms_payload = [];
+      const rooms_payload = [];
       const res_rooms: RoomType[] = await fetchPostApi(
         `/admin/${user.uid}/accommodation/${target.id}/rooms`,
         add_room_data,
       );
       for (const room of rooms) {
         const target_room = res_rooms.find(room_item => room_item.label == room.label);
-        let room_images = [];
+        const room_images = [];
         for (const room_item of room.image_list) {
           if (room_item.file) room_images.push(room_item.file);
         }
@@ -402,8 +402,8 @@ const AdminAccommodationInfo = () => {
     const count = accommodation.count;
     const rows = accommodation.rows;
 
-    let tmp_table_items = [];
-    for (let x of rows) {
+    const tmp_table_items = [];
+    for (const x of rows) {
       tmp_table_items.push({
         id: x.id,
         address: `${x.sido} ${x.sigungu} ${x.bname}`,

@@ -41,17 +41,22 @@ module.exports = {
     'import/no-dynamic-require': 'off',
     'no-inner-declarations': 'off',
     'class-methods-use-this': 'off',
+    'no-self-assign': 'off',
     'import/extensions': 'off',
     'import/prefer-default-export': 'off',
     '@typescript-eslint/explicit-function-return-type': 'off',
     '@typescript-eslint/no-var-requires': 'off',
     'react/jsx-uses-react': 'off',
     'react/react-in-jsx-scope': 'off',
+    'no-useless-catch': 'off',
+    'no-useless-escape': 'off',
+    '@typescript-eslint/no-empty-function': 'off',
+    'prefer-const': 'off',
     'prettier/prettier': [
       'error',
       {
         endOfLine: 'auto',
-        useTabs: false
+        useTabs: false,
       },
     ],
   },

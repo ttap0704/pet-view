@@ -184,7 +184,7 @@ function DrawerMobileSideMenu(props: DrawerMobileSideMenuProps) {
       const local = window.localStorage;
 
       let url = `/user/recent`;
-      let query: string[] = [];
+      const query: string[] = [];
       const local_accom = local.getItem('accommodation');
       const local_rest = local.getItem('restaurant');
       if (local_accom) {
@@ -231,7 +231,7 @@ function DrawerMobileSideMenu(props: DrawerMobileSideMenuProps) {
       const likes = session.getItem('likes');
 
       let url = `/user/likes`;
-      let query: string[] = [];
+      const query: string[] = [];
       if (likes) {
         const likes_json = JSON.parse(likes);
 

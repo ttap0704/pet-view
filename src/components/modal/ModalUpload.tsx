@@ -109,7 +109,7 @@ function ModalUpload(props: ModalUploadProps) {
     const clone_order_list = [...orderList];
     const tmp_order_list = [...clone_order_list.sort((a, b) => Number(a.number) - Number(b.number))].map(
       (item, index) => {
-        let new_item = {
+        const new_item = {
           ...item,
           number: `${index + 1}`,
         };

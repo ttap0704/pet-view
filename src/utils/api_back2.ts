@@ -1,5 +1,4 @@
-
-const servername = "http://localhost:3080";
+const servername = 'http://localhost:3080';
 
 function getCookie(type: string) {
   if (typeof window !== 'undefined') {
@@ -34,7 +33,7 @@ function setHeader(uri: string, no_content_type?: boolean) {
   const root_path = uri.split('/')[1];
   const children_path = uri.split('/')[2];
   const check_arr = ['admin'];
-  const excepted_path = ['login', 'join']
+  const excepted_path = ['login', 'join'];
   const cookie: string | null = getCookie('a-token') ? getCookie('a-token') : null;
 
   const header: { [key: string]: string } = {
@@ -67,25 +66,25 @@ async function setToken(res: any) {
 
 // Fetch POST
 export const fetchPostApi = async function (uri: string, args: object) {
-  let response = await fetch(servername + uri, {
+  const response = await fetch(servername + uri, {
     method: 'POST',
     headers: {
-      ...setHeader(uri)
+      ...setHeader(uri),
     },
-    body: JSON.stringify(args)
+    body: JSON.stringify(args),
   });
-  let responseJson = await response.json();
+  const responseJson = await response.json();
   setToken(responseJson);
   if (responseJson.new_token) {
-    let response1 = await fetch(servername + uri, {
+    const response1 = await fetch(servername + uri, {
       method: 'POST',
       headers: {
         ...setHeader(uri, false),
       },
-      body: JSON.stringify(args)
+      body: JSON.stringify(args),
     });
-    let responseJson1 = await response1.json();
-    return responseJson1
+    const responseJson1 = await response1.json();
+    return responseJson1;
   } else {
     return responseJson;
   }
@@ -93,23 +92,23 @@ export const fetchPostApi = async function (uri: string, args: object) {
 
 // Fetch GET
 export const fetchGetApi = async function (uri: string) {
-  let response = await fetch(servername + uri, {
+  const response = await fetch(servername + uri, {
     method: 'GET',
     headers: {
       ...setHeader(uri, false),
     },
   });
-  let responseJson = await response.json();
+  const responseJson = await response.json();
   setToken(responseJson);
   if (responseJson.new_token) {
-    let response1 = await fetch(servername + uri, {
+    const response1 = await fetch(servername + uri, {
       method: 'GET',
       headers: {
         ...setHeader(uri, false),
       },
     });
-    let responseJson1 = await response1.json();
-    return responseJson1
+    const responseJson1 = await response1.json();
+    return responseJson1;
   } else {
     return responseJson;
   }
@@ -117,7 +116,7 @@ export const fetchGetApi = async function (uri: string) {
 
 // Fetch DELETE
 export const fetchDeleteApi = async function (uri: string) {
-  let response = await fetch(servername + uri, {
+  const response = await fetch(servername + uri, {
     method: 'DELETE',
     headers: {
       ...setHeader(uri, false),
@@ -127,27 +126,27 @@ export const fetchDeleteApi = async function (uri: string) {
 };
 
 // Fetch PATCH
-export const fetchPatchApi = async function (uri: string, args: { target: string, value: string | number }) {
-  let response = await fetch(servername + uri, {
+export const fetchPatchApi = async function (uri: string, args: { target: string; value: string | number }) {
+  const response = await fetch(servername + uri, {
     method: 'PATCH',
     headers: {
       ...setHeader(uri, false),
     },
-    body: JSON.stringify(args)
+    body: JSON.stringify(args),
   });
 
   if (await response.json()) {
-    const responseJson = await response.json()
+    const responseJson = await response.json();
     setToken(responseJson);
 
-    let response1 = await fetch(servername + uri, {
+    const response1 = await fetch(servername + uri, {
       method: 'PATCH',
       headers: {
         ...setHeader(uri, false),
       },
-      body: JSON.stringify(args)
+      body: JSON.stringify(args),
     });
-    return response1.status
+    return response1.status;
   } else {
     return response.status;
   }
@@ -155,18 +154,18 @@ export const fetchPatchApi = async function (uri: string, args: { target: string
 
 // Fetch POST FILES
 export const fetchFileApi = async function (uri: string, args: FormData) {
-  let response = await fetch(servername + uri, {
+  const response = await fetch(servername + uri, {
     method: 'POST',
-    body: args
+    body: args,
   });
-  let responseJson = await response.json();
+  const responseJson = await response.json();
   if (responseJson.new_token) {
-    let response1 = await fetch(servername + uri, {
+    const response1 = await fetch(servername + uri, {
       method: 'POST',
-      body: args
+      body: args,
     });
-    let responseJson1 = await response1.json();
-    return responseJson1
+    const responseJson1 = await response1.json();
+    return responseJson1;
   } else {
     return responseJson;
   }
@@ -174,15 +173,15 @@ export const fetchFileApi = async function (uri: string, args: FormData) {
 
 // 사업자 인증 API
 export const fecthCheckBusiness = async function (args: object) {
-  const uri = `https://api.odcloud.kr/api/nts-businessman/v1/status?serviceKey=${process.env.BUSINESS_KEY}`
-  let response = await fetch(uri, {
+  const uri = `https://api.odcloud.kr/api/nts-businessman/v1/status?serviceKey=${process.env.BUSINESS_KEY}`;
+  const response = await fetch(uri, {
     method: 'POST',
     headers: {
       Accept: 'application/json',
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify(args)
+    body: JSON.stringify(args),
   });
-  let responseJson = await response.json();
+  const responseJson = await response.json();
   return responseJson;
 };

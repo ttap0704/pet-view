@@ -1,8 +1,8 @@
-import { GetServerSidePropsContext } from 'next'
-import cookies from 'next-cookies'
-import { serialize } from 'cookie'
+import { GetServerSidePropsContext } from 'next';
+import cookies from 'next-cookies';
+import { serialize } from 'cookie';
 
-const servername = "http://localhost:3080";
+const servername = 'http://localhost:3080';
 
 function getCookie(type: string, ctx?: GetServerSidePropsContext) {
   if (typeof window !== 'undefined') {
@@ -30,9 +30,9 @@ function getCookie(type: string, ctx?: GetServerSidePropsContext) {
     }
   } else if (ctx && ctx.req.cookies) {
     if (ctx.req.cookies[type]) {
-      return ctx.req.cookies[type]
+      return ctx.req.cookies[type];
     } else {
-      return null
+      return null;
     }
   }
 
@@ -43,7 +43,7 @@ function setHeader(uri: string, no_content_type?: boolean, ctx?: GetServerSidePr
   const root_path = uri.split('/')[1];
   const children_path = uri.split('/')[2];
   const check_arr = ['admin'];
-  const excepted_path = ['login', 'join']
+  const excepted_path = ['login', 'join'];
   const cookie: string | null = getCookie('a-token', ctx) ? getCookie('a-token', ctx) : null;
 
   const header: { [key: string]: string } = {
@@ -76,57 +76,56 @@ function setToken(res: any, ctx?: GetServerSidePropsContext) {
     }
   } else if (ctx) {
     if (res.new_token) {
-      ctx.res.setHeader('Set-Cookie', `a-token=; path=/; expires=-1`)
-      ctx.res.setHeader('Set-Cookie', serialize('a-token', `${res.new_token}`))
+      ctx.res.setHeader('Set-Cookie', `a-token=; path=/; expires=-1`);
+      ctx.res.setHeader('Set-Cookie', serialize('a-token', `${res.new_token}`));
     }
   }
 }
 
-
 // Fetch POST
 export const fetchPostApi = async function (uri: string, args: object) {
-  let response = await fetch(servername + uri, {
+  const response = await fetch(servername + uri, {
     method: 'POST',
     headers: {
-      ...setHeader(uri)
+      ...setHeader(uri),
     },
-    body: JSON.stringify(args)
+    body: JSON.stringify(args),
   });
-  let responseJson = await response.json();
+  const responseJson = await response.json();
   setToken(responseJson);
   return responseJson;
 };
 
 // Fetch GET
 export const fetchGetApi = async function (uri: string, ctx?: GetServerSidePropsContext) {
-  let response = await fetch(servername + uri, {
+  const response = await fetch(servername + uri, {
     method: 'GET',
     headers: {
-      ...setHeader(uri, false, ctx)
+      ...setHeader(uri, false, ctx),
     },
   });
-  let responseJson = await response.json();
+  const responseJson = await response.json();
   setToken(responseJson, ctx);
   return responseJson;
 };
 
 // Fetch DELETE
 export const fetchDeleteApi = async function (uri: string) {
-  let response = await fetch(servername + uri, {
-    method: 'DELETE'
+  const response = await fetch(servername + uri, {
+    method: 'DELETE',
   });
   return response.status;
 };
 
 // Fetch PATCH
-export const fetchPatchApi = async function (uri: string, args: { target: string, value: string | number }) {
-  let response = await fetch(servername + uri, {
+export const fetchPatchApi = async function (uri: string, args: { target: string; value: string | number }) {
+  const response = await fetch(servername + uri, {
     method: 'PATCH',
     headers: {
       Accept: 'application/json',
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify(args)
+    body: JSON.stringify(args),
   });
 
   return response.status;
@@ -134,25 +133,25 @@ export const fetchPatchApi = async function (uri: string, args: { target: string
 
 // Fetch POST FILES
 export const fetchFileApi = async function (uri: string, args: FormData) {
-  let response = await fetch(servername + uri, {
+  const response = await fetch(servername + uri, {
     method: 'POST',
-    body: args
+    body: args,
   });
-  let responseJson = await response.json();
+  const responseJson = await response.json();
   return responseJson;
 };
 
 // 사업자 인증 API
 export const fecthCheckBusiness = async function (args: object) {
-  const uri = `https://api.odcloud.kr/api/nts-businessman/v1/status?serviceKey=${process.env.BUSINESS_KEY}`
-  let response = await fetch(uri, {
+  const uri = `https://api.odcloud.kr/api/nts-businessman/v1/status?serviceKey=${process.env.BUSINESS_KEY}`;
+  const response = await fetch(uri, {
     method: 'POST',
     headers: {
       Accept: 'application/json',
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify(args)
+    body: JSON.stringify(args),
   });
-  let responseJson = await response.json();
+  const responseJson = await response.json();
   return responseJson;
 };

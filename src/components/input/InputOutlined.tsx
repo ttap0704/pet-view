@@ -14,7 +14,7 @@ interface InputOutlinedProps extends OutlinedInputProps {
   max?: number;
 }
 
-const StyledInput = styled(OutlinedInput)(({ theme }) => ({
+const StyledInput = styled(OutlinedInput)<OutlinedInputProps>(({ theme }) => ({
   width: '100%',
   borderRadius: 6,
   borderColor: theme.palette.gray_4.main,
@@ -88,8 +88,9 @@ const InputOutlined = (props: InputOutlinedProps) => {
   const [currentValue, setCurrentValue] = useState('');
   const [currentFormat, setCurrentFormat] = useState('');
 
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.code == 'Enter') onKeyDownEnter ? onKeyDownEnter() : false;
+  const handleKeyDown = (e: any) => {
+    const event = e as React.KeyboardEvent<HTMLInputElement>;
+    if (event.code == 'Enter') onKeyDownEnter ? onKeyDownEnter() : false;
   };
 
   useEffect(() => {
@@ -106,7 +107,7 @@ const InputOutlined = (props: InputOutlinedProps) => {
   }, [value]);
 
   const setStyle = () => {
-    let style: { [key: string]: string | number } = {
+    const style: { [key: string]: string | number } = {
       width: '100%',
       height: '3rem',
     };

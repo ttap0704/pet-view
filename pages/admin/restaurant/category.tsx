@@ -160,7 +160,7 @@ const AdminAccommodationCategory = () => {
     const target_string = modal_edit.data.target;
 
     if (target) {
-      let url = `/admin/${user.uid}/restaurant/${target.restaurant_id}/category/${target.id}/info`;
+      const url = `/admin/${user.uid}/restaurant/${target.restaurant_id}/category/${target.id}/info`;
       const update_res = await fetchPostApi(url, { [target_string]: value });
 
       if (update_res.affected == 1) {
@@ -180,8 +180,8 @@ const AdminAccommodationCategory = () => {
     const count = category.count;
     const rows = category.rows;
 
-    let tmp_table_items = [];
-    for (let x of rows) {
+    const tmp_table_items = [];
+    for (const x of rows) {
       tmp_table_items.push({
         id: x.id,
         category: x.category,
@@ -203,7 +203,7 @@ const AdminAccommodationCategory = () => {
   const completeChangeOrder = async (list: OrderListDataType[]) => {
     const target = data.table_items.find(item => item.checked);
     if (target) {
-      let change_data = [];
+      const change_data = [];
       if (curOrderModalType == 'menu') {
         for (const data of list) {
           const cur_menu = target.menu.find((item: EntireMenuType) => item.label == data.label);

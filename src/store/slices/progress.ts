@@ -1,7 +1,7 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit'
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 const initialState: ProgressType = {
-  loading: false
+  loading: false,
 };
 
 const progressSlice = createSlice({
@@ -9,13 +9,13 @@ const progressSlice = createSlice({
   initialState,
   reducers: {
     stopProgress(state) {
-      state.loading = false
+      state.loading = false;
     },
     startProgress(state) {
-      state.loading = true
+      state.loading = true;
     },
   },
-})
+});
 
-export const { stopProgress, startProgress } = progressSlice.actions
-export default progressSlice.reducer
+export const { stopProgress, startProgress } = progressSlice.actions;
+export default progressSlice.reducer;

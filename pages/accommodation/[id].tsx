@@ -285,8 +285,8 @@ const AccommodationDetail = (props: { detail: AccommodationResponse; style: { [k
       <Tabs
         contents={['객실/위치 정보', '숙소 정보']}
         elements={[
-          <AccommodationRoomsDetail rooms={rooms} info={locationInfo} />,
-          <AccommodationInfoDetail detail={detailInfo} />,
+          <AccommodationRoomsDetail key='tabs_element_0' rooms={rooms} info={locationInfo} />,
+          <AccommodationInfoDetail key='tabs_element_1' detail={detailInfo} />,
         ]}
       ></Tabs>
     </AccommodationContainer>

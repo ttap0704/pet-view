@@ -1,7 +1,6 @@
 import * as React from 'react';
 
 import { styled } from '@mui/material/styles';
-import { TextareaAutosizeProps } from '@mui/base';
 
 interface TextareaProps {
   value: string | number;

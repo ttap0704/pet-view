@@ -225,7 +225,7 @@ const AdminAccommodationRooms = () => {
 
     if (target && target_idx != null && target_idx >= 0) {
       const accommodation_id = target.accommodation_id;
-      let room_images = [];
+      const room_images = [];
 
       const delete_res = await fetchPostApi(`/images/rooms/${target_idx}/delete`, {});
 
@@ -258,8 +258,8 @@ const AdminAccommodationRooms = () => {
     let value = '';
     let title = '';
     let target_string = '';
-    let type: 'input' | 'textarea' = 'input';
-    let format = '';
+    const type: 'input' | 'textarea' = 'input';
+    const format = '';
     let end = '';
 
     if (target) {
@@ -299,7 +299,7 @@ const AdminAccommodationRooms = () => {
 
     if (target) {
       const accommodation_id = target.accommodation_id;
-      let url = `/admin/${user.uid}/accommodation/${accommodation_id}/rooms/${target.id}/info`;
+      const url = `/admin/${user.uid}/accommodation/${accommodation_id}/rooms/${target.id}/info`;
       if (['standard_num', 'maximum_num'].includes(target_string)) {
         value = Number(value);
       }
@@ -323,8 +323,8 @@ const AdminAccommodationRooms = () => {
     const count = accommodation.count;
     const rows = accommodation.rows;
 
-    let tmp_table_items = [];
-    for (let x of rows) {
+    const tmp_table_items = [];
+    for (const x of rows) {
       tmp_table_items.push({
         id: x.id,
         maximum_num: x.maximum_num,

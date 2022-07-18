@@ -10,14 +10,13 @@ interface UserType {
   certification: number;
 }
 
-
 interface StoreUserType extends UserType {
   uid: number;
   is_mobile: boolean;
 }
 
 interface ProgressType {
-  loading: boolean
+  loading: boolean;
 }
 
 interface RadioModalContentsDataType {
@@ -45,7 +44,6 @@ interface ImageListType {
   file: File | null;
 }
 
-
 interface ResponsePostcodeDataType {
   zonecode: string;
   sido: string;
@@ -66,7 +64,7 @@ interface FinalPostcodeDataType {
 }
 
 interface ChildrenDataType {
-  header: { label: string; center: boolean, key: string, type?: string }[];
+  header: { label: string; center: boolean; key: string; type?: string }[];
   edit_items: string[];
   type: string;
   title: string;
@@ -94,7 +92,7 @@ interface ServiceInfoType {
   open?: string;
   close?: string;
   last_order?: string;
-  [key: string]: string
+  [key: string]: string;
 }
 
 interface ImageType {
@@ -116,7 +114,7 @@ interface NoticeType {
   contents: string;
   target: number;
   created_at: string;
-  new: boolean
+  new: boolean;
 }
 
 interface DailyType {
@@ -126,7 +124,7 @@ interface DailyType {
   created_at: string;
   image_list: ImageType[];
   nickname: string;
-  profile_path: string
+  profile_path: string;
 }
 
 interface CommentType {

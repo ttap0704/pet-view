@@ -13,11 +13,10 @@ import LayoutAdmin from '../src/components/layout/LayoutAdmin';
 import wrapper from '../src/store/configureStore';
 import { setUser, setUserMobile, resetUser } from '../src/store/slices/user';
 import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from '../src/store';
-import { GetServerSidePropsContext } from 'next';
 import { fetchGetApi, fetchPostApi } from '../src/utils/api';
 import { checkAppRedirect } from '../src/utils/tools';
 import Head from 'next/head';
+import { Box } from '@mui/material';
 
 dotenv.config();
 // store 설정파일 로드
@@ -50,6 +49,8 @@ const _APP = ({ Component, pageProps }: AppProps) => {
         if (session_user) {
           const session: UserType = JSON.parse(session_user);
           dispatch(setUser(session));
+        } else {
+          document.cookie = `a-token=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;`; // 만료 코드
         }
       }
     }
@@ -58,8 +59,8 @@ const _APP = ({ Component, pageProps }: AppProps) => {
     // if (pageProps.is_mobile) {
     //   setUserMobile({ is_mobile: pageProps.is_mobile });
     // }
-    // 임시
-    dispatch(setUserMobile({ is_mobile: true }));
+    // 임시ㅔ
+    dispatch(setUserMobile({ is_mobile: false }));
   }, []);
 
   useEffect(() => {
@@ -163,7 +164,6 @@ _APP.getInitialProps = async (appContext: AppContext) => {
   const mobile = await userAgent?.indexOf('Mobi');
   const path = appContext.router.pathname;
   appProps.pageProps.isMobile = (await (mobile !== -1)) ? true : false;
-
   if (appContext.ctx.req && appContext.ctx.res) {
     const { headers } = appContext.ctx.req;
     const context = appContext.ctx;

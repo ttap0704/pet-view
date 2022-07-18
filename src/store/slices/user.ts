@@ -1,10 +1,10 @@
-import { createSlice, PayloadAction, } from '@reduxjs/toolkit'
-import { HYDRATE } from 'next-redux-wrapper'
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { HYDRATE } from 'next-redux-wrapper';
 
 const initialState: StoreUserType = {
   uid: 0,
-  nickname: "",
-  profile_path: "",
+  nickname: '',
+  profile_path: '',
   id: 0,
   login_id: '',
   name: '',
@@ -21,8 +21,8 @@ const userSlice = createSlice({
   reducers: {
     resetUser(state) {
       state.uid = 0;
-      state.nickname = "";
-      state.profile_path = ""
+      state.nickname = '';
+      state.profile_path = '';
       state.id = 0;
       state.login_id = '';
       state.name = '';
@@ -31,7 +31,6 @@ const userSlice = createSlice({
       state.type = 0;
       state.certification = 0;
       state.is_mobile = false;
-      state.likes = {};
     },
     setUser(state, action: PayloadAction<UserType>) {
       state.uid = action.payload.id;
@@ -49,7 +48,7 @@ const userSlice = createSlice({
       state.is_mobile = action.payload.is_mobile;
     },
     setUserNickname(state, action: { payload: { nickname: string } }) {
-      state.nickname = action.payload.nickname
+      state.nickname = action.payload.nickname;
     },
     setUserProfilePath(state, action: { payload: { profile_path: string | null } }) {
       state.profile_path = action.payload.profile_path;
@@ -60,7 +59,7 @@ const userSlice = createSlice({
       //
     },
   },
-})
+});
 
-export const { setUser, resetUser, setUserMobile, setUserNickname, setUserProfilePath } = userSlice.actions
-export default userSlice.reducer
+export const { setUser, resetUser, setUserMobile, setUserNickname, setUserProfilePath } = userSlice.actions;
+export default userSlice.reducer;

@@ -373,7 +373,7 @@ const AdminRestaurantRegistration = () => {
     const restaurant: CreateRestaurantResponse = await fetchPostApi(`/admin/${user.uid}/restaurant`, restaurant_data);
     const restaurant_id = restaurant.id;
 
-    let exposure_images = [];
+    const exposure_images = [];
     for (const item of exposureImages) {
       if (item.file) exposure_images.push(item.file);
     }
@@ -381,7 +381,7 @@ const AdminRestaurantRegistration = () => {
     const exposure_menu_images_payload = [];
     for (const menu of exposureMenu) {
       const res_menu = restaurant.exposure_menu.find(item => item.label == menu.label);
-      let menu_images = [];
+      const menu_images = [];
       if (menu.image_list && menu.image_list.length > 0 && menu.image_list[0].file)
         menu_images.push(menu.image_list[0].file);
 

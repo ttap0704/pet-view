@@ -1,6 +1,6 @@
 const imageHandler = () => {
   //
-}
+};
 
 export const toolbar = {
   container: [
@@ -12,5 +12,4 @@ export const toolbar = {
   handlers: {
     image: imageHandler,
   },
-}
-
+};

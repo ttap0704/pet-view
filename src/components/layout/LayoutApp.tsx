@@ -44,8 +44,6 @@ const LayoutApp = (props: LayoutAppProps) => {
     };
   }, []);
 
-  useEffect(() => {}, [router.pathname]);
-
   return (
     <>
       <AppHeader />

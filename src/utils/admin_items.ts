@@ -67,8 +67,7 @@ export const accommodation_info = {
   rows_length: 0,
   footer_colspan: 6,
   table_items: [],
-}
-
+};
 
 export const accommodation_rooms = {
   header: [
@@ -122,13 +121,21 @@ export const accommodation_rooms = {
       key: 'created_at',
     },
   ],
-  edit_items: ["객실명 수정", "기준 인원 수정", "최대 인원 수정", "입실/퇴실 시간 수정", "가격 수정", "대표이미지 수정", "객실 삭제"],
+  edit_items: [
+    '객실명 수정',
+    '기준 인원 수정',
+    '최대 인원 수정',
+    '입실/퇴실 시간 수정',
+    '가격 수정',
+    '대표이미지 수정',
+    '객실 삭제',
+  ],
   type: 'rooms',
   title: '객실 관리',
   rows_length: 0,
   footer_colspan: 7,
   table_items: [],
-}
+};
 
 export const restaurant_info = {
   header: [
@@ -183,23 +190,23 @@ export const restaurant_info = {
     },
   ],
   edit_items: [
-    "대표메뉴 추가",
-    "대표메뉴 순서 변경",
-    "카테고리 추가",
-    "카테고리 순서 변경",
-    "업소명 수정",
-    "주소 수정",
-    "소개 수정",
-    "대표이미지 수정",
-    "추가 정보 수정",
-    "음식점 삭제",
+    '대표메뉴 추가',
+    '대표메뉴 순서 변경',
+    '카테고리 추가',
+    '카테고리 순서 변경',
+    '업소명 수정',
+    '주소 수정',
+    '소개 수정',
+    '대표이미지 수정',
+    '추가 정보 수정',
+    '음식점 삭제',
   ],
   type: 'accommodation',
   title: '음식점 관리',
   rows_length: 0,
   footer_colspan: 7,
   table_items: [],
-}
+};
 
 export const restaurant_category = {
   header: [
@@ -210,17 +217,17 @@ export const restaurant_category = {
       type: 'checkbox',
     },
     {
-      label: "음식점",
+      label: '음식점',
       key: 'restaurant_label',
       center: false,
     },
     {
-      label: "카테고리",
+      label: '카테고리',
       key: 'category',
       center: false,
     },
     {
-      label: "메뉴수",
+      label: '메뉴수',
       key: 'menu_num',
       center: false,
     },
@@ -231,13 +238,13 @@ export const restaurant_category = {
       type: 'button',
     },
   ],
-  edit_items: ["카테고리명 수정", "메뉴 추가", "메뉴 순서 변경", "카테고리 삭제"],
+  edit_items: ['카테고리명 수정', '메뉴 추가', '메뉴 순서 변경', '카테고리 삭제'],
   type: 'category',
   title: '카테고리 관리',
   rows_length: 0,
   footer_colspan: 7,
   table_items: [],
-}
+};
 
 export const restaurant_exposure_menu = {
   header: [
@@ -248,17 +255,17 @@ export const restaurant_exposure_menu = {
       type: 'checkbox',
     },
     {
-      label: "음식점",
+      label: '음식점',
       key: 'restaurant_label',
       center: false,
     },
     {
-      label: "메뉴명",
+      label: '메뉴명',
       key: 'label',
       center: false,
     },
     {
-      label: "가격",
+      label: '가격',
       key: 'price',
       center: false,
     },
@@ -275,13 +282,13 @@ export const restaurant_exposure_menu = {
       type: 'button',
     },
   ],
-  edit_items: ["메뉴명 수정", "가격 수정", "대표이미지 수정", "설명 수정", "메뉴 삭제"],
+  edit_items: ['메뉴명 수정', '가격 수정', '대표이미지 수정', '설명 수정', '메뉴 삭제'],
   type: 'category',
   title: '카테고리 관리',
   rows_length: 0,
   footer_colspan: 7,
   table_items: [],
-}
+};
 
 export const restaurant_entire_menu = {
   header: [
@@ -292,33 +299,33 @@ export const restaurant_entire_menu = {
       type: 'checkbox',
     },
     {
-      label: "음식점",
+      label: '음식점',
       key: 'restaurant_label',
       center: false,
     },
     {
-      label: "카테고리",
+      label: '카테고리',
       key: 'category_label',
       center: false,
     },
     {
-      label: "메뉴명",
+      label: '메뉴명',
       key: 'label',
       center: false,
     },
     {
-      label: "가격",
+      label: '가격',
       key: 'price',
       center: false,
     },
   ],
-  edit_items: ["메뉴명 수정", "가격 수정", "카테고리 수정", "메뉴 삭제"],
+  edit_items: ['메뉴명 수정', '가격 수정', '카테고리 수정', '메뉴 삭제'],
   type: 'entire_menu',
   title: '전체메뉴 관리',
   rows_length: 0,
   footer_colspan: 7,
   table_items: [],
-}
+};
 
 export const product_menu = {
   header: [
@@ -329,22 +336,22 @@ export const product_menu = {
       type: 'checkbox',
     },
     {
-      label: "이름",
+      label: '이름',
       key: 'label',
       center: false,
     },
     {
-      label: "관리자",
+      label: '관리자',
       key: 'president',
       center: false,
     },
     {
-      label: "이메일",
+      label: '이메일',
       key: 'email',
       center: false,
     },
     {
-      label: "상태",
+      label: '상태',
       key: 'status',
       center: false,
     },
@@ -352,16 +359,16 @@ export const product_menu = {
       label: '상품 확인',
       key: 'domain',
       center: true,
-      type: 'button'
-    }
+      type: 'button',
+    },
   ],
-  edit_items: ["노출 중지", "노출 진행"],
+  edit_items: ['노출 중지', '노출 진행'],
   type: 'product',
   title: '매장 관리',
   rows_length: 0,
   footer_colspan: 7,
   table_items: [],
-}
+};
 
 export const notice = {
   header: [
@@ -372,22 +379,22 @@ export const notice = {
       type: 'checkbox',
     },
     {
-      label: "타이틀",
+      label: '타이틀',
       key: 'label',
       center: false,
     },
     {
       label: '타겟',
       key: 'target',
-      center: false
+      center: false,
     },
     {
-      label: "작성일",
+      label: '작성일',
       key: 'created_at',
       center: false,
     },
     {
-      label: "상태",
+      label: '상태',
       key: 'status',
       center: false,
     },
@@ -395,16 +402,16 @@ export const notice = {
       label: '확인',
       key: 'domain',
       center: true,
-      type: 'button'
-    }
+      type: 'button',
+    },
   ],
-  edit_items: ["노출 중지", "노출 진행", "공지사항 수정", "공지사항 삭제"],
+  edit_items: ['노출 중지', '노출 진행', '공지사항 수정', '공지사항 삭제'],
   type: 'notice',
   title: '공지사항 관리',
   rows_length: 0,
   footer_colspan: 7,
   table_items: [],
-}
+};
 
 export const users = {
   header: [
@@ -415,38 +422,38 @@ export const users = {
       type: 'checkbox',
     },
     {
-      label: "이메일",
+      label: '이메일',
       key: 'email',
       center: false,
     },
     {
       label: '휴대폰 번호',
       key: 'phone',
-      center: false
+      center: false,
     },
     {
-      label: "타입",
+      label: '타입',
       key: 'type',
       center: false,
     },
     {
       label: '경고',
       key: 'warning',
-      center: false
+      center: false,
     },
     {
-      label: "생성일",
+      label: '생성일',
       key: 'created_at',
       center: false,
     },
   ],
-  edit_items: [""],
+  edit_items: [''],
   type: 'users',
   title: '상태 관리',
   rows_length: 0,
   footer_colspan: 7,
   table_items: [],
-}
+};
 
 export const reports = {
   header: [
@@ -457,17 +464,17 @@ export const reports = {
       type: 'checkbox',
     },
     {
-      label: "카테고리",
+      label: '카테고리',
       key: 'category',
       center: false,
     },
     {
-      label: "신고 사유",
+      label: '신고 사유',
       key: 'reason',
       center: false,
     },
     {
-      label: "신고일",
+      label: '신고일',
       key: 'created_at',
       center: false,
     },
@@ -475,13 +482,13 @@ export const reports = {
       label: '게시물 확인',
       key: 'target_id',
       center: true,
-      type: 'button'
-    }
+      type: 'button',
+    },
   ],
-  edit_items: ["레포트 삭제", "게시물 삭제", "타겟 경고"],
+  edit_items: ['레포트 삭제', '게시물 삭제', '타겟 경고'],
   type: 'reports',
   title: '신고 접수',
   rows_length: 0,
   footer_colspan: 7,
   table_items: [],
-}
+};
